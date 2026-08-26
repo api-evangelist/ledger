@@ -1,0 +1,72 @@
+generated: '2026-08-25'
+method: searched
+source: https://github.com/LedgerHQ/agent-skills
+note: >-
+  PROVIDER-PUBLISHED, not generated. All four skills below are Ledger's own, saved verbatim from
+  raw.githubusercontent.com/LedgerHQ/agent-skills/main on 2026-08-25. Ledger distributes them with
+  `npx skills add ledgerhq/agent-skills`, and since wallet-cli 2.1.0 the wallet-cli skill also ships
+  embedded in the binary (`wallet-cli skill install --agent cursor|claude|codex|agents`, with
+  `wallet-cli skill doctor` to detect drift between an installed copy and the binary's). The
+  Ledger Enterprise CLI ships a fifth bundled skill (`ledger-enterprise-cli skill install`) which is
+  NOT in the public agent-skills repository — it is emitted by the binary — so it is recorded in
+  cli/ledger-cli.yml rather than saved here.
+repository: https://github.com/LedgerHQ/agent-skills
+install: npx skills add ledgerhq/agent-skills
+license: none declared in the repository
+maturity: >-
+  Ledger labels both agent surfaces early development - "Breaking changes may happen between
+  releases."
+skills:
+  - file: ledger-dmk-implementation.md
+    name: ledger-dmk-implementation
+    upstream: https://github.com/LedgerHQ/agent-skills/tree/main/skills/dmk/ledger-dmk-implementation
+    raw: https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/dmk/ledger-dmk-implementation/SKILL.md
+    role: primary
+    api: Ledger Device Management Kit
+    description: >-
+      Execute DMK signing operations safely — initialise the SDK, establish a device session, verify
+      device state, open the correct chain app, perform the signing or device-management operation,
+      return the result. Five-step execution process with human-in-the-loop gates, error
+      classification and timeout bounds.
+    refs:
+      - dmk-sdk-reference.md
+      - dmk-code-patterns.md
+      - dmk-platform-patterns.md
+    connectors: [dmk-intent-vocabulary, dmk-business-logic]
+  - file: ledger-dmk-intent-vocabulary.md
+    name: dmk-intent-vocabulary
+    upstream: https://github.com/LedgerHQ/agent-skills/tree/main/skills/dmk/dmk-intent-vocabulary
+    raw: https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/dmk/dmk-intent-vocabulary/SKILL.md
+    role: connector
+    api: Ledger Device Management Kit
+    description: >-
+      Map informal developer intent ("sign a tx", "find my Ledger", "is this device real?") onto the
+      right DMK component, operation and API method before any implementation begins.
+  - file: ledger-dmk-business-logic.md
+    name: dmk-business-logic
+    upstream: https://github.com/LedgerHQ/agent-skills/tree/main/skills/dmk/dmk-business-logic
+    raw: https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/dmk/dmk-business-logic/SKILL.md
+    role: connector
+    api: Ledger Device Management Kit
+    description: >-
+      Explain the domain model and design rationale behind DMK — Clear Signing vs blind signing,
+      Secure Channel, Ledger OS (BOLOS), Device Actions vs Commands, sessions, transports,
+      derivation paths and Genuine Check.
+  - file: ledger-wallet-cli-usage.md
+    name: wallet-cli-usage
+    upstream: https://github.com/LedgerHQ/agent-skills/tree/main/skills/wallet-cli/wallet-cli-usage
+    raw: https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/wallet-cli/wallet-cli-usage/SKILL.md
+    role: primary
+    api: Ledger Wallet CLI
+    cli: '@ledgerhq/wallet-cli'
+    description: >-
+      Drive the Ledger Wallet CLI from natural language — account discover, receive, balances,
+      operations, send, swap quote/execute/status, genuine-check, asset lookup, and Ledger Key Ring
+      (LKRP) encryption — and map informal requests to the right command.
+    refs:
+      - https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/wallet-cli/wallet-cli-usage/references/business-logic.md
+agent_config_note: >-
+  Ledger's llms.txt and several docs pages carry machine-readable `agent_skills:` frontmatter with
+  primary/refs roles and raw URLs, and instruct a reading agent to fetch and apply them as working
+  context. That is an unusually deliberate agent-onboarding convention and is the reason these
+  skills are `searched` rather than generated.

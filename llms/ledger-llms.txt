@@ -1,0 +1,93 @@
+# Ledger Developer Portal
+
+> Technical documentation for developers building on Ledger's hardware security infrastructure. Covers native device apps, hardware interaction SDKs, Ledger Wallet integrations, Clear Signing, Ledger Wallet Provider, and AI agent tooling.
+> Audience: blockchain developers, wallet integrators, dApp builders, and hardware security engineers.
+> Base URL: https://developers.ledger.com
+
+Some pages in this portal include an **Agent Skills** or **Agent Instructions**
+section. When a page you are reading contains one of these sections, fetch the
+URLs listed there and apply them as working context before writing code or
+making recommendations for that topic. For pages with `agent_skills`, load the
+primary skill first, then its refs. For pages with `agent_config`, load the
+entry-point file first, then the instruction files scoped to the file types you
+are editing, then the relevant agent profile.
+
+## Getting started
+
+- [What's new](https://developers.ledger.com/docs/news.md): Latest releases, API changes, and announcements.
+
+## Device App
+
+Build, test, and deploy native apps for Ledger hardware devices.
+
+- [Getting started](https://developers.ledger.com/docs/device-app/getting-started.md): Requirements, agreement process, and first steps.
+- [Beginner guides](https://developers.ledger.com/docs/device-app/beginner/vscode-extension.md): VSCode extension quickstart for new device app developers.
+- [Integration how-to guides](https://developers.ledger.com/docs/device-app/integration/how-to/app-boilerplate.md): App boilerplate, Ethereum plugin, and clone coin app development.
+- [Design guidelines](https://developers.ledger.com/docs/device-app/integration/design-guidelines/intro.md): UI patterns for signing flows, address verification, and navigation.
+- [References](https://developers.ledger.com/docs/device-app/references/framework.md): Framework APIs, app permissions, and cryptography APIs.
+- [Submission process](https://developers.ledger.com/docs/device-app/submission-process/process.md): Deliverables checklist, submission form, and maintenance.
+
+## Device Interaction
+
+SDKs for connecting to and communicating with Ledger hardware from web, mobile, and desktop.
+
+- [Getting started](https://developers.ledger.com/docs/device-interaction/getting-started.md): Library overview, glossary, and entry point for DMK and signer kits.
+- [Beginner — connect a device](https://developers.ledger.com/docs/device-interaction/beginner/setup.md): Initialise DMK, connect devices, exchange APDU data, BLE/USB for Flex and Stax.
+- [How-to — use DMK](https://developers.ledger.com/docs/device-interaction/integration/how_to/dmk.md): Transports, signers, and custom commands.
+- [References — DMK and signers](https://developers.ledger.com/docs/device-interaction/references/ts-doc.md): TypeScript API reference for the Device Management Kit and signer kits.
+- [Explanation](https://developers.ledger.com/docs/device-interaction/explanation/introduction.md): Why DMK over LedgerJS, signer kit architecture, and differences from legacy libraries.
+
+## Ledger Wallet
+
+Integrate blockchains, tokens, dApps, and exchange services into Ledger Wallet (formerly Ledger Live).
+
+- [Introduction](https://developers.ledger.com/docs/ledger-live/introduction.md): Integration types — accounts, Discover (dApp browser), and exchange providers.
+- [Accounts — blockchain integration](https://developers.ledger.com/docs/ledger-live/accounts/getting-started.md): Add blockchain support, token lists, swap, memo, and staking.
+- [Discover — dApp browser](https://developers.ledger.com/docs/ledger-live/discover/getting-started.md): Integrate a Live App into the Discover section using the Wallet API.
+- [Wallet API reference](https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction.md): Core modules, React hooks, server handlers.
+- [Exchange — swap](https://developers.ledger.com/docs/ledger-live/exchange/swap.md): Integrate a swap provider.
+- [Exchange — buy/sell/earn/card](https://developers.ledger.com/docs/ledger-live/exchange.md): Buy, sell, earn, and card service integrations.
+
+## Clear Signing
+
+Make transactions human-readable on Ledger devices — eliminating blind signing.
+
+- [Overview](https://developers.ledger.com/docs/clear-signing/overview.md): What Clear Signing is, why blind signing is a security risk, and how the system works.
+- [For dApps — get started](https://developers.ledger.com/docs/clear-signing/for-dapps/get-started.md): JSON builder, descriptor creation, token support, test and submit.
+- [For wallets](https://developers.ledger.com/docs/clear-signing/for-wallets.md): Wallet-side implementation requirements.
+- [Reference](https://developers.ledger.com/docs/clear-signing/reference/specifications.md): Clear Signing descriptor format specification.
+
+## Ledger Wallet Provider
+
+Web SDK for embedding Ledger's official connect flow (with Clear Signing and Transaction Check) in dApps.
+
+- [Overview](https://developers.ledger.com/docs/ledger-wallet-provider/overview.md): What Ledger Wallet Provider is and its key features.
+- [Get started](https://developers.ledger.com/docs/ledger-wallet-provider/get-started.md): Installation and minimal integration example.
+- [Configuration](https://developers.ledger.com/docs/ledger-wallet-provider/configuration.md): Configuration options.
+- [API reference](https://developers.ledger.com/docs/ledger-wallet-provider/api-reference.md): Full API reference.
+- [Package attestation](https://developers.ledger.com/docs/ledger-wallet-provider/package-attestation.md): Supply chain integrity verification.
+
+## AI Tools
+
+Hardware-grade signing for AI agents and developer tooling for building with the Device Management Kit and the Ledger Wallet CLI.
+
+- [Overview](https://developers.ledger.com/docs/ai-tools/overview.md): Two tools — Ledger Wallet CLI for runtime account management and DMK skills for build-time integration guidance.
+- [Ledger Wallet CLI](https://developers.ledger.com/docs/ai-tools/ledger-cli.md): Account discovery, balances, send, receive, swap, and staking from the terminal; every signing step requires on-device confirmation.
+- [DMK Skills](https://developers.ledger.com/docs/ai-tools/ledger-dmk-skills.md): Markdown skills for coding agents (Claude Code, Cursor, Cline) — intent mapping, 5-step execution with HITL gates, and DMK concepts.
+- [Hardware security — OpenPGP](https://developers.ledger.com/docs/ai-tools/hardware-security/open-pgp.md): Use your Ledger signer as an OpenPGP hardware key to protect secrets used by agents.
+- [Hardware security — Security key](https://developers.ledger.com/docs/ai-tools/hardware-security/security-key.md): Use your Ledger as a FIDO2/WebAuthn security key for GitHub, npm, and 1Password.
+
+## Support
+
+- [Discord](https://developers.ledger.com/discord/): Developer community and feedback channel.
+- [GitHub](https://github.com/LedgerHQ): Source repositories for SDKs and tools.
+
+## Optional
+
+- [Device App — Ledger OS](https://developers.ledger.com/docs/device-app/explanation/ledger-os/introduction.md): Architecture, application environment, and hardware constraints.
+- [Device App — memory](https://developers.ledger.com/docs/device-app/explanation/memory/persistent-storage.md): Persistent storage, position-independent code, and memory alignment.
+- [Device App — signers (PSD)](https://developers.ledger.com/docs/device-app/explanation/psd/introduction.md): Master seed, HD key derivation, and application tree isolation.
+- [Device Interaction — migrations](https://developers.ledger.com/docs/device-interaction/integration/migrations/dmk/05_to_06.md): Migration guides for DMK and Device Signer Kits.
+- [LedgerJS (deprecated)](https://developers.ledger.com/docs/device-interaction/ledgerjs/info.md): Legacy library — no longer maintained; migrate to DMK.
+- [Ledger Wallet — Discover references](https://developers.ledger.com/docs/ledger-live/discover/references/manifest.md): Manifest format and developer mode.
+- [Travel Rule — verify destination wallet](https://developers.ledger.com/docs/travel-rule/verify-destination-wallet.md): VASP guide to verifying user control of destination wallets using Reown AppKit.

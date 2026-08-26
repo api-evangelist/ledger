@@ -1,0 +1,4748 @@
+openapi: 3.1.0
+info:
+  title: Safe Transaction Service
+  version: 5.33.1
+  description: API to keep track of transactions sent via Safe smart contracts
+  x-gitbook-description-document:
+    object: document
+    data:
+      schemaVersion: 8
+    nodes:
+      - object: block
+        type: paragraph
+        isVoid: false
+        data: {}
+        nodes:
+          - object: text
+            leaves:
+              - object: leaf
+                text: >-
+                  API to keep track of transactions sent via Safe smart
+                  contracts
+                marks: []
+  x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
+paths:
+  /api/v2/delegates/:
+    get:
+      operationId: delegates_list_2
+      description: Returns a list with all the delegates
+      parameters:
+        - in: query
+          name: safe
+          schema:
+            type:
+              - string
+              - 'null'
+        - in: query
+          name: delegate
+          schema:
+            type: string
+        - in: query
+          name: delegator
+          schema:
+            type: string
+        - in: query
+          name: label
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+          x-gitbook-description-html: <p>Number of results to return per page.</p>
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+          x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+        - delegates
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeDelegateResponseList'
+          description: ''
+        '400':
+          description: Invalid data
+          x-gitbook-description-html: <p>Invalid data</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: Returns a list with all the delegates
+                    marks: []
+      x-gitbook-description-html: <p>Returns a list with all the delegates</p>
+    post:
+      operationId: delegates_create_2
+      description: >-
+        Adds a new Safe delegate with a custom label. Calls with same delegate
+        but different label or
+
+        signer will update the label or delegator if a different one is
+        provided.
+
+        To generate the signature, the following EIP712 data hash needs to be
+        signed:
+
+
+        ```python
+         {
+            "types": {
+                "EIP712Domain": [
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                    {"name": "chainId", "type": "uint256"},
+                ],
+                "Delegate": [
+                    {"name": "delegateAddress", "type": "address"},
+                    {"name": "totp", "type": "uint256"},
+                ],
+            },
+            "primaryType": "Delegate",
+            "domain": {
+                "name": "Safe Transaction Service",
+                "version": "1.0",
+                "chainId": chain_id,
+            },
+            "message": {
+                "delegateAddress": delegate_address,
+                "totp": totp,
+            },
+        }
+
+        ```
+
+
+        For the signature we use `TOTP` with `T0=0` and `Tx=3600`. `TOTP` is
+        calculated by taking the
+
+        Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural
+        division, no decimals).
+      tags:
+        - delegates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelegateSerializerV2'
+        required: true
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '202':
+          description: Accepted
+          x-gitbook-description-html: <p>Accepted</p>
+        '400':
+          description: Malformed data
+          x-gitbook-description-html: <p>Malformed data</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Adds a new Safe delegate with a custom label. Calls with
+                      same delegate but different label or signer will update
+                      the label or delegator if a different one is provided. To
+                      generate the signature, the following EIP712 data hash
+                      needs to be signed:
+                    marks: []
+          - object: block
+            type: code
+            isVoid: false
+            data:
+              syntax: python
+            nodes:
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: ' {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "types": {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "EIP712Domain": ['
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "name", "type": "string"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "version", "type": "string"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "chainId", "type": "uint256"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        ],'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "Delegate": ['
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "delegateAddress", "type": "address"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "totp", "type": "uint256"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        ],'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    },'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "primaryType": "Delegate",'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "domain": {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "name": "Safe Transaction Service",'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "version": "1.0",'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "chainId": chain_id,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    },'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "message": {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "delegateAddress": delegate_address,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "totp": totp,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    },'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '}'
+                        marks: []
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: 'For the signature we use '
+                    marks: []
+                  - object: leaf
+                    text: TOTP
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' with '
+                    marks: []
+                  - object: leaf
+                    text: T0=0
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' and '
+                    marks: []
+                  - object: leaf
+                    text: Tx=3600
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: '. '
+                    marks: []
+                  - object: leaf
+                    text: TOTP
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' is calculated by taking the Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals).'
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Adds a new Safe delegate with a custom label. Calls with same
+        delegate but different label or signer will update the label or
+        delegator if a different one is provided. To generate the signature, the
+        following EIP712 data hash needs to be signed:</p><pre
+        class="language-python"><code class="lang-python"> {
+            "types": {
+                "EIP712Domain": [
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                    {"name": "chainId", "type": "uint256"},
+                ],
+                "Delegate": [
+                    {"name": "delegateAddress", "type": "address"},
+                    {"name": "totp", "type": "uint256"},
+                ],
+            },
+            "primaryType": "Delegate",
+            "domain": {
+                "name": "Safe Transaction Service",
+                "version": "1.0",
+                "chainId": chain_id,
+            },
+            "message": {
+                "delegateAddress": delegate_address,
+                "totp": totp,
+            },
+        }
+
+        </code></pre><p>For the signature we use <code>TOTP</code> with
+        <code>T0=0</code> and <code>Tx=3600</code>. <code>TOTP</code> is
+        calculated by taking the Unix UTC epoch time (no milliseconds) and
+        dividing by 3600 (natural division, no decimals).</p>
+  /api/v2/delegates/{delegate_address}/:
+    delete:
+      operationId: delegates_destroy_2
+      description: >-
+        Removes every delegate/delegator pair found associated with a given
+        delegate address. The
+
+        signature is built the same way as for adding a delegate, but in this
+        case the signer can be
+
+        either the `delegator` (owner) or the `delegate` itself. Check `POST
+        /delegates/` to learn more.
+      parameters:
+        - in: path
+          name: delegate_address
+          schema:
+            type: string
+          required: true
+      tags:
+        - delegates
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '204':
+          description: Deleted
+          x-gitbook-description-html: <p>Deleted</p>
+        '400':
+          description: Malformed data
+          x-gitbook-description-html: <p>Malformed data</p>
+        '404':
+          description: Delegate not found
+          x-gitbook-description-html: <p>Delegate not found</p>
+        '422':
+          description: Invalid Ethereum address/Error processing data
+          x-gitbook-description-html: <p>Invalid Ethereum address/Error processing data</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Removes every delegate/delegator pair found associated
+                      with a given delegate address. The signature is built the
+                      same way as for adding a delegate, but in this case the
+                      signer can be either the 
+                    marks: []
+                  - object: leaf
+                    text: delegator
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' (owner) or the '
+                    marks: []
+                  - object: leaf
+                    text: delegate
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' itself. Check '
+                    marks: []
+                  - object: leaf
+                    text: POST /delegates/
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' to learn more.'
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Removes every delegate/delegator pair found associated with a given
+        delegate address. The signature is built the same way as for adding a
+        delegate, but in this case the signer can be either the
+        <code>delegator</code> (owner) or the <code>delegate</code> itself.
+        Check <code>POST /delegates/</code> to learn more.</p>
+  /api/v2/multisig-transactions/{safe_tx_hash}/:
+    get:
+      operationId: multisig_transactions_retrieve_2
+      description: Returns a multi-signature transaction given its Safe transaction hash
+      parameters:
+        - in: path
+          name: safe_tx_hash
+          schema:
+            type: string
+          required: true
+      tags:
+        - transactions
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/SafeMultisigTransactionResponseSerializerV2
+          description: ''
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Returns a multi-signature transaction given its Safe
+                      transaction hash
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Returns a multi-signature transaction given its Safe transaction
+        hash</p>
+    delete:
+      operationId: multisig_transactions_destroy_2
+      description: >-
+        Removes the queued but not executed multi-signature transaction
+        associated with the given Safe transaction hash.
+
+        Only the proposer or the delegate who proposed the transaction can
+        delete it.
+
+        If the transaction was proposed by a delegate, it must still be a valid
+        delegate for the transaction proposer.
+
+        An EOA is required to sign the following EIP-712 data:
+
+
+        ```python
+         {
+            "types": {
+                "EIP712Domain": [
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                    {"name": "chainId", "type": "uint256"},
+                    {"name": "verifyingContract", "type": "address"},
+                ],
+                "DeleteRequest": [
+                    {"name": "safeTxHash", "type": "bytes32"},
+                    {"name": "totp", "type": "uint256"},
+                ],
+            },
+            "primaryType": "DeleteRequest",
+            "domain": {
+                "name": "Safe Transaction Service",
+                "version": "1.0",
+                "chainId": chain_id,
+                "verifyingContract": safe_address,
+            },
+            "message": {
+                "safeTxHash": safe_tx_hash,
+                "totp": totp,
+            },
+        }
+
+        ```
+
+
+        `totp` parameter is calculated with `T0=0` and `Tx=3600`. `totp` is
+        calculated by taking the
+
+        Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural
+        division, no decimals)
+      parameters:
+        - in: path
+          name: safe_tx_hash
+          schema:
+            type: string
+          required: true
+      tags:
+        - transactions
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '204':
+          description: No response body
+          x-gitbook-description-html: <p>No response body</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Removes the queued but not executed multi-signature
+                      transaction associated with the given Safe transaction
+                      hash. Only the proposer or the delegate who proposed the
+                      transaction can delete it. If the transaction was proposed
+                      by a delegate, it must still be a valid delegate for the
+                      transaction proposer. An EOA is required to sign the
+                      following EIP-712 data:
+                    marks: []
+          - object: block
+            type: code
+            isVoid: false
+            data:
+              syntax: python
+            nodes:
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: ' {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "types": {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "EIP712Domain": ['
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "name", "type": "string"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "version", "type": "string"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "chainId", "type": "uint256"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "verifyingContract", "type": "address"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        ],'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "DeleteRequest": ['
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "safeTxHash", "type": "bytes32"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '            {"name": "totp", "type": "uint256"},'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        ],'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    },'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "primaryType": "DeleteRequest",'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "domain": {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "name": "Safe Transaction Service",'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "version": "1.0",'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "chainId": chain_id,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "verifyingContract": safe_address,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    },'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    "message": {'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "safeTxHash": safe_tx_hash,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '        "totp": totp,'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '    },'
+                        marks: []
+              - object: block
+                type: code-line
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: text
+                    leaves:
+                      - object: leaf
+                        text: '}'
+                        marks: []
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: totp
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' parameter is calculated with '
+                    marks: []
+                  - object: leaf
+                    text: T0=0
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' and '
+                    marks: []
+                  - object: leaf
+                    text: Tx=3600
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: '. '
+                    marks: []
+                  - object: leaf
+                    text: totp
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' is calculated by taking the Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals)'
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Removes the queued but not executed multi-signature transaction
+        associated with the given Safe transaction hash. Only the proposer or
+        the delegate who proposed the transaction can delete it. If the
+        transaction was proposed by a delegate, it must still be a valid
+        delegate for the transaction proposer. An EOA is required to sign the
+        following EIP-712 data:</p><pre class="language-python"><code
+        class="lang-python"> {
+            "types": {
+                "EIP712Domain": [
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                    {"name": "chainId", "type": "uint256"},
+                    {"name": "verifyingContract", "type": "address"},
+                ],
+                "DeleteRequest": [
+                    {"name": "safeTxHash", "type": "bytes32"},
+                    {"name": "totp", "type": "uint256"},
+                ],
+            },
+            "primaryType": "DeleteRequest",
+            "domain": {
+                "name": "Safe Transaction Service",
+                "version": "1.0",
+                "chainId": chain_id,
+                "verifyingContract": safe_address,
+            },
+            "message": {
+                "safeTxHash": safe_tx_hash,
+                "totp": totp,
+            },
+        }
+
+        </code></pre><p><code>totp</code> parameter is calculated with
+        <code>T0=0</code> and <code>Tx=3600</code>. <code>totp</code> is
+        calculated by taking the Unix UTC epoch time (no milliseconds) and
+        dividing by 3600 (natural division, no decimals)</p>
+  /api/v2/safes/{address}/all-transactions/:
+    get:
+      operationId: safes_all_transactions_list_2
+      description: >-
+        Returns all the *executed* transactions for a given Safe address.
+
+        The list has different structures depending on the transaction type:
+
+        - Multisig Transactions for a Safe. `tx_type=MULTISIG_TRANSACTION`.
+
+        - Module Transactions for a Safe. `tx_type=MODULE_TRANSACTION`
+
+        - Incoming Transfers of Ether/ERC20 Tokens/ERC721 Tokens.
+        `tx_type=ETHEREUM_TRANSACTION`
+
+        Ordering_fields: ["timestamp"] eg: `-timestamp` (default one) or
+        `timestamp`
+
+
+        Note: This endpoint has a bug that will be fixed in next versions of the
+        endpoint. Pagination is done
+
+        using the `Transaction Hash`, and due to that the number of relevant
+        transactions with the same
+
+        `Transaction Hash` cannot be known beforehand. So if there are only 2
+        transactions
+
+        with the same `Transaction Hash`, `count` of the endpoint will be 1
+
+        but there will be 2 transactions in the list.
+      parameters:
+        - in: path
+          name: address
+          schema:
+            type: string
+          required: true
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+          x-gitbook-description-html: <p>Which field to use when ordering the results.</p>
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+          x-gitbook-description-html: <p>Number of results to return per page.</p>
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+          x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+        - transactions
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/PaginatedAllTransactionsSchemaSerializerV2List
+          description: ''
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: 'Returns all the '
+                    marks: []
+                  - object: leaf
+                    text: executed
+                    marks:
+                      - object: mark
+                        type: italic
+                        data: {}
+                  - object: leaf
+                    text: ' transactions for a given Safe address. The list has different structures depending on the transaction type:'
+                    marks: []
+          - object: block
+            type: list-unordered
+            isVoid: false
+            data: {}
+            nodes:
+              - object: block
+                type: list-item
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: block
+                    type: paragraph
+                    isVoid: false
+                    data: {}
+                    nodes:
+                      - object: text
+                        leaves:
+                          - object: leaf
+                            text: 'Multisig Transactions for a Safe. '
+                            marks: []
+                          - object: leaf
+                            text: tx_type=MULTISIG_TRANSACTION
+                            marks:
+                              - object: mark
+                                type: code
+                                data: {}
+                          - object: leaf
+                            text: .
+                            marks: []
+              - object: block
+                type: list-item
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: block
+                    type: paragraph
+                    isVoid: false
+                    data: {}
+                    nodes:
+                      - object: text
+                        leaves:
+                          - object: leaf
+                            text: 'Module Transactions for a Safe. '
+                            marks: []
+                          - object: leaf
+                            text: tx_type=MODULE_TRANSACTION
+                            marks:
+                              - object: mark
+                                type: code
+                                data: {}
+              - object: block
+                type: list-item
+                isVoid: false
+                data: {}
+                nodes:
+                  - object: block
+                    type: paragraph
+                    isVoid: false
+                    data: {}
+                    nodes:
+                      - object: text
+                        leaves:
+                          - object: leaf
+                            text: >-
+                              Incoming Transfers of Ether/ERC20 Tokens/ERC721
+                              Tokens. 
+                            marks: []
+                          - object: leaf
+                            text: tx_type=ETHEREUM_TRANSACTION
+                            marks:
+                              - object: mark
+                                type: code
+                                data: {}
+                          - object: leaf
+                            text: ' Ordering_fields: ["timestamp"] eg: '
+                            marks: []
+                          - object: leaf
+                            text: '-timestamp'
+                            marks:
+                              - object: mark
+                                type: code
+                                data: {}
+                          - object: leaf
+                            text: ' (default one) or '
+                            marks: []
+                          - object: leaf
+                            text: timestamp
+                            marks:
+                              - object: mark
+                                type: code
+                                data: {}
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Note: This endpoint has a bug that will be fixed in next
+                      versions of the endpoint. Pagination is done using the 
+                    marks: []
+                  - object: leaf
+                    text: Transaction Hash
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: >-
+                      , and due to that the number of relevant transactions with
+                      the same 
+                    marks: []
+                  - object: leaf
+                    text: Transaction Hash
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' cannot be known beforehand. So if there are only 2 transactions with the same '
+                    marks: []
+                  - object: leaf
+                    text: Transaction Hash
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ', '
+                    marks: []
+                  - object: leaf
+                    text: count
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' of the endpoint will be 1 but there will be 2 transactions in the list.'
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Returns all the <em>executed</em> transactions for a given Safe
+        address. The list has different structures depending on the transaction
+        type:</p><ul><li>Multisig Transactions for a Safe.
+        <code>tx_type=MULTISIG_TRANSACTION</code>.</li><li>Module Transactions
+        for a Safe. <code>tx_type=MODULE_TRANSACTION</code></li><li>Incoming
+        Transfers of Ether/ERC20 Tokens/ERC721 Tokens.
+        <code>tx_type=ETHEREUM_TRANSACTION</code> Ordering_fields: ["timestamp"]
+        eg: <code>-timestamp</code> (default one) or
+        <code>timestamp</code></li></ul><p>Note: This endpoint has a bug that
+        will be fixed in next versions of the endpoint. Pagination is done using
+        the <code>Transaction Hash</code>, and due to that the number of
+        relevant transactions with the same <code>Transaction Hash</code> cannot
+        be known beforehand. So if there are only 2 transactions with the same
+        <code>Transaction Hash</code>, <code>count</code> of the endpoint will
+        be 1 but there will be 2 transactions in the list.</p>
+  /api/v2/safes/{address}/balances/:
+    get:
+      operationId: safes_balances_retrieve_2
+      description: |-
+        Get paginated balances for Ether and ERC20 tokens.
+        The maximum limit allowed is 200.
+      parameters:
+        - in: path
+          name: address
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: trusted
+          schema:
+            type: boolean
+            default: false
+          description: If `True` just trusted tokens will be returned
+          x-gitbook-description-html: <p>If <code>True</code> just trusted tokens will be returned</p>
+        - in: query
+          name: exclude_spam
+          schema:
+            type: boolean
+            default: false
+          description: If `True` spam tokens will not be returned
+          x-gitbook-description-html: <p>If <code>True</code> spam tokens will not be returned</p>
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of results to return per page.
+          x-gitbook-description-html: <p>Number of results to return per page.</p>
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The initial index from which to return the results.
+          x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+        - safes
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeCollectibleResponseList'
+          description: ''
+        '404':
+          description: Safe not found
+          x-gitbook-description-html: <p>Safe not found</p>
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+          x-gitbook-description-html: <p>Safe address checksum not valid</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Get paginated balances for Ether and ERC20 tokens. The
+                      maximum limit allowed is 200.
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Get paginated balances for Ether and ERC20 tokens. The maximum limit
+        allowed is 200.</p>
+  /api/v2/safes/{address}/collectibles/:
+    get:
+      operationId: safes_collectibles_retrieve
+      description: >-
+        Get paginated collectibles (ERC721 tokens) and information about them of
+        a given Safe account.
+
+        The maximum limit allowed is 10.
+      parameters:
+        - in: path
+          name: address
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: trusted
+          schema:
+            type: boolean
+            default: false
+          description: If `True` just trusted tokens will be returned
+          x-gitbook-description-html: <p>If <code>True</code> just trusted tokens will be returned</p>
+        - in: query
+          name: exclude_spam
+          schema:
+            type: boolean
+            default: false
+          description: If `True` spam tokens will not be returned
+          x-gitbook-description-html: <p>If <code>True</code> spam tokens will not be returned</p>
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of results to return per page.
+          x-gitbook-description-html: <p>Number of results to return per page.</p>
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The initial index from which to return the results.
+          x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+        - safes
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeCollectibleResponseList'
+          description: ''
+        '404':
+          description: Safe not found
+          x-gitbook-description-html: <p>Safe not found</p>
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+          x-gitbook-description-html: <p>Safe address checksum not valid</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Get paginated collectibles (ERC721 tokens) and information
+                      about them of a given Safe account. The maximum limit
+                      allowed is 10.
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Get paginated collectibles (ERC721 tokens) and information about them
+        of a given Safe account. The maximum limit allowed is 10.</p>
+  /api/v2/safes/{address}/multisig-transactions/:
+    get:
+      operationId: safes_multisig_transactions_list_2
+      description: |-
+        Returns all the multi-signature transactions for a given Safe address.
+        By default, only ``trusted`` multisig transactions are returned.
+      parameters:
+        - in: path
+          name: address
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: failed
+          schema:
+            type: boolean
+        - in: query
+          name: modified__lt
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: modified__gt
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: modified__lte
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: modified__gte
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: nonce__lt
+          schema:
+            type: number
+        - in: query
+          name: nonce__gt
+          schema:
+            type: number
+        - in: query
+          name: nonce__lte
+          schema:
+            type: number
+        - in: query
+          name: nonce__gte
+          schema:
+            type: number
+        - in: query
+          name: nonce
+          schema:
+            type: number
+        - in: query
+          name: safe_tx_hash
+          schema:
+            type: string
+            format: byte
+        - in: query
+          name: to
+          schema:
+            type: string
+        - in: query
+          name: value__lt
+          schema:
+            type: number
+        - in: query
+          name: value__gt
+          schema:
+            type: number
+        - in: query
+          name: value
+          schema:
+            type: number
+        - in: query
+          name: executed
+          schema:
+            type: boolean
+        - in: query
+          name: has_confirmations
+          schema:
+            type: boolean
+        - in: query
+          name: trusted
+          schema:
+            type: boolean
+        - in: query
+          name: execution_date__gte
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: execution_date__lte
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: submission_date__gte
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: submission_date__lte
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: transaction_hash
+          schema:
+            type:
+              - string
+              - 'null'
+            format: byte
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+          x-gitbook-description-html: <p>Which field to use when ordering the results.</p>
+        - name: limit
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+          x-gitbook-description-html: <p>Number of results to return per page.</p>
+        - name: offset
+          required: false
+          in: query
+          description: The initial index from which to return the results.
+          schema:
+            type: integer
+          x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+        - transactions
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/PaginatedSafeMultisigTransactionResponseSerializerV2List
+          description: ''
+        '400':
+          description: Invalid data
+          x-gitbook-description-html: <p>Invalid data</p>
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Invalid ethereum address
+          x-gitbook-description-html: <p>Invalid ethereum address</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Returns all the multi-signature transactions for a given
+                      Safe address. By default, only 
+                    marks: []
+                  - object: leaf
+                    text: trusted
+                    marks:
+                      - object: mark
+                        type: code
+                        data: {}
+                  - object: leaf
+                    text: ' multisig transactions are returned.'
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Returns all the multi-signature transactions for a given Safe
+        address. By default, only <code>trusted</code> multisig transactions are
+        returned.</p>
+    post:
+      operationId: safes_multisig_transactions_create_2
+      description: >-
+        Creates a multi-signature transaction for a given Safe account with its
+        confirmations and
+
+        retrieves all the information related.
+      parameters:
+        - in: path
+          name: address
+          schema:
+            type: string
+          required: true
+      tags:
+        - transactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafeMultisigTransaction'
+        required: true
+      security:
+        - cookieAuth: []
+        - tokenAuth: []
+        - {}
+      responses:
+        '201':
+          description: Created or signature updated
+          x-gitbook-description-html: <p>Created or signature updated</p>
+        '400':
+          description: Invalid data
+          x-gitbook-description-html: <p>Invalid data</p>
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: >-
+            Invalid ethereum address | User is not an owner | Invalid safeTxHash
+            |Invalid signature | Nonce already executed | Sender is not an owner
+          x-gitbook-description-html: >-
+            <p>Invalid ethereum address | User is not an owner | Invalid
+            safeTxHash |Invalid signature | Nonce already executed | Sender is
+            not an owner</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+          - object: block
+            type: paragraph
+            isVoid: false
+            data: {}
+            nodes:
+              - object: text
+                leaves:
+                  - object: leaf
+                    text: >-
+                      Creates a multi-signature transaction for a given Safe
+                      account with its confirmations and retrieves all the
+                      information related.
+                    marks: []
+      x-gitbook-description-html: >-
+        <p>Creates a multi-signature transaction for a given Safe account with
+        its confirmations and retrieves all the information related.</p>
+
+  /tx-service/eth/api/v1/modules/{address}/safes/:
+    get:
+      operationId: modules_safes_retrieve
+      description: Returns the list of Safes that have the provided module enabled
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - modules
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModulesResponse'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Module address checksum not valid
+  /tx-service/eth/api/v1/owners/{address}/safes/:
+    get:
+      operationId: owners_safes_retrieve
+      description: Returns the list of Safe accounts that have the given address as
+        their owner
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - owners
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerResponse'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Owner address checksum not valid
+  /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/:
+    get:
+      operationId: safe_operations_retrieve
+      description: Returns a SafeOperation given its Safe operation hash
+      parameters:
+      - in: path
+        name: safe_operation_hash
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeOperationWithUserOperationResponse'
+          description: ''
+  /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/confirmations/:
+    get:
+      operationId: safe_operations_confirmations_list
+      description: Get the list of confirmations for a multisig transaction
+      parameters:
+      - in: path
+        name: safe_operation_hash
+        schema:
+          type: string
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeOperationConfirmationResponseList'
+          description: ''
+        '400':
+          description: Invalid data
+    post:
+      operationId: safe_operations_confirmations_create
+      description: |-
+        Add a confirmation for a transaction. More than one signature can be used. This endpoint does not support
+        the use of delegates to make a transaction trusted.
+      parameters:
+      - in: path
+        name: safe_operation_hash
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafeOperationConfirmation'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Malformed data
+        '422':
+          description: Error processing data
+
+  /tx-service/eth/api/v1/safes/{address}/safe-operations/:
+    get:
+      operationId: safes_safe_operations_list
+      description: Returns the list of SafeOperations for a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: modified__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: modified__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: modified__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: modified__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: module_address
+        schema:
+          type: string
+      - in: query
+        name: executed
+        schema:
+          type: boolean
+      - in: query
+        name: has_confirmations
+        schema:
+          type: boolean
+      - in: query
+        name: execution_date__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: execution_date__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submission_date__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submission_date__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: transaction_hash
+        schema:
+          type:
+          - string
+          - 'null'
+          format: byte
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeOperationWithUserOperationResponseList'
+          description: ''
+    post:
+      operationId: safes_safe_operations_create
+      description: Adds a new SafeOperation for a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafeOperation'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+                description: Unspecified response body
+          description: ''
+
+  /tx-service/eth/api/v1/safes/{address}/user-operations/:
+    get:
+      operationId: safes_user_operations_list
+      description: Returns the list of UserOperations for a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserOperationWithSafeOperationResponseList'
+          description: ''
+  /tx-service/eth/api/v1/user-operations/{user_operation_hash}/:
+    get:
+      operationId: user_operations_retrieve
+      description: Returns a UserOperation given its user operation hash
+      parameters:
+      - in: path
+        name: user_operation_hash
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+          description: ''
+  /tx-service/eth/api/v1/safes/{address}/:
+    get:
+      operationId: safes_retrieve
+      description: Returns detailed information of a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeInfoResponse'
+          description: ''
+        '404':
+          description: Safe not found
+        '422':
+          description: |-
+            code = 1: Checksum address validation failed
+            code = 50: Cannot get Safe info
+  /tx-service/eth/api/v1/safes/{address}/creation/:
+    get:
+      operationId: safes_creation_retrieve
+      description: |-
+        Returns detailed information on the Safe creation transaction of a given Safe.
+
+        Note: When event indexing is being used and multiple Safes are deployed in the same transaction
+        the result might not be accurate due to the indexer not knowing which events belong to which Safe
+        deployment.
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeCreationInfoResponse'
+          description: ''
+        '404':
+          description: Safe creation not found
+        '422':
+          description: Owner address checksum not valid
+        '503':
+          description: Problem connecting to Ethereum network
+  /tx-service/eth/api/v1/safes/{address}/export/:
+    get:
+      operationId: safes_export_retrieve
+      description: |-
+        Get transactions optimized for CSV export with transfer information.
+        The maximum limit allowed is 1000.
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: execution_date__gte
+        schema:
+          type: string
+          format: date-time
+        description: Filter transactions executed after this date (ISO format)
+      - in: query
+        name: execution_date__lte
+        schema:
+          type: string
+          format: date-time
+        description: Filter transactions executed before this date (ISO format)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Maximum number of transactions to return (max 1000)
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: Number of transactions to skip
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeExportTransactionList'
+          description: ''
+        '404':
+          description: Safe not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+  /tx-service/eth/api/v2/safes/{address}/balances/:
+    get:
+      operationId: safes_balances_retrieve_2
+      description: |-
+        Get paginated balances for Ether and ERC20 tokens.
+        The maximum limit allowed is 200.
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: trusted
+        schema:
+          type: boolean
+          default: false
+        description: If `True` just trusted tokens will be returned
+      - in: query
+        name: exclude_spam
+        schema:
+          type: boolean
+          default: false
+        description: If `True` spam tokens will not be returned
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Number of results to return per page.
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: The initial index from which to return the results.
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeCollectibleResponseList'
+          description: ''
+        '404':
+          description: Safe not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+components:
+  schemas:
+    AllTransactionsSchema:
+      type: object
+      description: Just for the purpose of documenting, don't use it
+      properties:
+        txType1:
+          $ref: '#/components/schemas/SafeModuleTransactionWithTransfersResponse'
+        txType2:
+          $ref: '#/components/schemas/SafeMultisigTransactionWithTransfersResponse'
+        txType3:
+          $ref: '#/components/schemas/EthereumTxWithTransfersResponse'
+      required:
+        - txType1
+        - txType2
+        - txType3
+      x-gitbook-description-html: <p>Just for the purpose of documenting, don't use it</p>
+    AllTransactionsSchemaSerializerV2:
+      type: object
+      description: Just for the purpose of documenting, don't use it
+      properties:
+        txType1:
+          $ref: '#/components/schemas/SafeModuleTransactionWithTransfersResponse'
+        txType2:
+          $ref: >-
+            #/components/schemas/SafeMultisigTransactionWithTransfersResponseSerializerV2
+        txType3:
+          $ref: '#/components/schemas/EthereumTxWithTransfersResponse'
+      required:
+        - txType1
+        - txType2
+        - txType3
+      x-gitbook-description-html: <p>Just for the purpose of documenting, don't use it</p>
+    CodeErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        arguments:
+          type: array
+          items: {}
+      required:
+        - arguments
+        - code
+        - message
+    Contract:
+      type: object
+      properties:
+        address:
+          type: string
+        name:
+          type: string
+        displayName:
+          type: string
+        logoUri:
+          type: string
+          format: uri
+        contractAbi:
+          $ref: '#/components/schemas/ContractAbi'
+        trustedForDelegateCall:
+          type: boolean
+      required:
+        - address
+        - contractAbi
+        - displayName
+        - logoUri
+        - name
+        - trustedForDelegateCall
+    ContractAbi:
+      type: object
+      properties:
+        abi:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        description:
+          type: string
+        relevance:
+          type: integer
+      required:
+        - abi
+        - description
+        - relevance
+    DataDecoder:
+      type: object
+      properties:
+        data:
+          type: string
+        to:
+          type:
+            - string
+            - 'null'
+      required:
+        - data
+    Delegate:
+      type: object
+      description: |-
+        .. deprecated:: 4.38.0
+           Deprecated in favour of DelegateSerializerV2
+      properties:
+        safe:
+          type:
+            - string
+            - 'null'
+        delegate:
+          type: string
+        delegator:
+          type: string
+        signature:
+          type: string
+        label:
+          type: string
+          maxLength: 50
+      required:
+        - delegate
+        - delegator
+        - label
+        - signature
+      x-gitbook-description-html: |-
+        <p>.. deprecated:: 4.38.0
+        Deprecated in favour of DelegateSerializerV2</p>
+    DelegateSerializerV2:
+      type: object
+      description: Mixin to validate delegate operations data
+      properties:
+        safe:
+          type:
+            - string
+            - 'null'
+        delegate:
+          type: string
+        delegator:
+          type: string
+        signature:
+          type: string
+        label:
+          type: string
+          maxLength: 50
+        expiryDate:
+          type:
+            - string
+            - 'null'
+          format: date-time
+      required:
+        - delegate
+        - delegator
+        - label
+        - signature
+      x-gitbook-description-html: <p>Mixin to validate delegate operations data</p>
+    Erc20Info:
+      type: object
+      properties:
+        name:
+          type: string
+        symbol:
+          type: string
+        decimals:
+          type: integer
+        logoUri:
+          type: string
+      required:
+        - decimals
+        - logoUri
+        - name
+        - symbol
+    EthereumTxWithTransfersResponse:
+      type: object
+      properties:
+        executionDate:
+          type: string
+          format: date-time
+        to:
+          type:
+            - string
+            - 'null'
+        data:
+          type: string
+        txHash:
+          type: string
+        blockNumber:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
+        txType:
+          type: string
+          readOnly: true
+        from:
+          type: string
+      required:
+        - blockNumber
+        - data
+        - executionDate
+        - from
+        - to
+        - transfers
+        - txHash
+        - txType
+    IndexingStatus:
+      type: object
+      properties:
+        currentBlockNumber:
+          type: integer
+        currentBlockTimestamp:
+          type: string
+          format: date-time
+        erc20BlockNumber:
+          type: integer
+        erc20BlockTimestamp:
+          type: string
+          format: date-time
+        erc20Synced:
+          type: boolean
+        masterCopiesBlockNumber:
+          type: integer
+        masterCopiesBlockTimestamp:
+          type: string
+          format: date-time
+        masterCopiesSynced:
+          type: boolean
+        synced:
+          type: boolean
+      required:
+        - currentBlockNumber
+        - currentBlockTimestamp
+        - erc20BlockNumber
+        - erc20BlockTimestamp
+        - erc20Synced
+        - masterCopiesBlockNumber
+        - masterCopiesBlockTimestamp
+        - masterCopiesSynced
+        - synced
+    MasterCopyResponse:
+      type: object
+      properties:
+        address:
+          type: string
+        version:
+          type: string
+        deployer:
+          type: string
+        deployedBlockNumber:
+          type: integer
+        lastIndexedBlockNumber:
+          type: integer
+        l2:
+          type: boolean
+      required:
+        - address
+        - deployedBlockNumber
+        - deployer
+        - l2
+        - lastIndexedBlockNumber
+        - version
+    ModulesResponse:
+      type: object
+      properties:
+        safes:
+          type: array
+          items:
+            type: string
+      required:
+        - safes
+    OwnerResponse:
+      type: object
+      properties:
+        safes:
+          type: array
+          items:
+            type: string
+      required:
+        - safes
+    PaginatedAllTransactionsSchemaList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllTransactionsSchema'
+    PaginatedAllTransactionsSchemaSerializerV2List:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllTransactionsSchemaSerializerV2'
+    PaginatedContractList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contract'
+    PaginatedSafeCollectibleResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeCollectibleResponse'
+    PaginatedSafeDelegateResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeDelegateResponse'
+    PaginatedSafeExportTransactionList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeExportTransaction'
+    PaginatedSafeMessageResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeMessageResponse'
+    PaginatedSafeModuleTransactionResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeModuleTransactionResponse'
+    PaginatedSafeMultisigConfirmationResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeMultisigConfirmationResponse'
+    PaginatedSafeMultisigTransactionResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeMultisigTransactionResponse'
+    PaginatedSafeMultisigTransactionResponseSerializerV2List:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeMultisigTransactionResponseSerializerV2'
+    PaginatedSafeOperationConfirmationResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeOperationConfirmationResponse'
+    PaginatedSafeOperationWithUserOperationResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeOperationWithUserOperationResponse'
+    PaginatedTokenInfoResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TokenInfoResponse'
+    PaginatedTokenListList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TokenList'
+    PaginatedTransferWithTokenInfoResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
+    PaginatedUserOperationWithSafeOperationResponseList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+    SafeBalanceResponse:
+      type: object
+      properties:
+        tokenAddress:
+          type: string
+        token:
+          $ref: '#/components/schemas/Erc20Info'
+        balance:
+          type: string
+      required:
+        - balance
+        - token
+        - tokenAddress
+    SafeCollectibleResponse:
+      type: object
+      properties:
+        address:
+          type: string
+        tokenName:
+          type: string
+        tokenSymbol:
+          type: string
+        logoUri:
+          type: string
+        id:
+          type: string
+        uri:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        imageUri:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: {}
+      required:
+        - address
+        - description
+        - id
+        - imageUri
+        - logoUri
+        - metadata
+        - name
+        - tokenName
+        - tokenSymbol
+        - uri
+    SafeCreationInfoResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        creator:
+          type: string
+        transactionHash:
+          type: string
+        factoryAddress:
+          type: string
+        masterCopy:
+          type:
+            - string
+            - 'null'
+        setupData:
+          type:
+            - string
+            - 'null'
+        saltNonce:
+          type:
+            - string
+            - 'null'
+        dataDecoded:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        userOperation:
+          oneOf:
+            - $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+            - type: 'null'
+      required:
+        - created
+        - creator
+        - dataDecoded
+        - factoryAddress
+        - masterCopy
+        - saltNonce
+        - setupData
+        - transactionHash
+        - userOperation
+    SafeDelegateResponse:
+      type: object
+      properties:
+        safe:
+          type: string
+        delegate:
+          type: string
+        delegator:
+          type: string
+        label:
+          type: string
+          maxLength: 50
+        expiryDate:
+          type: string
+          format: date-time
+      required:
+        - delegate
+        - delegator
+        - expiryDate
+        - label
+        - safe
+    SafeDeployment:
+      type: object
+      properties:
+        version:
+          type: string
+          maxLength: 10
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeDeploymentContract'
+      required:
+        - contracts
+        - version
+    SafeDeploymentContract:
+      type: object
+      properties:
+        contractName:
+          type: string
+        address:
+          type:
+            - string
+            - 'null'
+      required:
+        - address
+        - contractName
+    SafeExportTransaction:
+      type: object
+      description: >-
+        Serializer for the export endpoint that returns transaction data
+        optimized for CSV export
+      properties:
+        safe:
+          type: string
+        From:
+          type: string
+          title: ' from'
+        to:
+          type: string
+        amount:
+          type: string
+        assetType:
+          type: string
+        assetAddress:
+          type:
+            - string
+            - 'null'
+        assetSymbol:
+          type:
+            - string
+            - 'null'
+        assetDecimals:
+          type:
+            - integer
+            - 'null'
+        proposerAddress:
+          type:
+            - string
+            - 'null'
+        proposedAt:
+          type:
+            - string
+            - 'null'
+          format: date-time
+        executorAddress:
+          type:
+            - string
+            - 'null'
+        executedAt:
+          type:
+            - string
+            - 'null'
+          format: date-time
+        note:
+          type:
+            - string
+            - 'null'
+        transactionHash:
+          type: string
+        contractAddress:
+          type:
+            - string
+            - 'null'
+        nonce:
+          type:
+            - string
+            - 'null'
+      required:
+        - From
+        - amount
+        - assetAddress
+        - assetDecimals
+        - assetSymbol
+        - assetType
+        - contractAddress
+        - executedAt
+        - executorAddress
+        - nonce
+        - note
+        - proposedAt
+        - proposerAddress
+        - safe
+        - to
+        - transactionHash
+      x-gitbook-description-html: >-
+        <p>Serializer for the export endpoint that returns transaction data
+        optimized for CSV export</p>
+    SafeInfoResponse:
+      type: object
+      properties:
+        address:
+          type: string
+        nonce:
+          type: string
+        threshold:
+          type: integer
+        owners:
+          type: array
+          items:
+            type: string
+        masterCopy:
+          type: string
+        modules:
+          type: array
+          items:
+            type: string
+        fallbackHandler:
+          type: string
+        guard:
+          type: string
+        version:
+          type:
+            - string
+            - 'null'
+      required:
+        - address
+        - fallbackHandler
+        - guard
+        - masterCopy
+        - modules
+        - nonce
+        - owners
+        - threshold
+        - version
+    SafeMessage:
+      type: object
+      properties:
+        message: {}
+        safeAppId:
+          type:
+            - integer
+            - 'null'
+          minimum: 0
+        signature:
+          type: string
+        origin:
+          type:
+            - string
+            - 'null'
+          maxLength: 200
+      required:
+        - message
+        - signature
+    SafeMessageResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safe:
+          type: string
+        messageHash:
+          type: string
+        message: {}
+        proposedBy:
+          type: string
+        safeAppId:
+          type: integer
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Filters confirmations queryset
+
+            :param obj: SafeMessage instance
+            :return: Serialized queryset
+          readOnly: true
+          x-gitbook-description-html: |-
+            <p>Filters confirmations queryset</p>
+            <p>:param obj: SafeMessage instance
+            :return: Serialized queryset</p>
+        preparedSignature:
+          type:
+            - string
+            - 'null'
+          description: |-
+            Prepared signature sorted
+
+            :param obj: SafeMessage instance
+            :return: Serialized queryset
+          readOnly: true
+          x-gitbook-description-html: |-
+            <p>Prepared signature sorted</p>
+            <p>:param obj: SafeMessage instance
+            :return: Serialized queryset</p>
+        origin:
+          type: string
+          readOnly: true
+      required:
+        - confirmations
+        - created
+        - message
+        - messageHash
+        - modified
+        - origin
+        - preparedSignature
+        - proposedBy
+        - safe
+        - safeAppId
+    SafeMessageSignature:
+      type: object
+      properties:
+        signature:
+          type: string
+      required:
+        - signature
+    SafeModuleTransactionResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        executionDate:
+          type: string
+          format: date-time
+        blockNumber:
+          type: integer
+        isSuccessful:
+          type: boolean
+          readOnly: true
+        transactionHash:
+          type: string
+        safe:
+          type: string
+        module:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,78}(?:\.\d{0,0})?$
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          enum:
+            - 0
+            - 1
+            - 2
+          type: integer
+          description: |-
+            * `0` - CALL
+            * `1` - DELEGATE_CALL
+            * `2` - CREATE
+          x-spec-enum-id: 73baf6048b75e41c
+          minimum: 0
+          maximum: 32767
+          x-gitbook-description-html: |-
+            <ul>
+            <li><code>0</code> - CALL</li>
+            <li><code>1</code> - DELEGATE_CALL</li>
+            <li><code>2</code> - CREATE</li>
+            </ul>
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: >-
+            This field is deprecated and will be removed in future versions.
+            Refer to decoder service
+            [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder)
+            for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>This field is deprecated and will be removed in future versions.
+            Refer to decoder service <a
+            href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a>
+            for decoding guidance.</p>
+        moduleTransactionId:
+          type: string
+          description: >-
+            Internally calculated parameter to uniquely identify a
+            moduleTransaction 
+
+            `ModuleTransactionId = i+tx_hash+trace_address`
+          x-gitbook-description-html: >-
+            <p>Internally calculated parameter to uniquely identify a
+            moduleTransaction
+
+            <code>ModuleTransactionId = i+tx_hash+trace_address</code></p>
+      required:
+        - blockNumber
+        - created
+        - data
+        - dataDecoded
+        - executionDate
+        - isSuccessful
+        - module
+        - moduleTransactionId
+        - operation
+        - safe
+        - to
+        - transactionHash
+        - value
+    SafeModuleTransactionWithTransfersResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        executionDate:
+          type: string
+          format: date-time
+        blockNumber:
+          type: integer
+        isSuccessful:
+          type: boolean
+          readOnly: true
+        transactionHash:
+          type: string
+        safe:
+          type: string
+        module:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,78}(?:\.\d{0,0})?$
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          enum:
+            - 0
+            - 1
+            - 2
+          type: integer
+          description: |-
+            * `0` - CALL
+            * `1` - DELEGATE_CALL
+            * `2` - CREATE
+          x-spec-enum-id: 73baf6048b75e41c
+          minimum: 0
+          maximum: 32767
+          x-gitbook-description-html: |-
+            <ul>
+            <li><code>0</code> - CALL</li>
+            <li><code>1</code> - DELEGATE_CALL</li>
+            <li><code>2</code> - CREATE</li>
+            </ul>
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: >-
+            This field is deprecated and will be removed in future versions.
+            Refer to decoder service
+            [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder)
+            for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>This field is deprecated and will be removed in future versions.
+            Refer to decoder service <a
+            href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a>
+            for decoding guidance.</p>
+        moduleTransactionId:
+          type: string
+          description: >-
+            Internally calculated parameter to uniquely identify a
+            moduleTransaction 
+
+            `ModuleTransactionId = i+tx_hash+trace_address`
+          x-gitbook-description-html: >-
+            <p>Internally calculated parameter to uniquely identify a
+            moduleTransaction
+
+            <code>ModuleTransactionId = i+tx_hash+trace_address</code></p>
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
+        txType:
+          type: string
+          readOnly: true
+      required:
+        - blockNumber
+        - created
+        - data
+        - dataDecoded
+        - executionDate
+        - isSuccessful
+        - module
+        - moduleTransactionId
+        - operation
+        - safe
+        - to
+        - transactionHash
+        - transfers
+        - txType
+        - value
+    SafeMultisigConfirmation:
+      type: object
+      properties:
+        signature:
+          type: string
+      required:
+        - signature
+    SafeMultisigConfirmationResponse:
+      type: object
+      properties:
+        owner:
+          type: string
+        submissionDate:
+          type: string
+          format: date-time
+        transactionHash:
+          type: string
+          readOnly: true
+        signature:
+          type: string
+        signatureType:
+          type: string
+          readOnly: true
+      required:
+        - owner
+        - signature
+        - signatureType
+        - submissionDate
+        - transactionHash
+    SafeMultisigTransaction:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: integer
+          minimum: 0
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+            - string
+            - 'null'
+        safeTxGas:
+          type: integer
+          minimum: 0
+        baseGas:
+          type: integer
+          minimum: 0
+        gasPrice:
+          type: integer
+          minimum: 0
+        refundReceiver:
+          type:
+            - string
+            - 'null'
+        nonce:
+          type: integer
+          minimum: 0
+        contractTransactionHash:
+          type: string
+        sender:
+          type: string
+        signature:
+          type:
+            - string
+            - 'null'
+        origin:
+          type:
+            - string
+            - 'null'
+          maxLength: 200
+      required:
+        - baseGas
+        - contractTransactionHash
+        - gasPrice
+        - nonce
+        - operation
+        - safe
+        - safeTxGas
+        - sender
+        - to
+        - value
+    SafeMultisigTransactionEstimate:
+      type: object
+      properties:
+        to:
+          type: string
+        value:
+          type: integer
+          minimum: 0
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          type: integer
+          minimum: 0
+      required:
+        - operation
+        - to
+        - value
+    SafeMultisigTransactionEstimateResponse:
+      type: object
+      properties:
+        safeTxGas:
+          type: string
+      required:
+        - safeTxGas
+    SafeMultisigTransactionResponse:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+            - string
+            - 'null'
+        safeTxGas:
+          type: integer
+          minimum: 0
+        baseGas:
+          type: integer
+          minimum: 0
+        gasPrice:
+          type: string
+        refundReceiver:
+          type:
+            - string
+            - 'null'
+        nonce:
+          type: integer
+          minimum: 0
+        executionDate:
+          type: string
+          format: date-time
+        submissionDate:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        blockNumber:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        transactionHash:
+          type: string
+        safeTxHash:
+          type: string
+        proposer:
+          type: string
+        proposedByDelegate:
+          type:
+            - string
+            - 'null'
+        executor:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        isExecuted:
+          type: boolean
+        isSuccessful:
+          type:
+            - boolean
+            - 'null'
+          readOnly: true
+        ethGasPrice:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxPriorityFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        gasUsed:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        fee:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        origin:
+          type: string
+          readOnly: true
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: >-
+            This field is deprecated and will be removed in future versions.
+            Refer to decoder service
+            [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder)
+            for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>This field is deprecated and will be removed in future versions.
+            Refer to decoder service <a
+            href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a>
+            for decoding guidance.</p>
+        confirmationsRequired:
+          type: integer
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Validate and check integrity of confirmations queryset
+
+            :param obj: MultisigConfirmation instance
+            :return: Serialized queryset
+            :raises InternalValidationError: If any inconsistency is detected
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>Validate and check integrity of confirmations queryset</p>
+
+            <p>:param obj: MultisigConfirmation instance
+
+            :return: Serialized queryset
+
+            :raises InternalValidationError: If any inconsistency is
+            detected</p>
+        trusted:
+          type: boolean
+        signatures:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+      required:
+        - baseGas
+        - blockNumber
+        - confirmations
+        - confirmationsRequired
+        - dataDecoded
+        - ethGasPrice
+        - executionDate
+        - executor
+        - fee
+        - gasPrice
+        - gasUsed
+        - isExecuted
+        - isSuccessful
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - modified
+        - nonce
+        - operation
+        - origin
+        - proposedByDelegate
+        - proposer
+        - safe
+        - safeTxGas
+        - safeTxHash
+        - signatures
+        - submissionDate
+        - to
+        - transactionHash
+        - trusted
+        - value
+    SafeMultisigTransactionResponseSerializerV2:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+            - string
+            - 'null'
+        safeTxGas:
+          type: string
+        baseGas:
+          type: string
+        gasPrice:
+          type: string
+        refundReceiver:
+          type:
+            - string
+            - 'null'
+        nonce:
+          type: string
+        executionDate:
+          type: string
+          format: date-time
+        submissionDate:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        blockNumber:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        transactionHash:
+          type: string
+        safeTxHash:
+          type: string
+        proposer:
+          type: string
+        proposedByDelegate:
+          type:
+            - string
+            - 'null'
+        executor:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        isExecuted:
+          type: boolean
+        isSuccessful:
+          type:
+            - boolean
+            - 'null'
+          readOnly: true
+        ethGasPrice:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxPriorityFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        gasUsed:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        fee:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        origin:
+          type: string
+          readOnly: true
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: >-
+            This field is deprecated and will be removed in future versions.
+            Refer to decoder service
+            [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder)
+            for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>This field is deprecated and will be removed in future versions.
+            Refer to decoder service <a
+            href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a>
+            for decoding guidance.</p>
+        confirmationsRequired:
+          type: integer
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Validate and check integrity of confirmations queryset
+
+            :param obj: MultisigConfirmation instance
+            :return: Serialized queryset
+            :raises InternalValidationError: If any inconsistency is detected
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>Validate and check integrity of confirmations queryset</p>
+
+            <p>:param obj: MultisigConfirmation instance
+
+            :return: Serialized queryset
+
+            :raises InternalValidationError: If any inconsistency is
+            detected</p>
+        trusted:
+          type: boolean
+        signatures:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+      required:
+        - baseGas
+        - blockNumber
+        - confirmations
+        - confirmationsRequired
+        - dataDecoded
+        - ethGasPrice
+        - executionDate
+        - executor
+        - fee
+        - gasPrice
+        - gasUsed
+        - isExecuted
+        - isSuccessful
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - modified
+        - nonce
+        - operation
+        - origin
+        - proposedByDelegate
+        - proposer
+        - safe
+        - safeTxGas
+        - safeTxHash
+        - signatures
+        - submissionDate
+        - to
+        - transactionHash
+        - trusted
+        - value
+    SafeMultisigTransactionWithTransfersResponse:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+            - string
+            - 'null'
+        safeTxGas:
+          type: integer
+          minimum: 0
+        baseGas:
+          type: integer
+          minimum: 0
+        gasPrice:
+          type: string
+        refundReceiver:
+          type:
+            - string
+            - 'null'
+        nonce:
+          type: integer
+          minimum: 0
+        executionDate:
+          type: string
+          format: date-time
+        submissionDate:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        blockNumber:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        transactionHash:
+          type: string
+        safeTxHash:
+          type: string
+        proposer:
+          type: string
+        proposedByDelegate:
+          type:
+            - string
+            - 'null'
+        executor:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        isExecuted:
+          type: boolean
+        isSuccessful:
+          type:
+            - boolean
+            - 'null'
+          readOnly: true
+        ethGasPrice:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxPriorityFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        gasUsed:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        fee:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        origin:
+          type: string
+          readOnly: true
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: >-
+            This field is deprecated and will be removed in future versions.
+            Refer to decoder service
+            [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder)
+            for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>This field is deprecated and will be removed in future versions.
+            Refer to decoder service <a
+            href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a>
+            for decoding guidance.</p>
+        confirmationsRequired:
+          type: integer
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Validate and check integrity of confirmations queryset
+
+            :param obj: MultisigConfirmation instance
+            :return: Serialized queryset
+            :raises InternalValidationError: If any inconsistency is detected
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>Validate and check integrity of confirmations queryset</p>
+
+            <p>:param obj: MultisigConfirmation instance
+
+            :return: Serialized queryset
+
+            :raises InternalValidationError: If any inconsistency is
+            detected</p>
+        trusted:
+          type: boolean
+        signatures:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
+        txType:
+          type: string
+          readOnly: true
+      required:
+        - baseGas
+        - blockNumber
+        - confirmations
+        - confirmationsRequired
+        - dataDecoded
+        - ethGasPrice
+        - executionDate
+        - executor
+        - fee
+        - gasPrice
+        - gasUsed
+        - isExecuted
+        - isSuccessful
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - modified
+        - nonce
+        - operation
+        - origin
+        - proposedByDelegate
+        - proposer
+        - safe
+        - safeTxGas
+        - safeTxHash
+        - signatures
+        - submissionDate
+        - to
+        - transactionHash
+        - transfers
+        - trusted
+        - txType
+        - value
+    SafeMultisigTransactionWithTransfersResponseSerializerV2:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        data:
+          type:
+            - string
+            - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+            - string
+            - 'null'
+        safeTxGas:
+          type: string
+        baseGas:
+          type: string
+        gasPrice:
+          type: string
+        refundReceiver:
+          type:
+            - string
+            - 'null'
+        nonce:
+          type: string
+        executionDate:
+          type: string
+          format: date-time
+        submissionDate:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        blockNumber:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        transactionHash:
+          type: string
+        safeTxHash:
+          type: string
+        proposer:
+          type: string
+        proposedByDelegate:
+          type:
+            - string
+            - 'null'
+        executor:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        isExecuted:
+          type: boolean
+        isSuccessful:
+          type:
+            - boolean
+            - 'null'
+          readOnly: true
+        ethGasPrice:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        maxPriorityFeePerGas:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        gasUsed:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        fee:
+          type:
+            - integer
+            - 'null'
+          readOnly: true
+        origin:
+          type: string
+          readOnly: true
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: >-
+            This field is deprecated and will be removed in future versions.
+            Refer to decoder service
+            [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder)
+            for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>This field is deprecated and will be removed in future versions.
+            Refer to decoder service <a
+            href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a>
+            for decoding guidance.</p>
+        confirmationsRequired:
+          type: integer
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Validate and check integrity of confirmations queryset
+
+            :param obj: MultisigConfirmation instance
+            :return: Serialized queryset
+            :raises InternalValidationError: If any inconsistency is detected
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>Validate and check integrity of confirmations queryset</p>
+
+            <p>:param obj: MultisigConfirmation instance
+
+            :return: Serialized queryset
+
+            :raises InternalValidationError: If any inconsistency is
+            detected</p>
+        trusted:
+          type: boolean
+        signatures:
+          type:
+            - string
+            - 'null'
+          readOnly: true
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
+        txType:
+          type: string
+          readOnly: true
+      required:
+        - baseGas
+        - blockNumber
+        - confirmations
+        - confirmationsRequired
+        - dataDecoded
+        - ethGasPrice
+        - executionDate
+        - executor
+        - fee
+        - gasPrice
+        - gasUsed
+        - isExecuted
+        - isSuccessful
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - modified
+        - nonce
+        - operation
+        - origin
+        - proposedByDelegate
+        - proposer
+        - safe
+        - safeTxGas
+        - safeTxHash
+        - signatures
+        - submissionDate
+        - to
+        - transactionHash
+        - transfers
+        - trusted
+        - txType
+        - value
+    SafeOperation:
+      type: object
+      description: >-
+        Mixin class to validate SafeOperation signatures. `_get_owners` can be
+        overridden to define
+
+        the valid owners to sign
+      properties:
+        nonce:
+          type: integer
+          minimum: 0
+        initCode:
+          type:
+            - string
+            - 'null'
+        callData:
+          type:
+            - string
+            - 'null'
+        callGasLimit:
+          type: integer
+          minimum: 0
+        verificationGasLimit:
+          type: integer
+          minimum: 0
+        preVerificationGas:
+          type: integer
+          minimum: 0
+        maxFeePerGas:
+          type: integer
+          minimum: 0
+        maxPriorityFeePerGas:
+          type: integer
+          minimum: 0
+        paymasterAndData:
+          type:
+            - string
+            - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+        validAfter:
+          type:
+            - string
+            - 'null'
+          format: date-time
+        validUntil:
+          type:
+            - string
+            - 'null'
+          format: date-time
+        moduleAddress:
+          type: string
+      required:
+        - callData
+        - callGasLimit
+        - entryPoint
+        - initCode
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - moduleAddress
+        - nonce
+        - paymasterAndData
+        - preVerificationGas
+        - signature
+        - validAfter
+        - validUntil
+        - verificationGasLimit
+      x-gitbook-description-html: >-
+        <p>Mixin class to validate SafeOperation signatures.
+        <code>_get_owners</code> can be overridden to define
+
+        the valid owners to sign</p>
+    SafeOperationConfirmation:
+      type: object
+      description: Validate new confirmations for an existing `SafeOperation`
+      properties:
+        signature:
+          type: string
+      required:
+        - signature
+      x-gitbook-description-html: >-
+        <p>Validate new confirmations for an existing
+        <code>SafeOperation</code></p>
+    SafeOperationConfirmationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        owner:
+          type: string
+        signature:
+          type: string
+        signatureType:
+          type: string
+          readOnly: true
+      required:
+        - created
+        - modified
+        - owner
+        - signature
+        - signatureType
+    SafeOperationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safeOperationHash:
+          type: string
+        validAfter:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        moduleAddress:
+          type: string
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Filters confirmations queryset
+
+            :param obj: SafeOperation instance
+            :return: Serialized queryset
+          readOnly: true
+          x-gitbook-description-html: |-
+            <p>Filters confirmations queryset</p>
+            <p>:param obj: SafeOperation instance
+            :return: Serialized queryset</p>
+        preparedSignature:
+          type: string
+          readOnly: true
+      required:
+        - confirmations
+        - created
+        - modified
+        - moduleAddress
+        - preparedSignature
+        - safeOperationHash
+        - validAfter
+        - validUntil
+    SafeOperationWithUserOperationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safeOperationHash:
+          type: string
+        validAfter:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        moduleAddress:
+          type: string
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: |-
+            Filters confirmations queryset
+
+            :param obj: SafeOperation instance
+            :return: Serialized queryset
+          readOnly: true
+          x-gitbook-description-html: |-
+            <p>Filters confirmations queryset</p>
+            <p>:param obj: SafeOperation instance
+            :return: Serialized queryset</p>
+        preparedSignature:
+          type: string
+          readOnly: true
+        userOperation:
+          allOf:
+            - $ref: '#/components/schemas/UserOperationResponse'
+          readOnly: true
+      required:
+        - confirmations
+        - created
+        - modified
+        - moduleAddress
+        - preparedSignature
+        - safeOperationHash
+        - userOperation
+        - validAfter
+        - validUntil
+    TokenInfoResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          readOnly: true
+        address:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        decimals:
+          type: integer
+        logoUri:
+          type: string
+          readOnly: true
+        trusted:
+          type: boolean
+      required:
+        - address
+        - decimals
+        - logoUri
+        - name
+        - symbol
+        - trusted
+        - type
+    TokenList:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 200
+      required:
+        - description
+        - url
+    TransferWithTokenInfoResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: >-
+            Sometimes ERC20/721 `Transfer` events look the same, if token info
+            is available better use that information
+
+            to check
+
+
+            :param obj:
+
+            :return: `TransferType` as a string
+          readOnly: true
+          x-gitbook-description-html: >-
+            <p>Sometimes ERC20/721 <code>Transfer</code> events look the same,
+            if token info is available better use that information
+
+            to check</p>
+
+            <p>:param obj:
+
+            :return: <code>TransferType</code> as a string</p>
+        executionDate:
+          type: string
+          format: date-time
+        blockNumber:
+          type: integer
+        transactionHash:
+          type: string
+        to:
+          type: string
+        value:
+          type:
+            - string
+            - 'null'
+        tokenId:
+          type:
+            - string
+            - 'null'
+        tokenAddress:
+          type:
+            - string
+            - 'null'
+        transferId:
+          type: string
+          readOnly: true
+          description: >-
+            Internally calculated parameter to uniquely identify a transfer 
+
+            Token transfers are calculated as `transferId =
+            e+tx_hash+log_index` 
+
+            Ether transfers are calculated as `transferId =
+            i+tx_hash+trace_address`
+          x-gitbook-description-html: >-
+            <p>Internally calculated parameter to uniquely identify a transfer
+
+            Token transfers are calculated as <code>transferId =
+            e+tx_hash+log_index</code>
+
+            Ether transfers are calculated as <code>transferId =
+            i+tx_hash+trace_address</code></p>
+        tokenInfo:
+          $ref: '#/components/schemas/TokenInfoResponse'
+        from:
+          type: string
+      required:
+        - blockNumber
+        - executionDate
+        - from
+        - to
+        - tokenId
+        - tokenInfo
+        - transactionHash
+        - transferId
+        - type
+        - value
+    UserOperationResponse:
+      type: object
+      properties:
+        ethereumTxHash:
+          type: string
+        sender:
+          type: string
+        userOperationHash:
+          type: string
+        nonce:
+          type: string
+        initCode:
+          type:
+            - string
+            - 'null'
+        callData:
+          type:
+            - string
+            - 'null'
+        callGasLimit:
+          type: string
+        verificationGasLimit:
+          type: string
+        preVerificationGas:
+          type: string
+        maxFeePerGas:
+          type: string
+        maxPriorityFeePerGas:
+          type: string
+        paymaster:
+          type:
+            - string
+            - 'null'
+        paymasterData:
+          type:
+            - string
+            - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+      required:
+        - callData
+        - callGasLimit
+        - entryPoint
+        - ethereumTxHash
+        - initCode
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - nonce
+        - paymaster
+        - paymasterData
+        - preVerificationGas
+        - sender
+        - signature
+        - userOperationHash
+        - verificationGasLimit
+    UserOperationWithSafeOperationResponse:
+      type: object
+      properties:
+        ethereumTxHash:
+          type: string
+        sender:
+          type: string
+        userOperationHash:
+          type: string
+        nonce:
+          type: string
+        initCode:
+          type:
+            - string
+            - 'null'
+        callData:
+          type:
+            - string
+            - 'null'
+        callGasLimit:
+          type: string
+        verificationGasLimit:
+          type: string
+        preVerificationGas:
+          type: string
+        maxFeePerGas:
+          type: string
+        maxPriorityFeePerGas:
+          type: string
+        paymaster:
+          type:
+            - string
+            - 'null'
+        paymasterData:
+          type:
+            - string
+            - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+        safeOperation:
+          oneOf:
+            - $ref: '#/components/schemas/SafeOperationResponse'
+            - type: 'null'
+          readOnly: true
+      required:
+        - callData
+        - callGasLimit
+        - entryPoint
+        - ethereumTxHash
+        - initCode
+        - maxFeePerGas
+        - maxPriorityFeePerGas
+        - nonce
+        - paymaster
+        - paymasterData
+        - preVerificationGas
+        - safeOperation
+        - sender
+        - signature
+        - userOperationHash
+        - verificationGasLimit
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+      x-gitbook-description-html: <p>Token-based authentication with required prefix "Token"</p>

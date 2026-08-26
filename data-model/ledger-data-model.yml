@@ -1,0 +1,915 @@
+generated: '2026-08-25'
+method: derived
+source: openapi/ledger-enterprise-vault-openapi.yml ($ref graph + *_id reference fields)
+note: Derived from the Ledger Enterprise (Vault) API, the only Ledger contract with a rich object model
+  — 269 schemas across 85 operations. The exchange-provider contracts are stateless request/response shapes
+  (quote, swap, sell payload) with no persistent entity graph, and the multisig service reuses the upstream
+  Safe object model (Safe, MultisigTransaction, Delegate, Owner, Module, SafeOperation), so neither is
+  modelled here.
+root_domain: 'institutional digital-asset custody: a WORKSPACE contains ACCOUNTS, and every state-changing
+  action on one is a REQUEST that must reach a governance QUORUM before the HSM signs it.'
+entity_count: 268
+relationship_count: 152
+core_entities:
+- name: Account
+  domain: custody
+  note: A per-currency custody account with its own governance rules, addresses, balances, labels, tokens,
+    NFTs and ERC-20 child accounts.
+  endpoints:
+  - GET /accounts
+  - GET /accounts/{account_id}
+  - GET /accounts/{account_id}/balances
+  - GET /accounts/{account_id}/addresses
+  - GET /accounts/{parent_account_id}/erc20-children-accounts
+- name: Transaction
+  domain: movement
+  note: A crypto transfer, staking action or smart-contract interaction. Created through a Request; rejectable
+    only while pending approval.
+  endpoints:
+  - GET /transactions
+  - GET /transactions/{transaction_id}
+  - POST /transactions/{transaction_id}/reject
+  - POST /transactions/estimate-fees
+- name: Request
+  domain: governance
+  note: The quorum-gated envelope around every critical action — create/edit an account, group, whitelist,
+    user invitation or transaction. Carries a challenge for device approval.
+  endpoints:
+  - GET /requests
+  - POST /requests
+  - POST /requests/{request_id}/approve
+  - POST /requests/{request_id}/reject
+  - GET /requests/{request_id}/challenge
+  - GET /requests/{request_id}/governance-status
+- name: User
+  domain: identity
+  note: Administrator, Operator or API Operator, each holding a Personal Security Device.
+  endpoints:
+  - GET /users
+  - GET /users/{user_id}
+  - GET /users/{user_id}/history
+- name: Group
+  domain: identity
+  note: A named set of Operators referenced by account governance rules.
+  endpoints:
+  - GET /groups
+  - GET /groups/{group_id}
+- name: Entity
+  domain: organisation
+  note: An organisational grouping of accounts, with its own users.
+  endpoints:
+  - GET /entities
+  - GET /entities/{entity_id}
+  - GET /entities/{entity_id}/users
+- name: Whitelist
+  domain: controls
+  note: Approved destination addresses; a transaction rule can require the destination be on one.
+  endpoints:
+  - GET /whitelists
+  - GET /whitelists/{whitelist_id}
+- name: Settlement
+  domain: tradelink
+  note: A TradeLink settlement with a liquidity provider; cancellable only in FAILED_TO_BROADCAST, recoverable
+    only in SUBMITTED.
+  endpoints:
+  - GET /settlements
+  - POST /settlements
+  - POST /settlements/{settlement_id}/cancel
+  - POST /settlements/{settlement_id}/recover
+- name: Digest
+  domain: compliance
+  note: Compliance digest records, alongside address-risk and sanctions screening.
+  endpoints:
+  - GET /digests
+  - GET /digests/{digests_id}
+  - GET /compliance/address-risk/{address}
+  - GET /compliance/sanctions/{address}
+- name: Pledge
+  domain: staking
+  note: A staking pledge; per-chain stake and reward views exist for Ethereum, Solana, Cardano and Tezos.
+  endpoints:
+  - GET /pledges
+  - GET /pledges/{pledge_id}
+  - GET /ethereum/accounts/{account_id}/stakes
+- name: Message
+  domain: signing
+  note: Off-chain message signing, including Proof of Reserve.
+  endpoints:
+  - GET /messages
+  - GET /messages/{message_id}
+- name: Webhook
+  domain: events
+  note: Notification target (url + shared secret) registered per API user.
+  endpoints:
+  - GET /notifications/configuration
+  - PUT /notifications/configuration
+history_pattern: Eight entities expose a parallel /history sub-resource — accounts, transactions, digests,
+  entities, groups, messages, users and whitelists — giving a uniform audit trail per object. This is
+  the estate's strongest data-model convention.
+id_conventions:
+  style: integer surrogate ids in path segments (account_id, transaction_id, request_id, ...)
+  note: No prefixed string ids. Webhook payloads carry only {payload_type, event_type, id}, so the id
+    plus payload_type is the join key back into the API.
+top_connected_schemas:
+- schema: account
+  degree: 26
+- schema: APISearchPageInfo
+  degree: 16
+- schema: Pledge
+  degree: 6
+- schema: Account
+  degree: 4
+- schema: CurrencyUnit
+  degree: 4
+- schema: pledge_subaccount
+  degree: 4
+- schema: target
+  degree: 4
+- schema: Transaction
+  degree: 4
+- schema: LiteLabel
+  degree: 3
+- schema: LightTokenAccount
+  degree: 3
+- schema: ChainalysisTransactionAlert
+  degree: 3
+- schema: Digests
+  degree: 3
+- schema: Message
+  degree: 3
+- schema: TradelinkAssetManager
+  degree: 3
+- schema: TradelinkExchange
+  degree: 3
+- schema: PolkadotBalancesWithUnbondingInfo
+  degree: 3
+- schema: User
+  degree: 3
+- schema: VaultGovernanceStep
+  degree: 3
+- schema: AccountBalancesHistory
+  degree: 2
+- schema: AccountCurrency
+  degree: 2
+relationships:
+- from: Account
+  type: has_many
+  to: AccountRuleSet
+  via: governance_rules
+  resolved: true
+- from: Account
+  type: has_many
+  to: LiteLabel
+  via: labels
+  resolved: true
+- from: Account
+  type: has_many
+  to: LightTokenAccount
+  via: token_accounts
+  resolved: true
+- from: AccountBalancesHistory
+  type: has_many
+  to: AccountBalancesHistoryEntry
+  via: balances
+  resolved: true
+- from: AccountBalancesHistory
+  type: has_one
+  to: CurrencyInfo
+  via: currency
+  resolved: true
+- from: AccountCurrency
+  type: has_many
+  to: CurrencyUnit
+  via: amount_units
+  resolved: true
+- from: AccountCurrency
+  type: has_many
+  to: CurrencyUnit
+  via: fees_units
+  resolved: true
+- from: AccountSearchResult
+  type: has_one
+  to: Account
+  via: node
+  resolved: true
+- from: AccountSmartContractInteractionRule
+  type: has_many
+  to: AccountSmartContractInteractionRuleEntry
+  via: data
+  resolved: true
+- from: AccountThresholdRule
+  type: has_many
+  to: AccountThresholdRuleEntry
+  via: data
+  resolved: true
+- from: AccountTransactionFilterRule
+  type: has_many
+  to: AccountTransactionFilterRuleEntry
+  via: data
+  resolved: true
+- from: AccountWhitelistRule
+  type: has_many
+  to: AccountWhitelistRuleEntry
+  via: data
+  resolved: true
+- from: AddressSanctions
+  type: has_many
+  to: ChainalysisAddressSanction
+  via: provider_details
+  resolved: true
+- from: Addresses
+  type: has_many
+  to: Address
+  via: addresses
+  resolved: true
+- from: ApiAuthRequest
+  type: belongs_to
+  to: api_key
+  via: api_key_id
+  resolved: false
+- from: BitcoinSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: BitcoinTransactionFeeEstimation
+  type: has_one
+  to: BitcoinFeesFields
+  via: coin_fields
+  resolved: true
+- from: CardanoSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: CardanoStakeBlockchainState
+  type: belongs_to
+  to: pool
+  via: pool_id
+  resolved: false
+- from: ChainalysisAddressRisk
+  type: has_many
+  to: Exposure
+  via: exposures
+  resolved: true
+- from: ChainalysisTransactionAlert
+  type: belongs_to
+  to: category
+  via: category_id
+  resolved: false
+- from: ChainalysisTransactionAlert
+  type: belongs_to
+  to: provider
+  via: provider_id
+  resolved: false
+- from: CreateSettlement
+  type: belongs_to
+  to: from_pledge
+  via: from_pledge_id
+  resolved: false
+- from: Currency
+  type: has_many
+  to: CurrencyUnit
+  via: units
+  resolved: true
+- from: CurrencyList
+  type: has_many
+  to: Currency
+  via: currencies
+  resolved: true
+- from: Digests
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: Digests
+  type: has_many
+  to: TransactionOrMessageNote
+  via: notes
+  resolved: true
+- from: DigestsSearchResult
+  type: has_one
+  to: Digests
+  via: node
+  resolved: true
+- from: EntitySearchResult
+  type: has_one
+  to: Entity
+  via: node
+  resolved: true
+- from: EthereumAccountReward
+  type: has_one
+  to: EthereumStakeRewardInfo
+  via: info
+  resolved: true
+- from: EthereumDeployContractTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: EthereumExecuteContractTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: EthereumSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: EthereumStakeReward
+  type: has_one
+  to: EthereumStakeRewardInfo
+  via: info
+  resolved: true
+- from: ForcedUnpledgeRequestDataDetails
+  type: belongs_to
+  to: pledge_subaccount
+  via: pledge_subaccount_id
+  resolved: false
+- from: GroupSearchResult
+  type: has_one
+  to: Group
+  via: node
+  resolved: true
+- from: InboundTransactionIntent
+  type: belongs_to
+  to: to_account
+  via: to_account_id
+  resolved: false
+- from: Label
+  type: has_one
+  to: LabelInfo
+  via: info
+  resolved: true
+- from: LabelSearchResult
+  type: has_one
+  to: Label
+  via: node
+  resolved: true
+- from: LightTokenAccount
+  type: belongs_to
+  to: parent
+  via: parent_id
+  resolved: false
+- from: LiteLabel
+  type: has_one
+  to: LabelInfo
+  via: info
+  resolved: true
+- from: Message
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: Message
+  type: has_many
+  to: TransactionOrMessageNote
+  via: notes
+  resolved: true
+- from: MessageSearchResult
+  type: has_one
+  to: Message
+  via: node
+  resolved: true
+- from: MessageSigningData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: NFT
+  type: belongs_to
+  to: token
+  via: token_id
+  resolved: false
+- from: NFTCollection
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: NFTCollectionResult
+  type: has_one
+  to: NFTCollection
+  via: node
+  resolved: true
+- from: NFTMetadata
+  type: has_one
+  to: Medias
+  via: medias
+  resolved: true
+- from: NFTMetadata
+  type: has_many
+  to: Property
+  via: properties
+  resolved: true
+- from: NFTPrice
+  type: belongs_to
+  to: token
+  via: token_id
+  resolved: false
+- from: NFTResult
+  type: has_one
+  to: NFT
+  via: node
+  resolved: true
+- from: OutboundTransaction
+  type: belongs_to
+  to: request
+  via: request_id
+  resolved: false
+- from: OutboundTransaction
+  type: belongs_to
+  to: transaction
+  via: transaction_id
+  resolved: false
+- from: PaginatedNFTCollections
+  type: has_many
+  to: NFTCollectionResult
+  via: edges
+  resolved: true
+- from: PaginatedNFTCollections
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: PaginatedNFTs
+  type: has_many
+  to: NFTResult
+  via: edges
+  resolved: true
+- from: PaginatedNFTs
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: Pledge
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: Pledge
+  type: has_one
+  to: TradelinkAssetManager
+  via: asset_manager
+  resolved: true
+- from: Pledge
+  type: has_one
+  to: TradelinkCustodian
+  via: custodian
+  resolved: true
+- from: Pledge
+  type: has_one
+  to: TradelinkExchange
+  via: exchange
+  resolved: true
+- from: Pledge
+  type: belongs_to
+  to: pledge_subaccount
+  via: pledge_subaccount_id
+  resolved: false
+- from: PledgeIncrementRequestDataDetails
+  type: belongs_to
+  to: pledge_subaccount
+  via: pledge_subaccount_id
+  resolved: false
+- from: PledgeSearchResult
+  type: has_one
+  to: Pledge
+  via: node
+  resolved: true
+- from: PolkadotAnonymousProxyInfo
+  type: has_one
+  to: PolkadotBalances
+  via: balances
+  resolved: true
+- from: PolkadotBalancesWithUnbondingInfo
+  type: has_many
+  to: PolkadotUnbondingInfo
+  via: unbonded
+  resolved: true
+- from: PolkadotBalancesWithUnbondingInfo
+  type: has_many
+  to: PolkadotUnbondingInfo
+  via: unbonding
+  resolved: true
+- from: PolkadotBondExtraTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: PolkadotChillTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: PolkadotFields
+  type: has_one
+  to: PolkadotBalancesWithUnbondingInfo
+  via: balances
+  resolved: true
+- from: PolkadotFields
+  type: has_one
+  to: PolkadotStakingInfo
+  via: staking
+  resolved: true
+- from: PolkadotRebondTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: PolkadotSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: PolkadotSetPayeeTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: PolkadotUnbondTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: PolkadotWithdrawTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: ProviderTransactionRiskDetails
+  type: has_many
+  to: ChainalysisTransactionAlert
+  via: chainalysis
+  resolved: true
+- from: RepledgeIntent
+  type: belongs_to
+  to: pledge_subaccount
+  via: pledge_subaccount_id
+  resolved: false
+- from: RepledgeRequest
+  type: belongs_to
+  to: repledge
+  via: repledge_id
+  resolved: false
+- from: RepledgeRequest
+  type: belongs_to
+  to: request
+  via: request_id
+  resolved: false
+- from: Request
+  type: belongs_to
+  to: target
+  via: target_id
+  resolved: false
+- from: RequestSearchResult
+  type: has_one
+  to: Request
+  via: node
+  resolved: true
+- from: RequestWithChallenge
+  type: belongs_to
+  to: target
+  via: target_id
+  resolved: false
+- from: RippleSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: Settlement
+  type: belongs_to
+  to: from_pledge
+  via: from_pledge_id
+  resolved: false
+- from: SolanaBalances
+  type: has_many
+  to: LightTokenAccount
+  via: token_accounts
+  resolved: true
+- from: SolanaCreateAssociatedTokenAccountCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: SolanaSendSplTokenTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: SolanaSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: StellarSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: TezosSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: TezosTransactionFeeEstimation
+  type: has_one
+  to: TezosFeesFields
+  via: coin_fields
+  resolved: true
+- from: Token
+  type: has_many
+  to: CurrencyUnit
+  via: units
+  resolved: true
+- from: TokenList
+  type: has_many
+  to: Token
+  via: tokens
+  resolved: true
+- from: TradelinkAssetManager
+  type: belongs_to
+  to: approver_group
+  via: approver_group_id
+  resolved: false
+- from: TradelinkAssetManager
+  type: belongs_to
+  to: whitelist
+  via: whitelist_id
+  resolved: false
+- from: TradelinkExchange
+  type: belongs_to
+  to: approver_group
+  via: approver_group_id
+  resolved: false
+- from: TradelinkExchange
+  type: belongs_to
+  to: whitelist
+  via: whitelist_id
+  resolved: false
+- from: Transaction
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: Transaction
+  type: has_many
+  to: LiteLabel
+  via: labels
+  resolved: true
+- from: Transaction
+  type: has_many
+  to: TransactionNote
+  via: notes
+  resolved: true
+- from: TransactionSearchResult
+  type: has_one
+  to: Transaction
+  via: node
+  resolved: true
+- from: TronSendTransactionCreationData
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: User
+  type: belongs_to
+  to: user
+  via: user_id
+  resolved: false
+- from: UserSearchResult
+  type: has_one
+  to: User
+  via: node
+  resolved: true
+- from: Users
+  type: has_many
+  to: User
+  via: users
+  resolved: true
+- from: VaultCollectedApproval
+  type: has_one
+  to: VaultUserRef
+  via: user
+  resolved: true
+- from: VaultGovernanceStep
+  type: has_many
+  to: VaultCollectedApproval
+  via: approvals
+  resolved: true
+- from: VaultGovernanceStep
+  type: has_many
+  to: VaultUserRef
+  via: approvers
+  resolved: true
+- from: VaultLightTokenAccount
+  type: belongs_to
+  to: parent
+  via: parent_id
+  resolved: false
+- from: VaultRequest
+  type: belongs_to
+  to: target
+  via: target_id
+  resolved: false
+- from: VaultRequestGovernance
+  type: has_many
+  to: VaultGovernanceStep
+  via: governance_steps
+  resolved: true
+- from: VaultTargetRequest
+  type: belongs_to
+  to: target
+  via: target_id
+  resolved: false
+- from: Whitelist
+  type: has_many
+  to: WhitelistAddress
+  via: addresses
+  resolved: true
+- from: WhitelistSearchResult
+  type: has_one
+  to: Whitelist
+  via: node
+  resolved: true
+- from: _APISearchAccountResults
+  type: has_many
+  to: AccountSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchAccountResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchCardanoStakeResults
+  type: has_many
+  to: _CardanoStakeSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchCardanoStakeResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchDigestsResults
+  type: has_many
+  to: DigestsSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchDigestsResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchEntitiesResults
+  type: has_many
+  to: EntitySearchResult
+  via: edges
+  resolved: true
+- from: _APISearchEntitiesResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchGroupResults
+  type: has_many
+  to: GroupSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchGroupResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchLabelsResults
+  type: has_many
+  to: LabelSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchLabelsResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchMessageResults
+  type: has_many
+  to: MessageSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchMessageResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchPledgeResults
+  type: has_many
+  to: PledgeSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchPledgeResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchRequestResults
+  type: has_many
+  to: RequestSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchRequestResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchSolanaStakeResults
+  type: has_many
+  to: _SolanaStakeSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchSolanaStakeResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchTezosStakeResults
+  type: has_many
+  to: _TezosStakeSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchTezosStakeResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchTransactionResults
+  type: has_many
+  to: TransactionSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchTransactionResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchUserResults
+  type: has_many
+  to: UserSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchUserResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _APISearchWhitelistResults
+  type: has_many
+  to: WhitelistSearchResult
+  via: edges
+  resolved: true
+- from: _APISearchWhitelistResults
+  type: has_one
+  to: APISearchPageInfo
+  via: page_info
+  resolved: true
+- from: _CardanoStake
+  type: has_one
+  to: CardanoStakeBlockchainState
+  via: blockchain_state
+  resolved: true
+- from: _CardanoStakeSearchResult
+  type: has_one
+  to: _CardanoStake
+  via: node
+  resolved: true
+- from: _EthereumBlockchainStake
+  type: belongs_to
+  to: account
+  via: account_id
+  resolved: false
+- from: _EthereumBlockchainStake
+  type: has_one
+  to: EthereumStakeBlockchainState
+  via: blockchain_state
+  resolved: true
+- from: _SolanaStake
+  type: has_one
+  to: SolanaStakeBlockchainState
+  via: blockchain_state
+  resolved: true
+- from: _SolanaStakeSearchResult
+  type: has_one
+  to: _SolanaStake
+  via: node
+  resolved: true
+- from: _TezosStake
+  type: has_one
+  to: TezosStakeBlockchainState
+  via: blockchain_state
+  resolved: true
+- from: _TezosStakeSearchResult
+  type: has_one
+  to: _TezosStake
+  via: node
+  resolved: true
+relationships_truncated: false

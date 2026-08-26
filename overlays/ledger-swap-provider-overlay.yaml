@@ -1,0 +1,46 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Ledger Wallet Swap provider contract
+  version: 1.0.0
+extends: openapi/ledger-swap-provider-openapi.yml
+x-generated: '2026-08-25'
+x-method: generated
+x-source: >-
+  Harvested 2026-08-25 from https://developers.ledger.com/exchange/openapi/swap-provider-openapi.yml,
+  discovered through Ledger's own RFC 9727 linkset at
+  https://developers.ledger.com/.well-known/api-catalog.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-profile: https://apis.io/provider/ledger
+      x-apievangelist-harvested: '2026-08-25'
+      x-apievangelist-discovered-via: https://developers.ledger.com/.well-known/api-catalog
+      x-apievangelist-contract-direction: >-
+        INVERTED. This document specifies the API an exchange PARTNER must implement; Ledger is the
+        client, not the server. That is why it carries no servers[] block and why the base URL is
+        correctly absent rather than missing — the host is the partner's own.
+  - target: $.info
+    update:
+      x-apievangelist-findings:
+        servers_absent_by_design: true
+        tags_declared: 0
+        tags_note: >-
+          No tags[] and no per-operation tags across all five exchange contracts, so a merged
+          reference cannot group them.
+        summaries_missing:
+          count: 6
+          total: 7
+          note: Only /webhook/{swapId}/status carries no summary gap; the rest rely on description alone.
+        error_format:
+          current: bespoke
+          note: >-
+            Sibling contracts diverge — the buy contract returns text/plain for its 400s while
+            sell, card and earn return application/json. One envelope across the five would remove a
+            real integration tax for a provider implementing more than one.
+        strength: >-
+          The statusUpdate webhook description is unusually good: it states the auth model, the
+          asynchronous acknowledgement semantics ("a 200 means the update was authenticated,
+          validated and queued, not that it has already been persisted"), the applicability window
+          ("only while the swap is still in a non-final status"), the status-mapping behaviour, and
+          the deliberate 401-on-unknown-provider enumeration guard. Most webhook contracts in the
+          catalog state none of these.

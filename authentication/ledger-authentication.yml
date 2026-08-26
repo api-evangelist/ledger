@@ -1,0 +1,108 @@
+generated: '2026-08-25'
+method: searched
+source: openapi/ledger-buy-provider-openapi.yml, openapi/ledger-card-provider-openapi.yml, openapi/ledger-enterprise-multisig-openapi.yml,
+  openapi/ledger-enterprise-vault-openapi.yml, openapi/ledger-sell-provider-openapi.yml, openapi/ledger-swap-provider-openapi.yml
+  ; upgraded from the docs auth pages
+summary:
+  types:
+  - apiKey
+  - http-bearer
+  api_key_in:
+  - cookie
+  - header
+  bearer: true
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-KEY
+  sources:
+  - openapi/ledger-buy-provider-openapi.yml
+- name: defaultApiKey
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  sources:
+  - openapi/ledger-card-provider-openapi.yml
+  - openapi/ledger-sell-provider-openapi.yml
+  - openapi/ledger-swap-provider-openapi.yml
+- name: cookieAuth
+  type: apiKey
+  in: cookie
+  parameter: sessionid
+  sources:
+  - openapi/ledger-enterprise-multisig-openapi.yml
+- name: tokenAuth
+  type: apiKey
+  in: header
+  parameter: Authorization
+  description: Token-based authentication with required prefix "Token"
+  sources:
+  - openapi/ledger-enterprise-multisig-openapi.yml
+- name: Ledger_API_User
+  type: apiKey
+  in: header
+  parameter: X-Ledger-API-User
+  description: (**required**) Username of a registered API User
+  sources:
+  - openapi/ledger-enterprise-vault-openapi.yml
+- name: Ledger_API_Key
+  type: apiKey
+  in: header
+  parameter: X-Ledger-API-Key
+  description: If you've set up your API Key when initializing your LAM, you'll need to include it as
+    a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+  sources:
+  - openapi/ledger-enterprise-vault-openapi.yml
+- name: Ledger_Store_Auth_Token
+  type: apiKey
+  in: header
+  parameter: X-Ledger-Store-Auth-Token
+  description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the
+    `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set
+    up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+  sources:
+  - openapi/ledger-enterprise-vault-openapi.yml
+docs: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+docs_findings:
+  enterprise_vault:
+    docs: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+    two_credential_families: Ledger issues two distinct credential families for two distinct endpoint
+      sets, which the OpenAPI does not distinguish. REPORTING/NOTIFICATION endpoints use X-Ledger-Workspace
+      plus X-Ledger-Reporting-API-Key against https://api.vault.ledger.com. TRANSACTION and governance
+      endpoints use registered API Operators — X-Ledger-API-User plus X-Ledger-API-Key and/or X-Ledger-Store-Auth-Token,
+      and a bearer access token from POST /auth/token.
+    headers_not_in_spec:
+    - X-Ledger-Workspace
+    - X-Ledger-Reporting-API-Key
+    operator_provisioning: An API Operator is created by an Administrator in the web app (name + public
+      key), confirmed with a Personal Security Device, and must clear quorum acceptance before it is usable.
+      The API key ID and secret are then generated per user. Credentials cannot be self-served.
+    programmatic_approval: 'Approving a governance request as an API user is a local-signature flow, not
+      a shared-secret flow: getChallenge -> verify the decoded payload -> sign with the operator private
+      key (LEDGER_ENTERPRISE_API_PRIVATE_KEY, hex-encoded PEM) -> approve api with the resulting signature.
+      Ledger states the private key never leaves the local machine.'
+    dead_link_note: The authentication page links three times to https://ledger-enterprise-api-portal.redoc.ly/developer-portal/docs/...
+      — that Redocly portal returns 404 on every path as of 2026-08-25, so the pages Ledger points readers
+      at for generating reporting API keys and understanding LAM no longer exist.
+  exchange_provider:
+    docs: https://developers.ledger.com/docs/ledger-live/exchange/swap
+    note: 'A per-provider x-api-key shared secret provisioned by Ledger. Additionally, each swap/sell
+      is secured with an application-layer signature independent of transport auth: the partner generates
+      a structured binary payload, signs it with its own private key, and shares the public key with Ledger
+      for verification. The Ledger device then clear-signs the payload.'
+    enumeration_guard: An unknown or unsupported provider is rejected with the same 401 as an invalid
+      key, so a caller cannot discover which providers exist.
+  multisig:
+    docs: https://help.multisig.ledger.com/guides/api-guides/1.-querying-safe-data
+    note: Read endpoints are fully anonymous — "No private key or API key is needed for read-only queries."
+      Writes carry Authorization with the literal prefix "Token". Authority to move funds is on-chain
+      (Safe owners and threshold), not in the API credential.
+  device:
+    note: The estate-wide authority model is not a bearer credential at all. Every fund-touching action
+      terminates in a physical confirmation on a Ledger device — a Personal Security Device for Ledger
+      Enterprise, a consumer signer for Ledger Wallet. An API credential can PROPOSE; only hardware can
+      APPROVE.
+oauth2: false
+oauth2_note: No OAuth 2.0 or OpenID Connect anywhere in the estate; scopes/ is therefore not applicable
+  and is intentionally absent.

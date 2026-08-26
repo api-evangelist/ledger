@@ -1,23 +1,314 @@
 aid: ledger
 name: Ledger
-description: 'Ledger is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Ledger SAS is the Paris-headquartered maker of the Ledger hardware signer family (Nano, Flex,
+  Stax) and the surrounding self-custody and institutional-custody platform. Its developer surface
+  spans five distinct programs: the Ledger Wallet exchange-provider APIs (Swap, Buy, Sell, Earn and
+  Card OpenAPI contracts an exchange partner implements so its service appears natively inside
+  Ledger Wallet), the Ledger Enterprise "Vault API" for institutional custody — accounts,
+  transactions, governance requests, whitelists, entities, staking, compliance digests and
+  reporting/notification webhooks — the Ledger Enterprise Multisig transaction service for
+  Ledger-secured Safe smart accounts, the Wallet API (a bi-directional JSON-RPC 2.0 bridge that lets
+  a Live App talk to a Ledger signer), and the Device Management Kit plus Clear Signing stack for
+  building native device apps and clear-signed transactions. Ledger also publishes an unusually
+  complete agent surface for a hardware company: an RFC 9727 /.well-known/api-catalog, an llms.txt
+  on the developer portal, and first-party Agent Skills for coding agents and the Ledger Wallet CLI.
 url: https://raw.githubusercontent.com/api-evangelist/ledger/refs/heads/main/apis.yml
+image: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
 tags:
-- Company
-apis: []
-maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
-- FN: APIs.json
-  email: info@apis.io
+  - Company
+  - Cryptocurrency
+  - Digital Assets
+  - Hardware Wallet
+  - Self Custody
+  - Institutional Custody
+  - Blockchain
+  - Payments
+  - Staking
+  - Security
+  - Agent Skills
+  - agent-native
+tags_raw:
+  - cryptocurrency
+  - digital-assets
+  - hardware-wallet
+  - self-custody
+  - institutional-custody
+  - blockchain
+  - payments
+  - staking
+  - security
+  - agent-skills
+  - agent-native
+apis:
+  - name: Ledger Wallet Exchange Provider APIs
+    description: >-
+      Five OpenAPI contracts (Swap, Buy, Sell, Earn, Card) that an exchange, on/off-ramp, earn or
+      card provider implements so its service is offered natively inside Ledger Wallet. Ledger
+      publishes the specification and calls the partner's implementation; each swap/sell is secured
+      with a partner-signed binary payload the Ledger device clear-signs. Advertised by Ledger's own
+      /.well-known/api-catalog at developers.ledger.com.
+    humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+    tags:
+      - Payments
+      - Cryptocurrency
+      - Digital Assets
+      - Staking
+    tags_raw:
+      - payments
+      - cryptocurrency
+      - digital-assets
+      - staking
+    properties:
+      - type: OpenAPI
+        url: openapi/ledger-swap-provider-openapi.yml
+      - type: OpenAPI
+        url: openapi/ledger-buy-provider-openapi.yml
+      - type: OpenAPI
+        url: openapi/ledger-sell-provider-openapi.yml
+      - type: OpenAPI
+        url: openapi/ledger-earn-provider-openapi.yml
+      - type: OpenAPI
+        url: openapi/ledger-card-provider-openapi.yml
+      - type: APIReference
+        url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+      - type: Documentation
+        url: https://developers.ledger.com/docs/ledger-live/exchange
+      - type: Webhooks
+        url: asyncapi/ledger-exchange-webhooks.yml
+      - type: Overlay
+        url: overlays/ledger-swap-provider-overlay.yaml
+    x-base-url-note: >-
+      These contracts carry no servers[] block because the server is the PARTNER's, not Ledger's —
+      Ledger publishes the specification and calls the provider's own host. Recorded as absent
+      rather than guessed.
+  - name: Ledger Enterprise API (Vault API)
+    description: >-
+      Institutional custody REST API for the Ledger Enterprise platform — accounts and balances,
+      transaction creation and approval, governance requests and quorums, users and API operators,
+      groups, entities, whitelists, labels, currencies and tokens, compliance digests, staking
+      pledges, settlements, PKI and reporting/notification webhooks. 85 operations over 269 schemas.
+      Authenticated with X-Ledger-API-User plus an API key or store auth token.
+    humanURL: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+    baseURL: https://api.vault.ledger.com
+    tags:
+      - Institutional Custody
+      - Digital Assets
+      - Staking
+      - Security
+      - Blockchain
+    tags_raw:
+      - institutional-custody
+      - digital-assets
+      - staking
+      - security
+      - blockchain
+    properties:
+      - type: OpenAPI
+        url: openapi/ledger-enterprise-vault-openapi.yml
+      - type: APIReference
+        url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+      - type: Documentation
+        url: https://help.enterprise.ledger.com/api-documentation
+      - type: GettingStarted
+        url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+      - type: Authentication
+        url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+      - type: RateLimits
+        url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+      - type: LLMsTxt
+        url: https://help.enterprise.ledger.com/llms.txt
+      - type: Overlay
+        url: overlays/ledger-enterprise-vault-overlay.yaml
+  - name: Ledger Enterprise Multisig API
+    description: >-
+      Ledger-hosted transaction service for Safe smart accounts, adding Ledger Clear Signing and
+      enterprise governance on top of the open-source Safe backend. Query Safe configuration,
+      balances, collectibles and history; propose, confirm and execute multisig transactions;
+      manage delegates, modules, owners and ERC-4337 user operations.
+    humanURL: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+    baseURL: https://app.multisig.ledger.com/api/safe-transaction-service/{chainId}
+    tags:
+      - Institutional Custody
+      - Digital Assets
+      - Blockchain
+      - Security
+    tags_raw:
+      - institutional-custody
+      - digital-assets
+      - blockchain
+      - security
+    properties:
+      - type: OpenAPI
+        url: openapi/ledger-enterprise-multisig-openapi.yml
+      - type: APIReference
+        url: https://help.multisig.ledger.com/reference
+      - type: Documentation
+        url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+      - type: LLMsTxt
+        url: https://help.multisig.ledger.com/llms.txt
+      - type: CLI
+        url: cli/ledger-cli.yml
+    x-contract-provenance: >-
+      The saved spec self-identifies as info.title "Safe Transaction Service" v5.33.1, not as a
+      Ledger product. It is kept under Ledger because Ledger's own documentation states it plainly:
+      "Ledger Enterprise Multisig is built upon the battle-tested, open-source Safe backend ... if
+      you are familiar with the Safe API you will find our endpoints and data structures virtually
+      identical. All API services are hosted under the Ledger Multisig domain", and the tutorials add
+      "This is the Ledger-hosted backend ... It is not the public Safe Transaction Service." The
+      document is uploaded to Ledger's own GitBook organisation and rendered as the Ledger Enterprise
+      Multisig API reference at help.multisig.ledger.com, against a Ledger base host. Upstream
+      project - https://github.com/safe-global/safe-transaction-service
+  - name: Ledger Wallet API
+    description: >-
+      Bi-directional JSON-RPC 2.0 interface between a Live App (dApp) and a wallet implementing the
+      Wallet API Server, such as Ledger Wallet. Currency-agnostic modules for accounts, currencies,
+      transactions, message signing, storage, exchange and device access, distributed as
+      @ledgerhq/wallet-api-client, -core, -server, -client-react and -simulator.
+    humanURL: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
+    tags:
+      - Blockchain
+      - Digital Assets
+      - Self Custody
+    tags_raw:
+      - blockchain
+      - digital-assets
+      - self-custody
+    properties:
+      - type: Documentation
+        url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
+      - type: APIReference
+        url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/core/modules/wallet
+      - type: Sandbox
+        url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/simulator/introduction
+      - type: SourceCode
+        url: https://github.com/LedgerHQ/wallet-api
+    x-transport-note: >-
+      JSON-RPC 2.0 over a message-port transport, not REST. No OpenAPI is published for it and none
+      was authored; the TypeScript client packages are the machine-readable surface.
+  - name: Ledger Device Management Kit
+    description: >-
+      TypeScript SDK for discovering, connecting to and driving Ledger hardware signers over WebHID,
+      Bluetooth, USB and Speculos — sessions, device state, app management, APDU exchange and
+      chain-specific signer kits for Ethereum, Bitcoin and Solana. Supersedes the deprecated LedgerJS
+      hw-app-* / hw-transport-* packages.
+    humanURL: https://developers.ledger.com/docs/device-interaction/getting-started
+    tags:
+      - Hardware Wallet
+      - Security
+      - Self Custody
+      - Blockchain
+    tags_raw:
+      - hardware-wallet
+      - security
+      - self-custody
+      - blockchain
+    properties:
+      - type: Documentation
+        url: https://developers.ledger.com/docs/device-interaction/getting-started
+      - type: APIReference
+        url: https://developers.ledger.com/docs/device-interaction/references/ts-doc
+      - type: SDKs
+        url: packages/ledger-packages.yml
+      - type: AgentSkill
+        url: skills/_index.yml
+      - type: SourceCode
+        url: https://github.com/LedgerHQ/device-sdk-ts
 common:
-- type: Website
-  url: https://forgeglobal.com/ledger_stock/
+  - type: Website
+    url: https://www.ledger.com/
+  - type: DeveloperPortal
+    url: https://developers.ledger.com/
+  - type: Documentation
+    url: https://developers.ledger.com/
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: GettingStarted
+    url: https://developers.ledger.com/docs/device-app/getting-started
+  - type: Support
+    url: https://support.ledger.com/
+  - type: Community
+    url: https://developers.ledger.com/discord/
+  - type: Blog
+    url: https://www.ledger.com/blog
+  - type: GitHubOrganization
+    url: https://github.com/LedgerHQ
+  - type: StatusPage
+    url: https://status.ledger.com/
+  - type: TermsOfService
+    url: https://shop.ledger.com/pages/terms-and-conditions
+  - type: PrivacyPolicy
+    url: https://www.ledger.com/privacy-policy
+  - type: Login
+    url: https://vault.ledger.com/
+  - type: Security
+    url: https://donjon.ledger.com/bounty/
+  - type: ChangeLog
+    url: https://developers.ledger.com/docs/news
+  - type: LLMsTxt
+    url: llms/ledger-llms.txt
+  - type: WellKnown
+    url: well-known/ledger-well-known.yml
+  - type: APICatalog
+    url: well-known/ledger-api-catalog.json
+  - type: Packages
+    url: packages/ledger-packages.yml
+  - type: SDKs
+    url: packages/ledger-packages.yml
+  - type: CLI
+    url: cli/ledger-cli.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Authentication
+    url: authentication/ledger-authentication.yml
+  - type: Conventions
+    url: conventions/ledger-conventions.yml
+  - type: Idempotency
+    url: conventions/ledger-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ledger-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/ledger-lifecycle.yml
+  - type: Deprecation
+    url: https://developers.ledger.com/docs/news
+  - type: Conformance
+    url: conformance/ledger-conformance.yml
+  - type: DomainSecurity
+    url: security/ledger-domain-security.yml
+  - type: VulnerabilityDisclosure
+    url: security/ledger-vulnerability-disclosure.yml
+  - type: DataModel
+    url: data-model/ledger-data-model.yml
+  - type: TrustCenter
+    url: security/ledger-trust-center.yml
+  - type: Compliance
+    url: https://enterprise.ledger.com/about
+  - type: RateLimits
+    url: rate-limits/ledger-rate-limits.yml
+  - type: Plans
+    url: plans/ledger-plans-pricing.yml
+  - type: ChangeLog
+    url: changelog/ledger-changelog.yml
+  - type: Sandbox
+    url: sandbox/ledger-sandbox.yml
+  - type: Components
+    url: components/ledger-components.yml
+  - type: ToolCrosswalk
+    url: mcp/ledger-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
+  - FN: APIs.json
+    email: info@apis.io
+x-enrichment:
+  date: '2026-08-25'
+  status: enriched
+  artifacts_added: 24
+  pass: local-v1

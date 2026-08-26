@@ -1,0 +1,156 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://developers.ledger.com/docs/ai-tools/ledger-cli,
+  https://help.multisig.ledger.com/guides/cli-guides/cli-overview,
+  https://help.multisig.ledger.com/guides/cli-guides/installation,
+  https://help.multisig.ledger.com/guides/cli-guides/command-reference
+note: >-
+  Ledger ships three distinct CLIs for three distinct audiences, and its own docs draw the line:
+  "This CLI manages personal accounts. The Ledger Enterprise CLI covers institutional,
+  policy-enforced workflows. The Ledger Enterprise Multisig CLI covers Safe multisig wallets."
+clis:
+  - name: Ledger Wallet CLI
+    binary: wallet-cli
+    audience: end users and power users driving their own accounts
+    version: 2.1.0
+    package: '@ledgerhq/wallet-cli'
+    install:
+      - npm i -g @ledgerhq/wallet-cli
+      - pnpm add -g @ledgerhq/wallet-cli
+      - yarn global add @ledgerhq/wallet-cli
+      - bun add -g @ledgerhq/wallet-cli
+    platforms: [macOS, Linux, 'Windows (WSL recommended)']
+    networks:
+      bitcoin: {balances_ops: true, send_receive: true, swap: true, token_lookup: false, earn: false}
+      ethereum_evm: {balances_ops: true, send_receive: true, swap: true, token_lookup: 'ERC-20', earn: 'ERC-4626 vaults'}
+      solana: {balances_ops: true, send_receive: true, swap: true, token_lookup: SPL, earn: native staking}
+    commands:
+      - {name: account, description: Account management commands (discover, list)}
+      - {name: assets, description: Crypto-assets store queries (resolve tokens by address or id)}
+      - {name: balances, description: Fetch native and token balances for an account (no device required)}
+      - {name: earn, description: 'Earn-related commands (yields, positions, deposit, withdraw)'}
+      - {name: genuine-check, description: Check whether the connected Ledger device is genuine}
+      - {name: operations, description: List operations for an account (no device required)}
+      - {name: receive, description: Get receive address for an account (optionally verify on device)}
+      - {name: ring, description: Ledger Key Ring (LKRP) encryption commands}
+      - {name: send, description: Sign and broadcast a transaction}
+      - {name: session, description: Session management commands}
+      - {name: skill, description: 'Agent skill commands (list, retrieve, install, doctor)'}
+      - {name: swap, description: Swap-related commands}
+    conventions:
+      output: 'every command supports --output json; --output human is the default'
+      signing: >-
+        the terminal announces what is about to happen, the user confirms on the Ledger screen, the
+        terminal reports the outcome
+      safe_in_ci: 'balances, operations, earn yields and earn positions never touch the device'
+    agent_integration:
+      embedded_skill: 'wallet-cli skill install --agent cursor|claude|codex|agents'
+      drift_check: wallet-cli skill doctor
+      fallback: npx skills add LedgerHQ/agent-skills -s wallet-cli-usage
+    docs: https://developers.ledger.com/docs/ai-tools/ledger-cli
+  - name: Ledger Enterprise Multisig CLI
+    binary: lem
+    audience: crypto-native organisations operating Ledger-secured Safe multisig wallets
+    package: les-multisig-cli
+    install:
+      - npm install -g les-multisig-cli
+      - npx les-multisig-cli@latest
+    install_defect: >-
+      VERIFIED 2026-08-25 - registry.npmjs.org/les-multisig-cli returns {"error":"Not found"} and
+      github.com/LedgerHQ/les-multisig returns 404. Neither the documented `npm install -g
+      les-multisig-cli` nor the documented build-from-source path is reachable publicly, so every
+      install route on https://help.multisig.ledger.com/guides/cli-guides/installation currently
+      dead-ends. Recorded as a defect, not inferred.
+    prerequisites: ['Node.js 22+', 'Ledger device with the Ethereum app (hardware signing only)']
+    command_groups:
+      - {name: safe, description: 'Query Safe data — info, balances, nonce, owners, delegates'}
+      - {name: tx, description: 'Transaction lifecycle — propose, sign, execute, list, show'}
+      - {name: signer, description: Configure the signing key (Ledger device, or --salt/--index derived test signer)}
+    agent_properties:
+      json_by_default: Every command prints a single JSON document to stdout
+      structured_errors: '{"error": {"code", "message", "suggestion"}} on stdout with a non-zero exit code'
+      exit_codes: {0: success, 2: validation, 3: no signer paired, 4: env misconfig, 1: everything else}
+      idempotent_reads: ['safe info', 'safe balances', 'safe nonce', 'tx list', 'tx show']
+      refusal_semantics: >-
+        tx sign refuses to double-sign, re-sign an executed tx, or sign past the threshold
+      discovery: 'lem --help and per-subcommand --help produce stable, parseable help'
+      audit_trail: >-
+        every CLI proposal carries origin.app = "les-multisig-cli" in the Transaction Service, so
+        agent-originated transactions are filterable in the Ledger Multisig UI
+    docs: https://help.multisig.ledger.com/guides/cli-guides/cli-overview
+  - name: Ledger Enterprise CLI
+    binary: ledger-enterprise-cli
+    audience: >-
+      AI agents and developers operating Ledger Enterprise under administrator-defined governance
+      rules. Ledger frames it agent-first - "an AI agent holds API operator credentials, initiates
+      requests via the CLI, and completes approvals without a context switch to the web app."
+    package: '@ledgerhq/ledger-enterprise-cli'
+    version: 0.2.3
+    published: '2026-05-13'
+    install:
+      - npm install -g @ledgerhq/ledger-enterprise-cli
+    prerequisites: ['Node.js >= 22']
+    version_enforcement: >-
+      The CLI enforces the latest published version at runtime — an outdated install blocks and
+      prompts to upgrade before processing any command.
+    auth:
+      modes: [api-credentials, ledger-device]
+      env:
+        - {name: LEDGER_ENTERPRISE_API_URL, required: true, description: Base URL of your Ledger Enterprise instance}
+        - {name: LEDGER_ENTERPRISE_WORKSPACE, required: true, description: Workspace name}
+        - {name: LEDGER_ENTERPRISE_API_KEY_ID, required: true, description: API key ID}
+        - {name: LEDGER_ENTERPRISE_API_KEY_SECRET, required: true, description: API key secret}
+        - {name: LEDGER_ENTERPRISE_API_PRIVATE_KEY, required: false, description: 'Hex-encoded PEM private key for the API operator; required only for programmatic approval via requests sign'}
+      note: >-
+        API key credentials are deliberately NOT accepted as CLI flags — they must come from the
+        environment. Device login (Stax or Flex) involves no API key secret at all.
+      commands: ['ledger-enterprise-cli login api', 'ledger-enterprise-cli login device', 'ledger-enterprise-cli logout']
+    global_options: ['--pretty', '--debug', '--timestamps', '-v/--version', '-h/--help']
+    command_groups:
+      - name: accounts
+        commands:
+          - 'accounts list [--page] [--pageSize]'
+          - 'accounts get --id <id>'
+          - 'accounts getBalance --id <id> [--id ...]'
+      - name: transactions
+        commands:
+          - 'transactions list --accountId <id> [--cursor]'
+          - "transactions estimate --accountId <id> --transactionData '<json>'"
+      - name: requests
+        commands:
+          - 'requests list [--page] [--pageSize]'
+          - 'requests get --id <id>'
+          - "requests create --requestData '<json>'"
+          - 'requests getChallenge --id <id>'
+          - 'requests sign --challenge <challenge>'
+          - 'requests approve api --id <id> --signature <sig>'
+          - 'requests approve device --id <id>'
+      - name: users
+        commands: ['users list [--page] [--pageSize]', 'users get --id <id>']
+      - name: groups
+        commands: ['groups list [--page] [--pageSize]', 'groups get --id <id>']
+      - name: policies
+        commands: ['policies list [--page] [--pageSize]', 'policies get --id <id>']
+      - name: whitelists
+        commands: ['whitelists list [--page] [--pageSize]', 'whitelists get --id <id>']
+    approval_workflow:
+      steps: [getChallenge, verify decoded payload, sign, approve api]
+      key_custody: The private key never leaves the local machine — only the derived signature is sent to the server.
+    conventions:
+      output: All commands return JSON to stdout; --pretty for indented output.
+      exit_codes: {0: Success, 1: General / network error, 2: 'Validation error (missing option, invalid input)', 3: Authentication error, 4: Resource not found, 5: Server error}
+    agent_integration:
+      bundled_skill: true
+      install: 'ledger-enterprise-cli skill install --path <YOUR_SKILLS_DIR>  (or print to stdout with no --path)'
+      format: shared SKILL format, works with any compatible AI assistant
+      versioning: >-
+        The skill is versioned with the CLI binary; Ledger instructs re-running skill install after
+        each upgrade to keep instructions in sync with available commands.
+      covers:
+        - Session setup and credential handling
+        - Full command reference with required options and output shapes
+        - 'API-user approval workflow: getChallenge -> sign -> approve api'
+        - Confirmation requirements for write and critical operations
+        - Exit codes and error handling
+    docs: https://help.enterprise.ledger.com/api-documentation-v2/guides/develop-with-ai

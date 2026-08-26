@@ -1,0 +1,63 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Ledger Enterprise (Vault) API
+  version: 1.0.0
+extends: openapi/ledger-enterprise-vault-openapi.yml
+x-generated: '2026-08-25'
+x-method: generated
+x-source: >-
+  Harvested 2026-08-25 from Ledger's own GitBook-hosted source document at
+  https://openapi.gitbook.com/o/fFY5hMNJlbYJQ0megQCu/spec/mostrecent07-07, which is the spec the
+  Ledger Enterprise API reference at help.enterprise.ledger.com renders. Ownership confirmed from the
+  document itself - info.title "Vault API", x-logo pointing at www.ledger.com, and security schemes
+  named Ledger_API_User / Ledger_API_Key / Ledger_Store_Auth_Token.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-profile: https://apis.io/provider/ledger
+      x-apievangelist-harvested: '2026-08-25'
+      x-apievangelist-source: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - target: $
+    update:
+      servers:
+        - url: https://api.vault.ledger.com
+          description: >-
+            Production base URL, stated on Ledger's own authentication page. NOT present in the
+            harvested document — the spec ships with no servers[] block at all, so every generated
+            client and every agent must be told the host out of band.
+  - target: $.info
+    update:
+      x-apievangelist-findings:
+        operation_ids_missing:
+          count: 85
+          total: 85
+          note: >-
+            NOT ONE of the 85 operations carries an operationId. Every generated SDK method name,
+            every Arazzo step reference and every MCP tool binding has to be invented by the
+            consumer, and two consumers will invent different ones. This is the single highest-value
+            fix available to this contract and it is purely additive.
+        untagged_operations:
+          count: 13
+          note: >-
+            13 of 85 operations carry no tags, so they fall out of every grouped reference rendering.
+        summaries_missing:
+          count: 6
+          note: 6 of 85 operations have no summary.
+        deprecated_flags:
+          count: 0
+          note: >-
+            Zero operations are flagged deprecated even though Ledger has publicly announced a
+            September 2026 breaking change to the LedgerJS signing path.
+        error_format:
+          current: 'bespoke {"code", "message"}'
+          recommended: RFC 9457 application/problem+json
+        idempotency:
+          current: none
+          note: >-
+            No Idempotency-Key header on POST /requests, POST /settlements or POST
+            /transactions/estimate-fees. An agent that times out mid-write cannot safely retry.
+        rate_limit_status:
+          documented: 420
+          note: >-
+            The rate-limit response is documented on the help centre but declared on no operation in
+            the spec, and 420 is non-standard where 429 is expected.

@@ -1,0 +1,36 @@
+generated: '2026-08-25'
+method: searched
+source: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+limit_count: 1
+limits:
+  - api: Ledger Enterprise API (Vault API)
+    scope: per-api-plan
+    window: null
+    limit: null
+    burst: null
+    documented_number: false
+    note: >-
+      Ledger publishes the SIGNALLING but not the numbers: "Rate limits are specific to your API plan
+      please get in touch with your Account Manager for more details." An agent can therefore react
+      correctly at runtime but cannot budget in advance.
+    response_headers:
+      - X-RateLimit-Limit
+      - X-RateLimit-Remaining
+      - X-RateLimit-Reset
+      - Retry-After
+    exhaustion_status: 420
+    exhaustion_note: >-
+      Non-standard. Ledger returns HTTP 420 with rate-limitation details rather than the conventional
+      429 Too Many Requests, so a generic client keying on 429 will not back off.
+    docs: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+undocumented:
+  - api: Ledger Wallet Exchange Provider APIs
+    note: >-
+      No rate limits published. These contracts are implemented by the partner and called by Ledger,
+      so any limit is the partner's to set; none of the five specs declares a 429/420 response.
+  - api: Ledger Enterprise Multisig API
+    note: >-
+      No rate limits published in the reference or the guides; no 429 response is declared in the
+      spec. Not probed live because doing so would require deliberately exceeding an unknown limit.
+  - api: Ledger Wallet API
+    note: JSON-RPC over a local message-port transport; no network rate limit applies.

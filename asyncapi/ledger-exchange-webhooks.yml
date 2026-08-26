@@ -1,0 +1,125 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://help.enterprise.ledger.com/api-documentation/reference/api-reference/notifications,
+  https://help.enterprise.ledger.com/api-documentation/tutorials/api-functionalities/events-via-web-hooks,
+  openapi/ledger-swap-provider-openapi.yml, openapi/ledger-sell-provider-openapi.yml,
+  openapi/ledger-card-provider-openapi.yml
+spec_type: Webhooks
+asyncapi_published: false
+asyncapi_note: >-
+  Ledger publishes no AsyncAPI document for any event surface. Probed /asyncapi.yaml and
+  /asyncapi.json on developers.ledger.com, help.enterprise.ledger.com and api.vault.ledger.com — all
+  404. The webhook catalogue below is captured from the reference docs and the OpenAPI contracts;
+  nothing is fabricated.
+
+surfaces:
+  - name: Ledger Enterprise notifications
+    direction: ledger-to-you
+    transport: HTTPS POST to a subscriber-registered endpoint
+    registration:
+      operation: PUT /notifications/configuration
+      spec: openapi/ledger-enterprise-vault-openapi.yml
+      body: '{"all": {"webhook": {"url": "<https url>", "secret": "<shared secret>"}}}'
+      constraint: https only
+    payload:
+      shape: '{"payload_type": <enum>, "event_type": <enum>, "id": <int>}'
+      design_note: >-
+        Deliberately minimal. Ledger states it explicitly: "By design, we've reduced the number of
+        information in the payload to the minimum as we can't guarantee the security of the channel
+        the same way we do with the LAM." The id plus payload_type is the join key — fetch the full
+        object from the matching endpoint.
+      example: '{"payload_type": "TRANSACTION", "event_type": "NEW_TRANSACTION_HAS_BEEN_RECEIVED", "id": 260}'
+    signature:
+      header: 'X-Ledger-Signature: t=<unix-timestamp>,v1=<hex-signature>'
+      algorithm: HMAC-SHA256 over "<timestamp>.<raw json body>" keyed with the registered shared secret
+      replay_guard: >-
+        Ledger's published reference implementation rejects a payload whose timestamp is more than
+        5 minutes old as a possible replay attack.
+    delivery:
+      retry: exponential backoff, 5-second starting interval, doubling to a 30-minute maximum
+      max_attempts: 100
+    visibility_rule: >-
+      Only events visible to the API Operator that registered the configuration are delivered.
+      Administrators can grant that operator "view-all" permission to receive every notification.
+    events:
+      - {event_type: NEW_TRANSACTION_HAS_BEEN_SIGNED, payload_type: TRANSACTION, description: A new transaction has been signed by the HSM}
+      - {event_type: NEW_TRANSACTION_HAS_BEEN_BROADCASTED, payload_type: TRANSACTION, description: A new transaction has been broadcast}
+      - {event_type: NEW_TRANSACTION_HAS_FAILED, payload_type: TRANSACTION, description: A new transaction has failed upon broadcast}
+      - {event_type: NEW_TRANSACTION_HAS_BEEN_ABORTED, payload_type: TRANSACTION, description: A new transaction has been aborted by a User}
+      - {event_type: NEW_TRANSACTION_HAS_BEEN_RECEIVED, payload_type: TRANSACTION, description: A new transaction has been received}
+      - {event_type: NEW_TRANSACTION_HAS_BEEN_SCORED, payload_type: TRANSACTION, description: A new transaction has been scored by a KYT provider}
+      - {event_type: REQUEST_HAS_BEEN_CREATED, payload_type: REQUEST, description: A new request has been created}
+      - {event_type: REQUEST_HAS_RECEIVED_AN_APPROVAL, payload_type: REQUEST, description: A request has received an approval}
+      - {event_type: REQUEST_HAS_REACHED_STEP, payload_type: REQUEST, description: A request has reached a new approval step}
+      - {event_type: REQUEST_HAS_REACHED_QUORUM, payload_type: REQUEST, description: A request has reached the required quorum}
+      - {event_type: REQUEST_HAS_BEEN_ABORTED, payload_type: REQUEST, description: A request has been aborted}
+      - {event_type: REQUEST_HAS_EXPIRED, payload_type: REQUEST, description: A request has been pending for too long and has expired}
+      - {event_type: NEW_USER_HAS_BEEN_CREATED, payload_type: USER, description: A new user has been created}
+      - {event_type: USER_HAS_BEEN_EDITED, payload_type: USER, description: A user has been edited}
+      - {event_type: USER_HAS_BEEN_REVOKED, payload_type: USER, description: A user has been revoked}
+      - {event_type: USER_HAS_BEEN_SUSPENDED, payload_type: USER, description: A user has been suspended}
+      - {event_type: USER_HAS_BEEN_UNSUSPENDED, payload_type: USER, description: A user has been unsuspended}
+      - {event_type: NEW_GROUP_HAS_BEEN_CREATED, payload_type: GROUP, description: A new group has been created}
+      - {event_type: GROUP_HAS_BEEN_EDITED, payload_type: GROUP, description: A group has been edited}
+      - {event_type: GROUP_HAS_BEEN_REVOKED, payload_type: GROUP, description: A group has been revoked}
+      - {event_type: NEW_ACCOUNT_HAS_BEEN_CREATED, payload_type: X_ACCOUNT, description: A new account has been created}
+      - {event_type: ACCOUNT_HAS_BEEN_EDITED, payload_type: X_ACCOUNT, description: An account has been edited}
+      - {event_type: NEW_ENTITY_HAS_BEEN_CREATED, payload_type: ENTITY, description: A new entity has been created}
+      - {event_type: ENTITY_HAS_BEEN_EDITED, payload_type: ENTITY, description: An entity has been edited}
+      - {event_type: ENTITY_HAS_BEEN_REVOKED, payload_type: ENTITY, description: An entity has been revoked}
+      - {event_type: NEW_WHITELIST_HAS_BEEN_CREATED, payload_type: WHITELIST, description: A new whitelist has been created}
+      - {event_type: WHITELIST_HAS_BEEN_EDITED, payload_type: WHITELIST, description: A whitelist has been edited}
+    payload_types:
+      - TRANSACTION
+      - REQUEST
+      - USER
+      - GROUP
+      - ENTITY
+      - WHITELIST
+      - X_ACCOUNT
+    payload_type_note: >-
+      X_ACCOUNT is a family, not a literal — Ledger documents it as "one of BITCOIN_ACCOUNT,
+      ETHEREUM_ACCOUNT, ERC20_ACCOUNT, ..." so a consumer must pattern-match rather than switch on a
+      closed enum.
+    docs: https://help.enterprise.ledger.com/api-documentation/reference/api-reference/notifications
+
+  - name: Ledger Wallet exchange status callbacks
+    direction: you-to-ledger
+    transport: HTTPS POST to a Ledger-hosted endpoint
+    note: >-
+      The inverse of a conventional webhook — Ledger HOSTS the receiver and the exchange PARTNER
+      calls it whenever a transaction changes state. It complements, rather than replaces, Ledger
+      polling the partner's own GET /status.
+    auth: x-api-key header, provisioned by Ledger per provider
+    semantics:
+      ack: >-
+        A 200 means the update was authenticated, validated and queued — not that it has already been
+        persisted. Processing is asynchronous.
+      applicability: The update is applied only while the transaction is still in a non-final status.
+      mapping: >-
+        providerStatus is the partner's own status string, mapped by Ledger through the same
+        per-provider mapping it uses when polling; an unmappable value is rejected 422 and nothing
+        is persisted.
+      enumeration_guard: >-
+        An unknown or unsupported provider gets the same 401 as an invalid key, so a caller cannot
+        discover which providers exist.
+    channels:
+      - operation: POST /webhook/{swapId}/status
+        operationId: statusUpdate
+        spec: openapi/ledger-swap-provider-openapi.yml
+        key: swapId returned by POST /swap/fixed or POST /swap/float
+        payload_schema: StatusWebhookRequest
+      - operation: POST /transaction/{sellId}/status
+        operationId: statusUpdate
+        spec: openapi/ledger-sell-provider-openapi.yml
+        key: sellId
+      - operation: POST /transaction/{sellId}/status
+        operationId: statusUpdate
+        spec: openapi/ledger-card-provider-openapi.yml
+        key: sellId
+    paired_reads:
+      - {operation: 'GET /status', spec: openapi/ledger-swap-provider-openapi.yml, note: Ledger polls this as the reconciliation path.}
+      - {operation: 'GET /transaction/{sellId}/status', spec: openapi/ledger-sell-provider-openapi.yml}
+      - {operation: 'GET /transaction/{sellId}/status', spec: openapi/ledger-card-provider-openapi.yml}
+    docs: https://developers.ledger.com/docs/ledger-live/exchange/swap

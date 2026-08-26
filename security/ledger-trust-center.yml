@@ -1,0 +1,52 @@
+generated: '2026-08-25'
+method: searched
+probe: true
+url: https://enterprise.ledger.com/about
+note: >-
+  Ledger operates no dedicated trust.ledger.com / security.ledger.com portal — probes for those
+  hosts and for /trust and /compliance on www.ledger.com returned no trust-center page. The
+  certification posture below is published as prose in the Ledger Enterprise FAQ on
+  enterprise.ledger.com and is recorded verbatim from it, including the items Ledger states are
+  still in progress rather than achieved.
+certifications:
+  - name: SOC 2 Type 2
+    status: certified
+    scope: Ledger Enterprise
+    source: https://enterprise.ledger.com/about
+  - name: ISO 27001
+    status: in-progress
+    scope: Ledger Enterprise
+    source: https://enterprise.ledger.com/about
+  - name: ISO 22301
+    status: in-progress
+    scope: Ledger Enterprise
+    source: https://enterprise.ledger.com/about
+  - name: CSPN V4 (ANSSI security visa)
+    status: in-progress
+    scope: Ledger Enterprise
+    source: https://enterprise.ledger.com/about
+  - name: FIPS 140 Level III
+    status: claimed
+    scope: HSM layer enforcing governance rules
+    source: https://enterprise.ledger.com/protect
+  - name: Common Criteria EAL5+
+    status: claimed
+    scope: HSM / secure hardware
+    source: https://enterprise.ledger.com/protect
+insurance:
+  program: Specie insurance program underwritten by Arch Insurance (UK) Limited
+  source: https://enterprise.ledger.com/protect
+evidence:
+  - source: https://enterprise.ledger.com/about
+    http_status: 200
+    keywords:
+      - soc 2 type 2
+      - iso 27001
+      - iso 22301
+      - cspn v4
+  - source: https://enterprise.ledger.com/protect
+    http_status: 200
+    keywords:
+      - fips level iii
+      - eal5 + certification
+      - insurance policy

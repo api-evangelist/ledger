@@ -1,0 +1,117 @@
+generated: '2026-08-25'
+method: searched
+source: live probes of every apis.yml host on 2026-08-25
+note: >-
+  One real hit across the estate: developers.ledger.com serves an RFC 9727 /.well-known/api-catalog
+  linkset naming five OpenAPI documents (swap, buy, sell, earn, card). Everything else 404s honestly
+  — developers.ledger.com returns a genuine 404 for unknown /.well-known/* paths, so this host is NOT
+  a catch-all. www.ledger.com answers 403 "Forbidden" (9 bytes) to every /.well-known/* path, which
+  is an edge policy rather than a served document; api.ledger.com does not resolve.
+  status.ledger.com DOES serve a 200 /.well-known/security.txt, but it is ATLASSIAN'S — Canonical is
+  https://www.atlassian.com/.well-known/security.txt and Contact is security@atlassian.com — because
+  status.ledger.com is a hosted Atlassian Statuspage. It is recorded below as a miss for Ledger and
+  NO SecurityTxt pointer is emitted; crediting it would credit Ledger with Atlassian's document.
+hit_count: 1
+hosts:
+  - host: https://developers.ledger.com
+    documents:
+      - path: /.well-known/api-catalog
+        status: 200
+        file: ledger-api-catalog.json
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://www.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 403
+      - path: /.well-known/openid-configuration
+        status: 403
+      - path: /.well-known/oauth-authorization-server
+        status: 403
+      - path: /.well-known/api-catalog
+        status: 403
+      - path: /.well-known/ai-plugin.json
+        status: 403
+      - path: /.well-known/agent-card.json
+        status: 403
+      - path: /.well-known/agent.json
+        status: 403
+  - host: https://api.vault.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+  - host: https://app.multisig.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://help.enterprise.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+  - host: https://help.multisig.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+  - host: https://enterprise.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://status.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        third_party: atlassian
+        counted: false
+        note: >-
+          Served by Atlassian Statuspage, not Ledger. Canonical points at
+          https://www.atlassian.com/.well-known/security.txt and Contact is security@atlassian.com.
+          Not saved and not counted as a Ledger document.
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+  - host: https://donjon.ledger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        note: >-
+          Ledger's real disclosure surface is the Donjon Bug Bounty at https://donjon.ledger.com/bounty/
+          with a GPG key at https://donjon.ledger.com/ledger-bounty.asc — published as web pages, not
+          as an RFC 9116 security.txt.
+soft_404_control:
+  developers.ledger.com:
+    probe: /.well-known/does-not-exist-ae-probe
+    status: 404
+    note: Host returns a real 404 for unknown well-known paths, so the api-catalog 200 is a genuine hit.

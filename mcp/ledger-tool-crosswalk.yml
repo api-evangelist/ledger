@@ -1,0 +1,89 @@
+generated: '2026-08-25'
+method: derived
+source: mcp/ledger-mcp.yml, cli/ledger-cli.yml, openapi/ledger-*.yml
+status: candidate
+note: >-
+  Ledger publishes NO MCP server, so there is no live tools/list to bind against. What Ledger does
+  publish is three CLIs with stable JSON output and four Agent Skills, plus seven OpenAPI documents.
+  This crosswalk therefore binds the CANDIDATE tool set in mcp/ledger-mcp.yml — the tools an
+  integrator would build following Ledger's own instruction to "write a thin MCP server" — to the
+  real backing operations, and records where the CLI surface and the REST surface diverge. Confidence
+  is high throughout because each row maps to a named operationId or a documented CLI command, but
+  every row is a candidate binding, not a published one.
+surfaces:
+  openapi:
+    - {file: openapi/ledger-enterprise-vault-openapi.yml, operations: 85, gated: false, note: 'Spec is public; calling it requires workspace credentials.'}
+    - {file: openapi/ledger-enterprise-multisig-openapi.yml, operations: 23, gated: false, note: 'Read endpoints are anonymous; writes need a Token header.'}
+    - {file: openapi/ledger-swap-provider-openapi.yml, operations: 7, gated: false}
+    - {file: openapi/ledger-sell-provider-openapi.yml, operations: 7, gated: false}
+    - {file: openapi/ledger-buy-provider-openapi.yml, operations: 4, gated: false}
+    - {file: openapi/ledger-earn-provider-openapi.yml, operations: 2, gated: false}
+    - {file: openapi/ledger-card-provider-openapi.yml, operations: 3, gated: false}
+  graphql: null
+  mcp: null
+  cli:
+    - {binary: ledger-enterprise-cli, package: '@ledgerhq/ledger-enterprise-cli', bundled_agent_skill: true}
+    - {binary: lem, package: les-multisig-cli, note: 'package absent from public npm as of 2026-08-25'}
+    - {binary: wallet-cli, package: '@ledgerhq/wallet-cli', bundled_agent_skill: true}
+crosswalk:
+  - {tool: list_accounts, category: custody, rest: ['GET /accounts'], cli: 'ledger-enterprise-cli accounts list', binding: rest, confidence: high}
+  - {tool: get_account, category: custody, rest: ['GET /accounts/{account_id}'], cli: 'ledger-enterprise-cli accounts get --id', binding: rest, confidence: high}
+  - {tool: get_account_balances, category: custody, rest: ['GET /accounts/{account_id}/balances'], cli: 'ledger-enterprise-cli accounts getBalance --id', binding: rest, confidence: high}
+  - {tool: get_receive_address, category: custody, rest: ['GET /accounts/{account_id}/addresses', 'GET /accounts/{account_id}/address'], binding: rest, confidence: high, note: 'Ledger warns the trusted address must come from the /addresses endpoint, not from Account.address.'}
+  - {tool: list_transactions, category: movement, rest: ['GET /transactions'], cli: 'ledger-enterprise-cli transactions list --accountId', binding: rest, confidence: high}
+  - {tool: estimate_transaction_fees, category: movement, rest: ['POST /transactions/estimate-fees'], cli: 'ledger-enterprise-cli transactions estimate', binding: rest, confidence: high, note: 'Dry-run surface — read-only rehearsal before a request is opened.'}
+  - {tool: create_request, category: governance, rest: ['POST /requests'], cli: 'ledger-enterprise-cli requests create --requestData', binding: rest, confidence: high, note: 'Write. Takes effect only at quorum.'}
+  - {tool: get_request_governance_status, category: governance, rest: ['GET /requests/{request_id}/governance-status', 'GET /requests/{request_id}'], binding: rest, confidence: high}
+  - {tool: approve_request, category: governance, rest: ['POST /requests/{request_id}/approve'], cli: 'ledger-enterprise-cli requests approve api|device', binding: rest, confidence: high, note: 'Human-in-the-loop. CLI path is getChallenge -> sign -> approve api; the private key never leaves the local machine.'}
+  - {tool: reject_request, category: governance, rest: ['POST /requests/{request_id}/reject'], binding: rest, confidence: high, note: 'Reversal path; valid only before quorum.'}
+  - {tool: reject_transaction, category: governance, rest: ['POST /transactions/{transaction_id}/reject'], binding: rest, confidence: high, note: 'Reversal path; valid only while pending approval.'}
+  - {tool: screen_address_risk, category: compliance, rest: ['GET /compliance/address-risk/{address}'], binding: rest, confidence: high}
+  - {tool: check_address_sanctions, category: compliance, rest: ['GET /compliance/sanctions/{address}'], binding: rest, confidence: high}
+  - {tool: list_whitelists, category: controls, rest: ['GET /whitelists', 'GET /whitelists/{whitelist_id}'], cli: 'ledger-enterprise-cli whitelists list', binding: rest, confidence: high}
+  - {tool: list_stakes, category: staking, rest: ['GET /ethereum/accounts/{account_id}/stakes', 'GET /solana/accounts/{account_id}/stakes', 'GET /cardano/accounts/{account_id}/stakes', 'GET /tezos/accounts/{account_id}/stakes'], binding: rest, confidence: medium, note: 'Fans out per chain; one tool would need a network parameter the REST surface encodes in the path.'}
+  - {tool: configure_notifications, category: events, rest: ['PUT /notifications/configuration', 'GET /notifications/configuration'], binding: rest, confidence: high}
+  - {tool: get_safe_info, category: multisig, rest: [safes_retrieve], cli: 'lem safe info', binding: rest, confidence: high}
+  - {tool: get_safe_balances, category: multisig, rest: [safes_balances_retrieve_2], cli: 'lem safe balances', binding: rest, confidence: high}
+  - {tool: propose_safe_transaction, category: multisig, rest: [safes_multisig_transactions_create_2], cli: 'lem tx propose', binding: rest, confidence: high, note: 'Ledger recommends agents PROPOSE only on mainnet; execution stays with human device owners.'}
+  - {tool: delete_safe_transaction, category: multisig, rest: [multisig_transactions_destroy_2], binding: rest, confidence: high, note: 'Reversal path; valid only before execution.'}
+  - {tool: list_safe_delegates, category: multisig, rest: [delegates_list_2], binding: rest, confidence: high}
+  - {tool: get_swap_quote, category: exchange, rest: [postQuote], binding: rest, confidence: high, note: 'Calls the PARTNER host, not a Ledger host.'}
+  - {tool: get_swap_status, category: exchange, rest: [getStatus], binding: rest, confidence: high, note: 'Calls the PARTNER host, not a Ledger host.'}
+mcp_only: []
+cli_only:
+  - {command: 'wallet-cli genuine-check', reason: 'Device attestation against Ledger''s authenticity service. No REST equivalent; requires physical hardware.'}
+  - {command: 'wallet-cli send', reason: 'Signs and broadcasts from a personal (not workspace) account over USB. The signing step is hardware-bound and has no REST projection.'}
+  - {command: 'wallet-cli receive', reason: 'Derives and optionally verifies a receive address on the device screen.'}
+  - {command: 'wallet-cli ring init|encrypt|decrypt|keys|destroy', reason: 'Ledger Key Ring (LKRP) file/text encryption. Local-only capability with no server API.'}
+  - {command: 'wallet-cli swap', reason: 'Consumer swap flow through Ledger Wallet''s own exchange routing rather than a partner contract.'}
+  - {command: 'wallet-cli assets token|token-by-id', reason: 'Crypto-assets store lookup; no public REST endpoint documented.'}
+  - {command: 'wallet-cli session view|reset', reason: 'Local session state for device-free reads.'}
+  - {command: 'wallet-cli skill install|doctor|list|retrieve', reason: 'Agent-skill distribution embedded in the binary. Notably, this IS an agent surface with no API behind it.'}
+  - {command: 'ledger-enterprise-cli requests getChallenge|sign', reason: 'GET /requests/{request_id}/challenge exists in REST, but the local signing step is client-side by design — the private key never leaves the machine.'}
+  - {command: 'ledger-enterprise-cli policies list|get', reason: 'No /policies path in the published Vault OpenAPI; the CLI exposes a resource the REST contract does not document.'}
+  - {command: 'lem tx sign', reason: 'Hardware signature collection; refuses to double-sign, re-sign an executed tx, or sign past the threshold.'}
+rest_only:
+  - {capability: Account sub-resources, operations: ['GET /accounts/{account_id}/nfts', '/nft-collections', '/nft-portfolio', '/tokens', '/labels', '/currency', '/sync', '/history', '/balances/history', '/erc20-children-accounts'], reason: 'Rich per-account reads with no CLI or candidate-tool projection.'}
+  - {capability: Audit history, operations: ['GET /{accounts,transactions,digests,entities,groups,messages,users,whitelists}/{id}/history'], reason: 'Uniform /history sub-resource across eight entities; no tool binds it.'}
+  - {capability: Digests and compliance records, operations: ['GET /digests', 'GET /digests/{digests_id}', 'GET /digests/{digests_id}/history'], reason: 'Compliance reporting surface.'}
+  - {capability: Entities and organisation, operations: ['GET /entities', 'GET /entities/{entity_id}/users', 'GET /organization'], reason: 'Org structure reads.'}
+  - {capability: Settlements (TradeLink), operations: ['GET /settlements', 'POST /settlements', 'POST /settlements/{id}/cancel', 'POST /settlements/{id}/recover'], reason: 'Liquidity-provider settlement flow, including both reversal paths. Absent from every CLI.'}
+  - {capability: Message signing / Proof of Reserve, operations: ['GET /messages', 'GET /messages/{message_id}'], reason: 'Compliance attestation surface.'}
+  - {capability: Pledges, operations: ['GET /pledges', 'GET /pledges/{pledge_id}'], reason: 'Staking pledge records.'}
+  - {capability: PKI, operations: ['GET /certificates/chain'], reason: 'Certificate chain for device/PKI verification.'}
+  - {capability: Auth token lifecycle, operations: ['POST /auth/token', 'POST /auth/token/refresh'], reason: 'Handled inside the CLI login flow rather than exposed as a tool.'}
+  - {capability: Exchange provider contracts, operations: ['getCapabilities', 'getCryptoCurrencies', 'getPairs', 'postSwapFixed', 'postSwapFloat', 'statusUpdate', 'postSell', 'buy-redirect', 'sell-redirect', 'getV0NetworkStakes', 'getV0Grow'], reason: 'Implemented by exchange PARTNERS on their own hosts. Ledger calls them; an agent acting for a Ledger user does not.'}
+  - {capability: Safe transaction service breadth, operations: ['safes_all_transactions_list_2', 'safes_creation_retrieve', 'safes_export_retrieve', 'safes_collectibles_retrieve', 'modules_safes_retrieve', 'owners_safes_retrieve', 'safe_operations_confirmations_list', 'safe_operations_confirmations_create'], reason: 'ERC-4337 and indexing reads with no candidate tool.'}
+coverage:
+  tools_named: 23
+  tools_bound: 23
+  mcp_only: 0
+  cli_only: 11
+  rest_operations_total: 131
+  rest_operations_with_a_tool: 27
+  rest_operations_partner_implemented: 23
+  note: >-
+    131 counts every operation across all seven specs. 23 of those are the exchange-provider
+    contracts a PARTNER implements, so the addressable Ledger-hosted surface is 108 operations, of
+    which 27 have a candidate tool binding — roughly a quarter. The gap is concentrated in audit
+    history, compliance records and TradeLink settlements.

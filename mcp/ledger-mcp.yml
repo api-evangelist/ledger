@@ -1,0 +1,100 @@
+generated: '2026-08-25'
+method: derived
+status: candidate
+source: >-
+  openapi/ledger-enterprise-vault-openapi.yml, cli/ledger-cli.yml,
+  https://help.multisig.ledger.com/guides/cli-guides/building-agent-workflows
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+search_result: >-
+  NO MCP server exists — hosted or packaged. Probed npm for @ledgerhq/mcp-server, @ledgerhq/mcp and
+  ledger-mcp (all {"error":"Not found"}), and found no mcp.* host in the estate. Ledger's own
+  documentation confirms the absence and pushes the work onto the integrator: the multisig agent
+  guide says "Write a thin MCP server (one tool per `lem` subcommand, or a single 'run lem' tool
+  that accepts an args array. Both work)" and "wrapped in your MCP framework of choice."
+  This is a deliberate posture, not an oversight — Ledger has invested heavily in the ADJACENT agent
+  surfaces (four published Agent Skills, three CLIs with JSON-by-default output and stable exit
+  codes, an embedded skill installer, an llms.txt on every docs host) while leaving MCP itself to the
+  integrator. An agent cannot reach Ledger over MCP today; it reaches it by shelling out to a CLI.
+  NO MCPServer pointer is emitted in apis.yml, because emitting one would credit Ledger with an
+  agent surface it does not serve.
+candidate_note: >-
+  The tools below are a DERIVED candidate set for the thin MCP server Ledger tells integrators to
+  build. They are not published by Ledger and must not be read as such. Each is bound to a real
+  operation or a real CLI command that exists today; see mcp/ledger-tool-crosswalk.yml for the
+  binding table.
+tools:
+  - name: list_accounts
+    description: Search and page workspace custody accounts.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /accounts'
+  - name: get_account
+    description: Fetch a single custody account by id.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}'
+  - name: get_account_balances
+    description: Fetch balances for a custody account.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/balances'
+  - name: get_receive_address
+    description: Retrieve a trusted public receiving address for an account.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/addresses'
+  - name: list_transactions
+    description: List transactions across the workspace.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /transactions'
+  - name: estimate_transaction_fees
+    description: Estimate fees for a transaction payload without creating it. Read-only rehearsal step.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#POST /transactions/estimate-fees'
+  - name: create_request
+    description: Open a governance request (transaction, account change, user invitation). Requires quorum before it takes effect.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#POST /requests'
+  - name: get_request_governance_status
+    description: Read how far a request has progressed toward quorum.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /requests/{request_id}/governance-status'
+  - name: approve_request
+    description: Approve a pending governance request. Human-in-the-loop — device or API-operator signature required.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#POST /requests/{request_id}/approve'
+  - name: reject_request
+    description: Reject a pending governance request. Reversal path; valid only before quorum.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#POST /requests/{request_id}/reject'
+  - name: reject_transaction
+    description: Reject a transaction pending approval. Reversal path; valid only before broadcast.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#POST /transactions/{transaction_id}/reject'
+  - name: screen_address_risk
+    description: Screen a destination address for risk via the configured KYT provider.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /compliance/address-risk/{address}'
+  - name: check_address_sanctions
+    description: Check a destination address against sanctions lists.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /compliance/sanctions/{address}'
+  - name: list_whitelists
+    description: List approved destination-address whitelists.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /whitelists'
+  - name: list_stakes
+    description: Read staking positions and rewards for an account on a supported chain.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#GET /ethereum/accounts/{account_id}/stakes'
+  - name: configure_notifications
+    description: Register or update the webhook URL and shared secret for workspace event notifications.
+    source_operation: 'openapi/ledger-enterprise-vault-openapi.yml#PUT /notifications/configuration'
+  - name: get_safe_info
+    description: Read a Safe's owners, threshold, nonce, version, modules and guard.
+    source_operation: 'openapi/ledger-enterprise-multisig-openapi.yml#safes_retrieve'
+  - name: get_safe_balances
+    description: Read Ether and ERC-20 balances for a Safe.
+    source_operation: 'openapi/ledger-enterprise-multisig-openapi.yml#safes_balances_retrieve_2'
+  - name: propose_safe_transaction
+    description: Propose a multisig transaction against a Safe. Reversible by deletion until executed.
+    source_operation: 'openapi/ledger-enterprise-multisig-openapi.yml#safes_multisig_transactions_create_2'
+  - name: delete_safe_transaction
+    description: Withdraw a proposed but unexecuted Safe transaction. Reversal path.
+    source_operation: 'openapi/ledger-enterprise-multisig-openapi.yml#multisig_transactions_destroy_2'
+  - name: list_safe_delegates
+    description: List addresses allowed to propose transactions on behalf of Safe owners.
+    source_operation: 'openapi/ledger-enterprise-multisig-openapi.yml#delegates_list_2'
+  - name: get_swap_quote
+    description: Request a swap quote from an exchange provider implementing the Ledger swap contract.
+    source_operation: 'openapi/ledger-swap-provider-openapi.yml#postQuote'
+  - name: get_swap_status
+    description: Read the current status of a swap.
+    source_operation: 'openapi/ledger-swap-provider-openapi.yml#getStatus'

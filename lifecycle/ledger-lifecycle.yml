@@ -1,0 +1,83 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://developers.ledger.com/docs/news, https://status.ledger.com/,
+  https://help.enterprise.ledger.com/whats-new, and the OpenAPI documents in openapi/
+versioning:
+  enterprise_vault:
+    scheme: document-version (unversioned paths)
+    current: '1.35.0'
+    source: openapi/ledger-enterprise-vault-openapi.yml
+  multisig:
+    scheme: uri-path
+    current: v2
+    also_served: v1 under /tx-service/eth/api/v1/
+    source: openapi/ledger-enterprise-multisig-openapi.yml
+  exchange_provider:
+    scheme: per-document version
+    current:
+      swap: '2.0'
+      buy: '1.0'
+      sell: '1.0'
+      earn: 1.1.0
+      card: '1.0'
+deprecation:
+  policy_url: https://developers.ledger.com/docs/news
+  sunset_header: false
+  deprecation_header: false
+  practice: >-
+    Ledger announces deprecations on its developer "What's new" page with a named calendar date and a
+    one-to-one migration table, but does not emit RFC 8594 Sunset or Deprecation response headers and
+    does not mark deprecated operations in any OpenAPI document (0 of 85 Vault operations, 0 of 23
+    exchange operations carry `deprecated: true`). A client therefore learns of a removal by reading
+    a web page, not from the API.
+  announced:
+    - name: LedgerJS end-of-life
+      date: '2026-09'
+      breaking: true
+      detail: >-
+        In September 2026 the Ethereum device app drops support for signEIP712HashedMessage — the
+        hashed / blind-signing variant of EIP-712 — which removes the last working path for
+        @ledgerhq/hw-app-eth. All LedgerJS packages (hw-app-*, hw-transport-*) are deprecated from
+        that date, and applications that have not migrated to the Device Management Kit will be
+        unable to sign EIP-712 typed data on Ledger devices.
+      migration:
+        '@ledgerhq/hw-app-eth': '@ledgerhq/device-signer-kit-ethereum'
+        '@ledgerhq/hw-app-btc': '@ledgerhq/device-signer-kit-bitcoin'
+        '@ledgerhq/hw-app-solana': '@ledgerhq/device-signer-kit-solana'
+        '@ledgerhq/hw-transport-webhid': '@ledgerhq/device-transport-kit-web-hid'
+        '@ledgerhq/hw-transport-web-ble': '@ledgerhq/device-transport-kit-web-ble'
+        '@ledgerhq/hw-transport-node-hid': '@ledgerhq/device-transport-kit-node-hid'
+      source: https://developers.ledger.com/docs/news
+    - name: LedgerJS marked legacy in the portal
+      breaking: false
+      detail: >-
+        The developer portal lists "LedgerJS (deprecated)" under Optional reading with the note
+        "Legacy library — no longer maintained; migrate to DMK".
+      source: https://developers.ledger.com/llms.txt
+  stability_warnings:
+    - surface: Ledger AI tools (wallet-cli, DMK skills)
+      note: >-
+        Ledger labels both agent surfaces as early development — "Breaking changes may happen between
+        releases" — on https://developers.ledger.com/docs/ai-tools/overview.
+    - surface: '@ledgerhq/device-transport-kit-web-ble, -node-hid'
+      note: >-
+        Both npm READMEs carry "[!CAUTION] This is still under development and we are free to make
+        breaking changes".
+status_page: https://status.ledger.com/
+status_page_provider: Atlassian Statuspage
+sla:
+  url: null
+  uptime_target: null
+  note: >-
+    No public SLA or uptime commitment is published for any Ledger API. Ledger Enterprise SLAs are
+    presumably contractual; nothing is reachable without a sales conversation.
+deprecated_operations: []
+deprecated_operations_note: >-
+  Zero operations across all seven harvested specs carry `deprecated: true`, including the LedgerJS
+  surface Ledger has publicly announced for September 2026 removal. The deprecation is real; it is
+  simply not expressed in the machine-readable contract.
+changelog:
+  developer: https://developers.ledger.com/docs/news
+  enterprise: https://help.enterprise.ledger.com/whats-new
+  see: changelog/ledger-changelog.yml

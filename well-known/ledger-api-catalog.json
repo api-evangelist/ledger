@@ -1,0 +1,119 @@
+{
+    "linkset": [
+      {
+        "anchor": "https://developers.ledger.com/docs/ledger-live/exchange/swap",
+        "service-desc": [
+          {
+            "href": "https://developers.ledger.com/exchange/openapi/swap-provider-openapi.yml",
+            "type": "application/yaml"
+          }
+        ],
+        "service-doc": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api",
+            "type": "text/html",
+            "title": "Swap API – For exchange providers integrating with Ledger Wallet"
+          }
+        ],
+        "service-meta": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/swap",
+            "type": "text/html",
+            "title": "Swap integration overview – usage policy and requirements"
+          }
+        ]
+      },
+      {
+        "anchor": "https://developers.ledger.com/docs/ledger-live/exchange/buy",
+        "service-desc": [
+          {
+            "href": "https://developers.ledger.com/exchange/openapi/buy-provider-openapi.yml",
+            "type": "application/yaml"
+          }
+        ],
+        "service-doc": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/buy/redoc-api",
+            "type": "text/html",
+            "title": "Buy API – For exchange providers integrating with Ledger Wallet"
+          }
+        ],
+        "service-meta": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/buy",
+            "type": "text/html",
+            "title": "Buy integration overview – usage policy and requirements"
+          }
+        ]
+      },
+      {
+        "anchor": "https://developers.ledger.com/docs/ledger-live/exchange/sell",
+        "service-desc": [
+          {
+            "href": "https://developers.ledger.com/exchange/openapi/sell-provider-openapi.yml",
+            "type": "application/yaml"
+          }
+        ],
+        "service-doc": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/sell/redoc-api",
+            "type": "text/html",
+            "title": "Sell API – For exchange providers integrating with Ledger Wallet"
+          }
+        ],
+        "service-meta": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/sell",
+            "type": "text/html",
+            "title": "Sell integration overview – usage policy and requirements"
+          }
+        ]
+      },
+      {
+        "anchor": "https://developers.ledger.com/docs/ledger-live/exchange/earn",
+        "service-desc": [
+          {
+            "href": "https://developers.ledger.com/exchange/openapi/earn-provider-openapi.yml",
+            "type": "application/yaml"
+          }
+        ],
+        "service-doc": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/earn/redoc-api",
+            "type": "text/html",
+            "title": "Earn API – For exchange providers integrating with Ledger Wallet"
+          }
+        ],
+        "service-meta": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/earn",
+            "type": "text/html",
+            "title": "Earn integration overview – usage policy and requirements"
+          }
+        ]
+      },
+      {
+        "anchor": "https://developers.ledger.com/docs/ledger-live/exchange/card",
+        "service-desc": [
+          {
+            "href": "https://developers.ledger.com/exchange/openapi/card-provider-openapi.yml",
+            "type": "application/yaml"
+          }
+        ],
+        "service-doc": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/card/redoc-api",
+            "type": "text/html",
+            "title": "Card API – For exchange providers integrating with Ledger Wallet"
+          }
+        ],
+        "service-meta": [
+          {
+            "href": "https://developers.ledger.com/docs/ledger-live/exchange/card",
+            "type": "text/html",
+            "title": "Card integration overview – usage policy and requirements"
+          }
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,49 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://developers.ledger.com/docs/ledger-wallet-provider/overview,
+  https://developers.ledger.com/docs/ledger-wallet-provider/api-reference,
+  https://developers.ledger.com/docs/ledger-live/discover/getting-started
+families:
+  - name: Ledger Wallet Provider
+    kind: web components
+    package: '@ledgerhq/ledger-wallet-provider'
+    version: 1.4.2
+    published: '2026-08-18'
+    description: >-
+      A Web Components-based library that embeds Ledger's official connect flow directly in a dApp,
+      carrying Clear Signing and Transaction Check with it, so the dApp does not build its own
+      wallet-connection UI.
+    docs: https://developers.ledger.com/docs/ledger-wallet-provider/overview
+    api_reference: https://developers.ledger.com/docs/ledger-wallet-provider/api-reference
+    configuration: https://developers.ledger.com/docs/ledger-wallet-provider/configuration
+    supply_chain:
+      package_attestation: https://developers.ledger.com/docs/ledger-wallet-provider/package-attestation
+      note: >-
+        Ledger publishes a package-attestation procedure for supply-chain integrity verification of
+        this library — an unusual and welcome control for a browser-loaded wallet component.
+  - name: Live App (Discover) surface
+    kind: embedded application
+    description: >-
+      A web application that loads inside Ledger Wallet's Discover section and talks to the signer
+      through the Wallet API. Ledger supplies the host surface, the manifest format and the UX
+      requirements; the partner supplies the app.
+    docs: https://developers.ledger.com/docs/ledger-live/discover/getting-started
+    manifest: https://developers.ledger.com/docs/ledger-live/discover/references/manifest
+    loader_packages:
+      - '@ledgerhq/wallet-api-client'
+      - '@ledgerhq/wallet-api-client-react'
+      - '@ledgerhq/wallet-api-exchange-module'
+    developer_mode: https://developers.ledger.com/docs/ledger-live/discover/references/manifest
+  - name: Clear Signing descriptors
+    kind: declarative UI contract
+    description: >-
+      Not a UI component library but the closest analogue on the device — a JSON descriptor a dApp
+      publishes so the Ledger device can render a human-readable transaction instead of a raw hash.
+      Built with Ledger's JSON builder and submitted for review.
+    docs: https://developers.ledger.com/docs/clear-signing/for-dapps/get-started
+    specification: https://developers.ledger.com/docs/clear-signing/reference/specifications
+note: >-
+  No hosted/prebuilt checkout-style widget, embedded dashboard or element library exists in the
+  Ledger estate beyond these. Ledger Enterprise and Ledger Multisig are full web applications, not
+  embeddable surfaces.

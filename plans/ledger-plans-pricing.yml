@@ -1,0 +1,34 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://enterprise.ledger.com/, https://enterprise.ledger.com/about,
+  https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits,
+  https://developers.ledger.com/
+plan_count: 0
+note: >-
+  Ledger publishes NO API pricing of any kind. www.ledger.com/pricing returns a real 404. Every API
+  program in the estate is gated behind a commercial conversation rather than a published tier:
+    - Ledger Enterprise is sold enterprise-direct — enterprise.ledger.com's calls to action are
+      "Request a 30-minute meeting" and "Get started", and Ledger's own rate-limit page says limits
+      are "specific to your API plan, please get in touch with your Account Manager", which confirms
+      plans exist but are not published.
+    - The Ledger Wallet exchange-provider APIs (swap/buy/sell/earn/card) are not a purchasable
+      product at all: a provider implements Ledger's contract, submits its API, manifest and public
+      key for Ledger review, and the commercial terms are negotiated in that partnership.
+    - The developer surface itself (Device Management Kit, Wallet API, Clear Signing, Ledger Wallet
+      Provider, agent skills, wallet-cli) is free and open-source; hardware is sold at retail via
+      shop.ledger.com, which is device pricing rather than API pricing.
+  Recorded as plan_count 0 with the reason, rather than omitted.
+plans: []
+access_model:
+  pricing: contact-sales
+  onboarding: sales-gate
+  trial: false
+  public_pricing_page: false
+  evidence:
+    - url: https://www.ledger.com/pricing
+      status: 404
+    - url: https://enterprise.ledger.com/
+      status: 200
+    - url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+      status: 200

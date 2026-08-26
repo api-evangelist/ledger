@@ -1,0 +1,35 @@
+generated: '2026-08-25'
+method: searched
+source: https://developers.ledger.com/docs/news
+scheme: quarterly narrative (no semantic version stream)
+current_version: null
+note: >-
+  Ledger's developer changelog is organised by calendar quarter rather than by release version, and
+  mixes API changes with event announcements. There is no per-release dated entry list and no RSS or
+  JSON feed. A second, separate changelog exists for the institutional product at
+  https://help.enterprise.ledger.com/whats-new.
+feeds: []
+entries:
+  - version: null
+    period: 2026-Q3
+    date: '2026-09'
+    breaking: true
+    title: 'Breaking change: LedgerJS deprecated in September 2026'
+    highlights:
+      - The Ethereum device app drops signEIP712HashedMessage (hashed / blind-signing EIP-712).
+      - This removes the last working path for @ledgerhq/hw-app-eth.
+      - All LedgerJS packages (hw-app-*, hw-transport-*) are deprecated from that date.
+      - Applications not migrated to the Device Management Kit lose EIP-712 typed-data signing.
+      - A six-row package-for-package migration table is published alongside the notice.
+    source: https://developers.ledger.com/docs/news
+  - version: null
+    period: 2026-Q3
+    date: '2026-07'
+    breaking: false
+    title: Community events
+    highlights:
+      - 'ETH Global Lisbon, 24-26 July 2026, Lisbon, Portugal.'
+    source: https://developers.ledger.com/docs/news
+window: >-
+  Recent window only, captured 2026-08-25. The live page at https://developers.ledger.com/docs/news
+  remains the source of truth.

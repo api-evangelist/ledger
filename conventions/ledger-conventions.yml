@@ -1,0 +1,266 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://help.enterprise.ledger.com/api-documentation/getting-started/pagination,
+  https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits,
+  https://help.enterprise.ledger.com/api-documentation/getting-started/authentication,
+  https://help.enterprise.ledger.com/api-documentation/reference/api-reference/notifications,
+  https://developers.ledger.com/docs/ledger-live/exchange/swap, and the OpenAPI documents in openapi/
+scope: >-
+  Cross-cutting semantics differ per program. The Ledger Enterprise (Vault) API and the Ledger
+  Wallet exchange-provider contracts are governed separately; both are recorded here, labelled.
+
+authentication:
+  enterprise_vault:
+    style: header API key + workspace header
+    headers:
+      - name: X-Ledger-API-User
+        required: true
+        note: Username of a registered API User; required on all LAM calls except API-user registration.
+      - name: X-Ledger-API-Key
+        required: conditional
+        note: Required when an API key was configured at LAM initialisation.
+      - name: X-Ledger-Store-Auth-Token
+        required: conditional
+        note: Required when HashiCorp Vault is configured as the authentication service.
+      - name: X-Ledger-Workspace
+        required: true
+        note: Workspace name; used on the reporting/notification endpoints.
+      - name: X-Ledger-Reporting-API-Key
+        required: conditional
+        note: Reporting API key, for reporting and notification endpoints.
+    bearer: >-
+      POST /auth/token and POST /auth/token/refresh issue a bearer access token used as
+      `authorization: Bearer <token>` alongside the workspace header.
+    docs: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  exchange_provider:
+    style: shared API key header, provisioned by Ledger per provider
+    headers:
+      - name: x-api-key
+        required: true
+        note: >-
+          Named `defaultApiKey` in the swap/sell/card specs and `ApiKeyAuth` (X-API-KEY) in the buy
+          spec. An unknown or unsupported provider is rejected with the same 401 as a bad key, so a
+          caller cannot enumerate which providers exist.
+    docs: https://developers.ledger.com/docs/ledger-live/exchange/swap/providers-backend
+  multisig:
+    style: token header
+    headers:
+      - name: Authorization
+        required: conditional
+        note: 'Token-based authentication with the required prefix "Token"; read endpoints are anonymous.'
+    docs: https://help.multisig.ledger.com/guides/api-guides/1.-querying-safe-data
+
+idempotency:
+  supported: partial
+  mechanism: natural-key idempotency, not an Idempotency-Key header
+  detail: >-
+    No API in the Ledger estate documents an RFC-style Idempotency-Key request header. Idempotency is
+    instead expressed through natural keys and refusal semantics:
+      - Ledger Wallet exchange: the status webhook is keyed on the immutable {swapId} / {sellId} path
+        parameter and is explicitly re-appliable — Ledger only applies an update "while the swap is
+        still in a non-final status", so a replayed webhook for a settled swap is a safe no-op.
+        Ledger also polls the provider's GET /status for the same swapId, so the callback and the
+        poll are two idempotent reads of one state machine.
+      - Ledger Enterprise: the governance model makes writes idempotent by construction — a
+        transaction or account change is a REQUEST that must reach quorum, and POST
+        /requests/{request_id}/approve is scoped to a single request id, so a repeated approval by
+        the same operator cannot double-count toward the quorum.
+      - Multisig CLI: `lem tx sign` "refuses to double-sign, re-sign an executed tx, or sign past the
+        threshold", and `safe info`, `safe balances`, `safe nonce`, `tx list` and `tx show` are
+        documented as "safe to retry or replay arbitrarily".
+      - Safe transactions are keyed on safe_tx_hash and nonce, so proposing the same transaction
+        twice collapses onto one entry.
+  gap: >-
+    An agent retrying a POST /requests or POST /transactions/estimate-fees after a timeout has no
+    client-supplied key to deduplicate on. An Idempotency-Key header on the Vault write surface is
+    the single highest-value addition available to this estate.
+  sources:
+    - openapi/ledger-swap-provider-openapi.yml#statusUpdate
+    - https://help.multisig.ledger.com/guides/cli-guides/building-agent-workflows
+
+pagination:
+  enterprise_vault:
+    style: page-number
+    params: [page, page_size]
+    response_fields:
+      - edges[]        # array of {cursor, node}
+      - page_info.count
+      - page_info.has_next_page
+    default_ordering: creation date, descending (newest first)
+    caveat: >-
+      Ledger documents the drift hazard itself — newly created objects shift the window between
+      successive page fetches, "creating what looks like duplicates in two successive pages". This
+      is particularly relevant for transactions.
+    docs: https://help.enterprise.ledger.com/api-documentation/getting-started/pagination
+  multisig:
+    style: limit/offset
+    params: [limit, offset]
+    response_fields: [count, next, previous, results]
+    caps:
+      balances: 200
+      collectibles: 10
+      export: 1000
+    source: openapi/ledger-enterprise-multisig-openapi.yml
+
+rate_limits:
+  see: rate-limits/ledger-rate-limits.yml
+
+error_envelope:
+  enterprise_vault:
+    media_type: application/json
+    format: bespoke
+    shape: '{"code": <int>, "message": <string>}'
+    observed: 'GET https://api.vault.ledger.com/ -> 404 {"code":404,"message":"The requested URL was not found on the server..."}'
+  multisig:
+    media_type: application/json
+    format: bespoke
+    shape: '{"code": <int>, "message": <string>, "arguments": [...]}'
+    schema: CodeErrorResponse
+  exchange_provider:
+    media_type: application/json
+    format: bespoke
+    note: >-
+      The buy spec returns text/plain for its 400s ("Invalid value for: query parameter from, ...")
+      while sell/card/earn return application/json. No API in the estate uses RFC 9457
+      application/problem+json.
+  see: errors/ledger-problem-types.yml
+
+versioning:
+  enterprise_vault:
+    scheme: unversioned path, versioned document
+    current: Vault API 1.35.0
+    note: Paths carry no version segment; the OpenAPI info.version identifies the contract revision.
+  multisig:
+    scheme: uri-path
+    current: v2 (v1 still served under /tx-service/eth/api/v1/)
+  exchange_provider:
+    scheme: per-service document version
+    current:
+      swap: '2.0'
+      buy: '1.0'
+      sell: '1.0'
+      earn: 1.1.0
+      card: '1.0'
+    note: The earn contract additionally carries a /v1/ path prefix.
+
+request_tracing:
+  supported: false
+  note: No request-id / correlation-id response header is documented on any Ledger API.
+
+webhook_signing:
+  enterprise_vault:
+    header: 'X-Ledger-Signature: t=<unix-timestamp>,v1=<hex>'
+    algorithm: HMAC-SHA256 over "<timestamp>.<raw json body>" with the shared secret registered at PUT /notifications/configuration
+    replay_window: >-
+      Ledger's own reference implementation rejects a payload older than 5 minutes as a possible
+      replay attack.
+    retry_policy: exponential backoff starting at 5 seconds, doubling to a 30-minute maximum, capped at 100 attempts
+    docs: https://help.enterprise.ledger.com/api-documentation/reference/api-reference/notifications
+  see: asyncapi/ledger-exchange-webhooks.yml
+
+dry_run_mode:
+  supported: true
+  grade: documented
+  surfaces:
+    - operation: POST /transactions/estimate-fees
+      spec: openapi/ledger-enterprise-vault-openapi.yml
+      note: >-
+        Estimates transaction fees without creating a transaction — the rehearsal step before a
+        governance request is opened.
+    - operation: wallet-cli send --dry-run
+      source: https://developers.ledger.com/docs/ai-tools/ledger-cli
+      note: >-
+        Ledger's own agent guidance is explicit — "the agent plans the transaction, calls
+        `send --dry-run` to preview fees, then triggers hardware signing after your approval."
+    - surface: Wallet API Simulator
+      source: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/simulator/introduction
+      note: Mock Wallet API Server with predefined responses; lets a Live App rehearse without a real wallet.
+    - surface: Ledger Wallet Developer Mode
+      source: https://developers.ledger.com/docs/ledger-live/exchange/swap/providers-test-and-submit
+      note: End-to-end exchange-integration testing before submission for Ledger review.
+
+reversibility:
+  grade: verified
+  summary: >-
+    Every write surface in this estate is reversible before it reaches the chain and irreversible
+    after — which is exactly the boundary an agent needs stated before it acts. Ledger states the
+    window for each reversal in the contract itself.
+  surfaces:
+    - surface: Ledger Enterprise transaction
+      write_operation: 'POST /requests  (transaction creation opens a governance request)'
+      reversal_operation: 'POST /transactions/{transaction_id}/reject'
+      spec: openapi/ledger-enterprise-vault-openapi.yml
+      window: >-
+        While the transaction is pending approval. The spec states it verbatim: "Reject a transaction
+        pending approval." Once quorum is reached the transaction is signed by the HSM and broadcast
+        (events NEW_TRANSACTION_HAS_BEEN_SIGNED then NEW_TRANSACTION_HAS_BEEN_BROADCASTED) and is
+        then irreversible on-chain.
+      window_source: openapi/ledger-enterprise-vault-openapi.yml#/paths/~1transactions~1{transaction_id}~1reject
+      docs: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+    - surface: Ledger Enterprise governance request
+      write_operation: 'POST /requests'
+      reversal_operation: 'POST /requests/{request_id}/reject  (also GET /requests/{request_id}/challenge/reject)'
+      spec: openapi/ledger-enterprise-vault-openapi.yml
+      window: >-
+        Until the request reaches quorum. Ledger also expires requests on its own — the notification
+        catalogue carries REQUEST_HAS_EXPIRED, "a request has been pending for too long and has
+        expired", and REQUEST_HAS_BEEN_ABORTED. Approvals are observable en route via
+        REQUEST_HAS_RECEIVED_AN_APPROVAL, REQUEST_HAS_REACHED_STEP and REQUEST_HAS_REACHED_QUORUM.
+      window_source: https://help.enterprise.ledger.com/api-documentation/reference/api-reference/notifications
+    - surface: Ledger Enterprise settlement
+      write_operation: 'POST /settlements'
+      reversal_operation: 'POST /settlements/{settlement_id}/cancel'
+      spec: openapi/ledger-enterprise-vault-openapi.yml
+      window: >-
+        Stated in the operation description: "Only Settlement with an outbound transaction in status
+        FAILED_TO_BROADCAST can be canceled. Only Exchange (Liquidity Provider) user can cancel a
+        settlement." A settlement that broadcast successfully cannot be cancelled.
+      window_source: openapi/ledger-enterprise-vault-openapi.yml#/paths/~1settlements~1{settlement_id}~1cancel
+    - surface: Ledger Enterprise settlement (stuck in mempool)
+      write_operation: 'POST /settlements'
+      reversal_operation: 'POST /settlements/{settlement_id}/recover'
+      spec: openapi/ledger-enterprise-vault-openapi.yml
+      window: >-
+        "Only applicable to a settlement with an outbound transaction in status SUBMITTED ... and is
+        only applicable to currencies supporting Replace by Fees (RBF) or Replace by Nonce (RBN)."
+        This accelerates rather than reverses — it replaces a stuck transaction.
+      window_source: openapi/ledger-enterprise-vault-openapi.yml#/paths/~1settlements~1{settlement_id}~1recover
+    - surface: Ledger Enterprise Multisig transaction
+      write_operation: 'POST /api/v2/safes/{address}/multisig-transactions/  (propose)'
+      reversal_operation: 'DELETE /api/v2/multisig-transactions/{safe_tx_hash}/'
+      spec: openapi/ledger-enterprise-multisig-openapi.yml
+      window: >-
+        A proposed-but-unexecuted Safe transaction can be deleted from the transaction service; once
+        the threshold is met and the transaction is executed on-chain it cannot be withdrawn. `lem tx
+        sign` enforces the same boundary client-side by refusing to re-sign an executed transaction.
+      window_source: https://help.multisig.ledger.com/guides/cli-guides/building-agent-workflows
+    - surface: Ledger Wallet exchange (swap / sell / card)
+      write_operation: 'POST /swap/fixed, POST /swap/float, POST /sell'
+      reversal_operation: null
+      window: >-
+        NONE. A swap or sell is executed on-chain after the user clear-signs it on the Ledger device;
+        there is no cancel, refund or void operation in any of the five exchange contracts. The
+        device confirmation IS the point of no return, which is why Ledger gates it on physical
+        confirmation rather than on a reversal window.
+      window_source: openapi/ledger-swap-provider-openapi.yml
+    - surface: Ledger Wallet delegate management
+      write_operation: 'POST /api/v2/delegates/'
+      reversal_operation: 'DELETE /api/v2/delegates/{delegate_address}/'
+      spec: openapi/ledger-enterprise-multisig-openapi.yml
+      window: Any time; delegate grants are revocable indefinitely.
+  human_in_the_loop: >-
+    The estate-wide safety property is not a reversal window but a hardware gate: every fund-touching
+    operation requires affirmative physical confirmation on the Ledger device before it is signed.
+    Ledger states this in its own agent legal notice — "Every transaction proposed or initiated
+    through these tools requires affirmative physical confirmation by the user on their Ledger device
+    before it is signed or executed."
+    source: https://developers.ledger.com/docs/ai-tools/overview
+
+cross_links:
+  errors: errors/ledger-problem-types.yml
+  lifecycle: lifecycle/ledger-lifecycle.yml
+  authentication: authentication/ledger-authentication.yml
+  rate_limits: rate-limits/ledger-rate-limits.yml
+  webhooks: asyncapi/ledger-exchange-webhooks.yml
+  sandbox: sandbox/ledger-sandbox.yml

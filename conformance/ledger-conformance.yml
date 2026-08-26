@@ -1,0 +1,194 @@
+generated: '2026-08-25'
+method: derived
+source: >-
+  openapi/ledger-*.yml, https://enterprise.ledger.com/about,
+  https://help.enterprise.ledger.com/api-documentation/reference/api-reference/notifications,
+  https://developers.ledger.com/.well-known/api-catalog
+standards:
+  - id: openapi-3
+    conforms: true
+    evidence: >-
+      Seven documents published — five OpenAPI 3.0.3/3.1.0 exchange-provider contracts advertised via
+      /.well-known/api-catalog, the Vault API at OpenAPI 3.0.2, and the multisig service at 3.1.0.
+  - id: rfc9727-api-catalog
+    conforms: true
+    evidence: >-
+      https://developers.ledger.com/.well-known/api-catalog returns a valid linkset with
+      service-desc, service-doc and service-meta relations for five APIs. Rare in this sector and one
+      of the strongest discovery signals in the whole Ledger estate.
+  - id: llms-txt
+    conforms: true
+    evidence: >-
+      Three distinct llms.txt files served — developers.ledger.com/llms.txt,
+      help.enterprise.ledger.com/llms.txt and help.multisig.ledger.com/llms.txt — plus per-page
+      Markdown twins reachable by appending .md to any docs URL.
+  - id: agent-skills
+    conforms: true
+    evidence: >-
+      Four first-party Agent Skills published at github.com/LedgerHQ/agent-skills with SKILL.md
+      frontmatter, installable via `npx skills add ledgerhq/agent-skills`. Since wallet-cli 2.1.0 the
+      skill ships embedded in the binary with `wallet-cli skill install` and `skill doctor`.
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      No oauth2 securityScheme in any of the seven specs. Authentication is header API keys plus, on
+      the Vault API, a bearer token minted by POST /auth/token.
+  - id: oidc
+    conforms: false
+    evidence: No openIdConnect scheme and no /.well-known/openid-configuration on any host (404).
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      No application/problem+json anywhere. Three bespoke envelopes coexist — see
+      errors/ledger-problem-types.yml.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: >-
+      No /.well-known/security.txt on any Ledger-controlled host. The 200 on status.ledger.com is
+      Atlassian's, not Ledger's. The disclosure programme is real but web-page-only at
+      donjon.ledger.com/bounty/.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: >-
+      No Sunset or Deprecation headers, and 0 of 108 operations carry `deprecated: true`, despite a
+      publicly announced September 2026 LedgerJS removal.
+  - id: rfc6749-idempotency-key
+    conforms: false
+    evidence: >-
+      No Idempotency-Key header on any write surface. Idempotency is natural-key and refusal-based
+      instead — see conventions/ledger-conventions.yml.
+  - id: a2a-agent-card
+    conforms: false
+    evidence: /.well-known/agent-card.json and /.well-known/agent.json 404 on all eight probed hosts.
+  - id: mcp
+    conforms: false
+    evidence: >-
+      No hosted or packaged MCP server. Ledger's multisig CLI guide instead instructs the reader to
+      "write a thin MCP server" themselves around `lem`.
+  - id: grpc-protobuf
+    conforms: false
+    evidence: >-
+      No published .proto. buf.build/ledgerhq answers 200, but so does a deliberately nonexistent
+      org path on the same host, so the Buf Schema Registry is an SPA catch-all and the 200 is not a
+      hit. No proto surface found in the LedgerHQ GitHub org docs or the developer portal.
+  - id: soap-wsdl
+    conforms: false
+    evidence: >-
+      ?wsdl and /service?wsdl probed on api.vault.ledger.com (404) and app.multisig.ledger.com
+      (200 returning the SPA shell, not a WSDL). No SOAP surface exists.
+  - id: json-rpc-2.0
+    conforms: true
+    evidence: >-
+      The Wallet API is a bi-directional JSON-RPC 2.0 server bridging a Live App and a wallet.
+      Source - https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/server/introduction
+  - id: soc2-type2
+    conforms: true
+    evidence: >-
+      "Ledger Enterprise is certified SOC 2 Type 2" — https://enterprise.ledger.com/about. See
+      security/ledger-trust-center.yml.
+  - id: iso-27001
+    conforms: false
+    evidence: In progress, not certified — Ledger states it is "currently involved in the process of obtaining ISO 27001".
+  - id: cspn-anssi
+    conforms: false
+    evidence: CSPN V4 security visa in progress, not awarded.
+  - id: common-criteria-eal5-plus
+    conforms: true
+    evidence: EAL5+ certification claimed for the HSM layer — https://enterprise.ledger.com/protect.
+  - id: fips-140
+    conforms: true
+    evidence: FIPS level III claimed for the HSM enforcing governance rules — https://enterprise.ledger.com/protect.
+
+domain_standards:
+  - id: erc-4337-account-abstraction
+    conforms: true
+    evidence: >-
+      The multisig contract exposes a first-class 4337 surface — /tx-service/eth/api/v1/safe-operations/
+      with UserOperationWithSafeOperationResponse and SafeOperationResponse schemas carrying
+      entryPoint, callGasLimit, verificationGasLimit, preVerificationGas, maxFeePerGas,
+      maxPriorityFeePerGas, paymaster and paymasterData. A caller who already speaks ERC-4337
+      integrates with no bespoke connector.
+    spec_location: openapi/ledger-enterprise-multisig-openapi.yml#/components/schemas/UserOperationWithSafeOperationResponse
+  - id: safe-transaction-service-api
+    conforms: true
+    evidence: >-
+      The Ledger Enterprise Multisig API is wire-compatible with the open-source Safe Transaction
+      Service (info.title "Safe Transaction Service" 5.33.1; the live service reports 5.42.1 at
+      /v1/about/). Ledger states the compatibility as a feature - "if you are familiar with the Safe
+      API you will find our endpoints and data structures virtually identical" - so any Safe SDK
+      (@safe-global/api-kit) works against the Ledger host by changing txServiceUrl only.
+    spec_location: openapi/ledger-enterprise-multisig-openapi.yml#/info/title
+  - id: erc-20
+    conforms: true
+    evidence: >-
+      ERC-20 is a first-class entity in the Vault API, not an afterthought — GET
+      /accounts/{parent_account_id}/erc20-children-accounts, GET /currencies/{currency_name}/tokens/{contract_address},
+      and an ERC20_ACCOUNT payload type in the notification catalogue.
+    spec_location: openapi/ledger-enterprise-vault-openapi.yml
+  - id: erc-721-collectibles
+    conforms: true
+    evidence: >-
+      NFT surface on both platforms — GET /accounts/{account_id}/nfts, /nft-collections and
+      /nft-portfolio on the Vault API, and SafeCollectibleResponse (ERC-721) on the multisig service.
+    spec_location: openapi/ledger-enterprise-vault-openapi.yml
+  - id: erc-4626-vaults
+    conforms: true
+    evidence: >-
+      The Ledger Wallet CLI documents earn support for ERC-4626 vaults on Ethereum/EVM alongside
+      native Solana staking.
+    spec_location: https://developers.ledger.com/docs/ai-tools/ledger-cli
+  - id: eip-712-typed-data
+    conforms: true
+    evidence: >-
+      EIP-712 typed-data signing is a named capability of the Ethereum device app and the signer
+      kits; the September 2026 breaking change is specifically the removal of the hashed
+      (blind-signing) variant signEIP712HashedMessage.
+    spec_location: https://developers.ledger.com/docs/news
+  - id: eip-155-evm-chains
+    conforms: true
+    evidence: >-
+      The multisig service is keyed on numeric chain id — base URL
+      https://app.multisig.ledger.com/api/safe-transaction-service/{chainId} with Ethereum (1),
+      Optimism (10), BSC (56), Polygon (137), Base (8453), Arbitrum (42161) and Sepolia (11155111)
+      documented.
+    spec_location: https://help.multisig.ledger.com/guides/api-guides/1.-querying-safe-data
+  - id: bip-32-44-derivation
+    conforms: true
+    evidence: >-
+      HD key derivation and derivation paths are core DMK concepts, documented in the device-app
+      signers (PSD) section and in Ledger's own published DMK Concepts agent skill.
+    spec_location: https://developers.ledger.com/docs/device-app/explanation/psd/introduction
+  - id: crypto-travel-rule
+    conforms: partial
+    evidence: >-
+      Ledger publishes a Travel Rule guide for VASPs — "verify destination wallet ... using Reown
+      AppKit" — addressing the FATF Recommendation 16 self-hosted-wallet verification obligation. It
+      is a documented integration pattern rather than a conformant protocol implementation
+      (no IVMS 101 payload, no TRP/OpenVASP endpoint), so recorded as partial.
+    spec_location: https://developers.ledger.com/docs/travel-rule/verify-destination-wallet
+  - id: kyt-address-screening
+    conforms: true
+    evidence: >-
+      Compliance screening is exposed as API operations — GET /compliance/address-risk/{address} and
+      GET /compliance/sanctions/{address} — and transactions emit a
+      NEW_TRANSACTION_HAS_BEEN_SCORED event when a KYT provider scores them.
+    spec_location: openapi/ledger-enterprise-vault-openapi.yml
+  - id: proof-of-reserve
+    conforms: true
+    evidence: >-
+      Message signing for Proof of Reserve is a documented account capability with its own API
+      surface (GET /messages, /messages/{message_id}) and help-centre procedure.
+    spec_location: https://help.enterprise.ledger.com/core/compliance-capabilities/proof-of-reserve-enable-message-signing-on-an-account
+  - id: fido2-webauthn
+    conforms: true
+    evidence: >-
+      Ledger devices act as FIDO2/WebAuthn security keys (app-security-key, in scope for the bug
+      bounty) and Ledger publishes agent-oriented guidance for using one against GitHub, npm and
+      1Password.
+    spec_location: https://developers.ledger.com/docs/ai-tools/hardware-security/security-key
+  - id: openpgp
+    conforms: true
+    evidence: >-
+      The OpenPGP device app (app-openpgp) lets a Ledger signer act as an OpenPGP hardware key;
+      documented as agent-secret protection.
+    spec_location: https://developers.ledger.com/docs/ai-tools/hardware-security/open-pgp

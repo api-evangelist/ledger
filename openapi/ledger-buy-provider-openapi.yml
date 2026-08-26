@@ -1,0 +1,636 @@
+openapi: 3.0.3
+info:
+  title: Buy Provider Server
+  version: '1.0'
+paths:
+  /capabilities:
+    get:
+      operationId: getCapabilities
+      responses:
+        '200':
+          description: |
+            ### Buy Provider Capabilities
+            - "fiatCurrencyCapabilities.[].fiat": fiat currency supported at the ISO-4217 standard,
+            - "fiatCurrencyCapabilities.[].minAmount": minimum amount in fiat the user can buy crypto,
+            - "fiatCurrencyCapabilities.[].maxAmount ": minimum amount in fiat the user can buy crypto,
+            - "countryCapabilities.[].country": available at the Alpha-2 standard (ISO3166),
+            - "countryCapabilities.[].paymentMethods.[].name": Available payment method, valid values : card, googlepay, applepay, paypal, cryptocom, sepa, ach, instantach, fasterpayments, easybank, bank, cashapp, venmo, pix, mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay, eps, ideal, other, revolut, p2p, interac, payid, spei, imps, gcash, ovo, shopeepay, grabpay, linkaja, maya, pse, dana, qris
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyProviderCapabilities'
+              example:
+                fiatCurrencyCapabilities:
+                  - fiat: eur
+                    minAmount: 50
+                    maxAmount: 100000
+                  - fiat: USD
+                    minAmount: 50
+                    maxAmount: 100000
+                  - fiat: GBP
+                    minAmount: 50
+                    maxAmount: 100000
+                countryCapabilities:
+                  - country: FR
+                    paymentMethods:
+                      - name: paypal
+                      - name: pix
+                      - name: card
+                  - country: US
+                    paymentMethods:
+                      - name: paypal
+                      - name: pix
+                      - name: card
+                  - country: GB
+                    paymentMethods:
+                      - name: paypal
+                      - name: pix
+                      - name: card
+        default:
+          description: Error sent by the provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderServerError'
+              example:
+                code: 42
+                message: Server isn't able to handle the request because of whatever.
+  /quote:
+    get:
+      operationId: getQuote
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: from
+          in: query
+          description: Fiat currency at the ISO-4217 standard.
+          required: true
+          schema:
+            type: string
+          example: EUR
+        - name: to
+          in: query
+          description: Crypto currency ID using the LedgerId format.
+          required: true
+          schema:
+            type: string
+          example: bitcoin
+        - name: payment-method
+          in: query
+          description: 'Payment method, valid values : card, googlepay, applepay, paypal, cryptocom, sepa, ach, instantach, fasterpayments, easybank, bank, cashapp, venmo, pix, mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay, eps, ideal, other, revolut, p2p, interac, payid, spei, imps, gcash, ovo, shopeepay, grabpay, linkaja, maya, pse, dana, qris.'
+          required: true
+          schema:
+            type: string
+          example: paypal
+        - name: amount
+          in: query
+          description: Fiat amount to buy.
+          required: true
+          schema:
+            type: integer
+          example: 50
+        - name: country
+          in: query
+          description: Country of the user at the Alpha-2 standard (ISO3166).
+          required: true
+          schema:
+            type: string
+          example: FR
+        - name: dest
+          in: query
+          description: Destination address of the buy.
+          required: true
+          schema:
+            type: string
+          example: '0x000000000000000000000000000000'
+      responses:
+        '200':
+          description: "### Quote information about the the buy. \n- \"from\": fiat\
+           \ currency of the buy\n- \"to\": crypto currency ID of the buy, using the LedgerId format\n- \"amount\"\
+           : fiat amount\n- \"cryptoAmount\": crypto amount the user will have,\
+           \ must include all the fees\n- \"dca\": must be true if recurring purchases (dca) are allowed for this specific quote\n"
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderQuoteResponse'
+              example:
+                from: EUR
+                to: bitcoin
+                fiatAmount: 50
+                cryptoAmount: 0.2
+                dca: true
+        '400':
+          description: 'Invalid value for: query parameter from, Invalid value for:
+           query parameter to, Invalid value for: query parameter payment-method,
+           Invalid value for: query parameter amount, Invalid value for: query parameter
+           country, Invalid value for: query parameter dest'
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+          description: Error sent by the provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderServerError'
+  /buy-redirect:
+    get:
+      operationId: buy-redirect
+      summary: Retrieve a redirect URL
+      description: Returns the URL of the on-ramp widget, including the specified buy parameters, to which the user will be redirected.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: from
+          in: query
+          description: Fiat currency at the ISO-4217 standard.
+          required: true
+          schema:
+            type: string
+          example: EUR
+        - name: to
+          in: query
+          description: Crypto currency ID using the LedgerId format.
+          required: true
+          schema:
+            type: string
+          example: bitcoin
+        - name: payment-method
+          in: query
+          description: 'Payment method, valid values: card, googlepay, applepay, paypal, cryptocom, sepa, ach, instantach, fasterpayments, easybank, bank, cashapp, venmo, pix, mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay, eps, ideal, other, revolut, p2p, interac, payid, spei, imps, gcash, ovo, shopeepay, grabpay, linkaja, maya, pse, dana, qris'
+          required: true
+          schema:
+            type: string
+          example: paypal
+        - name: amount
+          in: query
+          description: Fiat amount to buy.
+          required: true
+          schema:
+            type: integer
+          example: 50
+        - name: country
+          in: query
+          description: Country of the user at the Alpha-2 standard (ISO3166).
+          required: true
+          schema:
+            type: string
+          example: FR
+        - name: dest
+          in: query
+          description: Destination address of the buy.
+          required: true
+          schema:
+            type: string
+          example: '0x000000000000000000000000000000'
+        - in: query
+          name: ledgerTransactionId
+          description: Ledger Wallet transaction ID. Used by Ledger to track transactions and their completion statuses.
+          required: true
+          schema:
+            type: string
+          example: 9649d677-f201-45b2-8130-0317065743de
+        - in: query
+          name: deeplinkUrl
+          description: Deeplink URL to Ledger Wallet.
+          required: false
+          schema:
+            type: string
+          example: ledgerlive://buy
+        - in: query
+          name: accountId
+          description: The Ledger Wallet ID of the account the user selected to receive the crypto.
+          required: false
+          schema:
+            type: string
+          example: d7e79746-e40c-5fab-9012-3c0bc04e8a13
+        - in: query
+          name: language
+          description: 'The language chosen by the user in Ledger Wallet. Valid values: ar, de, en, es, fr, ja, ko, pt, ru, th, tr, zh.'
+          required: false
+          schema:
+            type: string
+          example: es
+        - in: query
+          name: theme
+          description: 'The theme chosen by the user in Ledger Wallet. Valid values: light, dark.'
+          required: false
+          schema:
+            type: string
+          example: dark
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RampRedirectUrl'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+  /crypto-currencies:
+    get:
+      operationId: getCrypto-currencies
+      responses:
+        '200':
+          description: |
+            ### Available crypto currencies
+            Return a list of crypto currencies supported by the Buy provider. Must be an array of IDs using the LedgerId format. More details are available on the [Ledger Developer Portal](https://developers.ledger.com/docs/ledger-live/exchange/buy/providers-backend#ledger-ids-mapping).
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - "bitcoin"
+                - "solana"
+                - "ethereum"
+                - "ethereum/erc20/aave"
+                - "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v"
+        default:
+          description: Error sent by the provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderServerError'
+              example:
+                code: 42
+                message: Server isn't able to handle the request because of whatever.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Ach:
+      type: object
+    ApplePay:
+      type: object
+    Astropay:
+      type: object
+    BanContact:
+      type: object
+    Bank:
+      type: object
+    BuyPaymentMethod:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PaymentMethod'
+    BuyProviderCapabilities:
+      type: object
+      properties:
+        fiatCurrencyCapabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/FiatCurrencyCapability'
+        countriesCapabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CountryCapability'
+      description: "# Buy Provider Capabilities \n- \"fiatCurrencyCapabilities.[].fiat\"\
+       : fiat currency supported at the ISO-4217 standard,\n- \"fiatCurrencyCapabilities.[].minAmount\"\
+       : minimum amount in fiat the user can buy crypto,\n- \"fiatCurrencyCapabilities.[].maxAmount\
+       \ \": minimum amount in fiat the user can buy crypto,\n- \"cryptoCurrencies\"\
+       : list of supported crypto currencies supported. The crypto currencies must\
+       \ be at the ledgerId format (see ledger_tokens.json and ledger_coins.json\
+       \ files),\n- \"coutriesCapabilities.[].country\": available at the Alpha-2\
+       \ standard (ISO3166),\n- \"coutriesCapabilities.[].paymentMethods.[].name\"\
+       : Available payment method, valid values : card, pix,\
+       \ mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay,\
+       \ googlepay, applepay, paypal, sepa, ach, fasterpayments, easybank,\
+       \ bank, gbpbank, eps, ideal, revolut\n- \"countriesCapabilities.[].paymentMethods.[].successRate\"\
+       : percentage of success of the transaction.\n"
+    CountryCapability:
+      required:
+        - country
+      type: object
+      properties:
+        country:
+          type: string
+        paymentMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BuyPaymentMethod'
+    Card:
+      type: object
+    EasyBank:
+      type: object
+    Easypay:
+      type: object
+    Eps:
+      type: object
+    FasterPayments:
+      type: object
+    FiatCurrencyCapability:
+      required:
+        - fiat
+        - minAmount
+        - maxAmount
+      type: object
+      properties:
+        fiat:
+          type: string
+        minAmount:
+          type: integer
+        maxAmount:
+          type: integer
+    GbpBank:
+      type: object
+    Giropay:
+      type: object
+    GooglePay:
+      type: object
+    Ideal:
+      type: object
+    Mobikwik:
+      type: object
+    Other:
+      type: object
+    PayPal:
+      type: object
+    PaymentMethod:
+      oneOf:
+        - $ref: '#/components/schemas/Card'
+        - $ref: '#/components/schemas/Googlepay'
+        - $ref: '#/components/schemas/Applepay'
+        - $ref: '#/components/schemas/Paypal'
+        - $ref: '#/components/schemas/Cryptocom'
+        - $ref: '#/components/schemas/Sepa'
+        - $ref: '#/components/schemas/Ach'
+        - $ref: '#/components/schemas/Instantach'
+        - $ref: '#/components/schemas/Fasterpayments'
+        - $ref: '#/components/schemas/Easybank'
+        - $ref: '#/components/schemas/Bank'
+        - $ref: '#/components/schemas/Cashapp'
+        - $ref: '#/components/schemas/Venmo'
+        - $ref: '#/components/schemas/Pix'
+        - $ref: '#/components/schemas/Mobikwik'
+        - $ref: '#/components/schemas/Easypay'
+        - $ref: '#/components/schemas/Astropay'
+        - $ref: '#/components/schemas/Upibanktransfer'
+        - $ref: '#/components/schemas/Sofort'
+        - $ref: '#/components/schemas/Bancontact'
+        - $ref: '#/components/schemas/Giropay'
+        - $ref: '#/components/schemas/Eps'
+        - $ref: '#/components/schemas/Ideal'
+        - $ref: '#/components/schemas/Other'
+        - $ref: '#/components/schemas/Revolut'
+        - $ref: '#/components/schemas/P2p'
+        - $ref: '#/components/schemas/Interac'
+        - $ref: '#/components/schemas/Payid'
+        - $ref: '#/components/schemas/Spei'
+        - $ref: '#/components/schemas/Imps'
+        - $ref: '#/components/schemas/Gcash'
+        - $ref: '#/components/schemas/Ovo'
+        - $ref: '#/components/schemas/Shopeepay'
+        - $ref: '#/components/schemas/Grabpay'
+        - $ref: '#/components/schemas/Linkaja'
+        - $ref: '#/components/schemas/Maya'
+        - $ref: '#/components/schemas/Pse'
+        - $ref: '#/components/schemas/Dana'
+        - $ref: '#/components/schemas/Qris'
+    Pix:
+      type: object
+    ProviderQuoteResponse:
+      required:
+        - from
+        - to
+        - fiatAmount
+        - cryptoAmount
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        fiatAmount:
+          type: number
+        cryptoAmount:
+          type: number
+        dca:
+          type: boolean
+    ProviderServerError:
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Revolut:
+      type: object
+    Sepa:
+      type: object
+    Sofort:
+      type: object
+    UPIBankTransfer:
+      type: object
+    Googlepay:
+      type: object
+    Applepay:
+      type: object
+    Paypal:
+      type: object
+    Cryptocom:
+      type: object
+    Instantach:
+      type: object
+    Fasterpayments:
+      type: object
+    Easybank:
+      type: object
+    Cashapp:
+      type: object
+    Venmo:
+      type: object
+    Upibanktransfer:
+      type: object
+    Bancontact:
+      type: object
+    P2p:
+      type: object
+    Interac:
+      type: object
+    Payid:
+      type: object
+    Spei:
+      type: object
+    Imps:
+      type: object
+    Gcash:
+      type: object
+    Ovo:
+      type: object
+    Shopeepay:
+      type: object
+    Grabpay:
+      type: object
+    Linkaja:
+      type: object
+    Maya:
+      type: object
+    Pse:
+      type: object
+    Dana:
+      type: object
+    Qris:
+      type: object
+    Unknown:
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+    RampRedirectUrl:
+      type: object
+      description: Redirect URL to Ramp UI widget
+      required:
+        - rampRedirectUrl
+      properties:
+        rampRedirectUrl:
+          type: string
+          format: uri
+          description: The URL of the on-ramp widget, including the specified Buy parameters, to which the user will be redirected.
+      example:
+        rampRedirectUrl: "https://widget.crypto-partner.com?fiatCurrency=GBP&amount=12345&cryptoCurrency=ETH&walletAddress=0x96e2B7Bf479f84e7A0a94f0620290B7D3E08f5EF&countryCode=GB&partnerId=a01798bc-7f0b-14ed-a12b-0e3fac1209ad&externalOrderId=2d1769bc-7aab-92ed-a10b-0232ac12090d&disableFiatAmount=true&disableCryptoCurrency=true&disableWalletAddress=true&disableCountryCode=true&skipWalletAddress=true&partnerRedirectUrl=https%3A%2F%2Fcrypto.partner.com%2Forder%3ForderId%3D2d1769bc-7aab-92ed-a10b-0232ac12090d&theme=dark"
+    Order:
+      type: object
+      description: Fiat to crypto exchange order
+      required:
+        - id
+        - timestamp
+        - lastUpdated
+        - state
+        - fiat
+        - crypto
+        - paymentMethod
+        - userWalletAddress
+        - userCountry
+        - transactionHash
+      properties:
+        id:
+          type: string
+          description: Identifier of the order, passed as orderId parameter in /buy endpoint
+        timestamp:
+          type: string
+          format: date-time
+          description: UTC date and time of order creation in the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format
+        lastUpdated:
+          type: string
+          format: date-time
+          description: UTC date and time of order update in the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format
+        state:
+          type: string
+          enum:
+            - pending
+            - processing
+            - failed
+            - completed
+          description: State of order processing
+        fiat:
+          $ref: '#/components/schemas/Money'
+          description: Fiat amount the customer paid for the crypto (excluding fees)
+        crypto:
+          $ref: '#/components/schemas/CryptoMoney'
+          description: Crypto amount that the customer received
+        paymentMethod:
+          $ref: '#/components/schemas/BuyPaymentMethod'
+          description: Payment method used for the purchase
+        userWalletAddress:
+          type: string
+          description: Wallet address to which crypto transfer was ordered
+        userCountry:
+          type: string
+          description: Country of the user at the Alpha-2 standard (ISO3166).
+        transactionHash:
+          type: string
+          description: >-
+            Blockchain transaction hash.
+            Absent if no crypto transaction has been created yet.
+            Always present if order is in the `COMPLETED` state.
+        fees:
+          type: object
+          description: Fees
+          properties:
+            ledger:
+              $ref: '#/components/schemas/Money'
+              description: Ledger fee
+      example:
+        id: a01868cc-71ab-d2ed-a10b-0a32ac1c0b02
+        timestamp: 2022-12-26T11:32:10Z
+        lastUpdated: 2022-12-26T11:33:54Z
+        status: completed
+        fiat:
+          amount: 101.22
+          currency: USD
+        crypto:
+          amount: 0.10604352
+          currency: ETH
+          blockchain: ethereum
+          chainId: 1
+        paymentMethod: card
+        userWalletAddress: "0x96e2B7Bf479f84e7A0a94f0620290B7D3E08f5EF"
+        userCountry: PL
+        transactionHash: 76cfb3b4f0acd595fa5b24036e86fd21d3c7b9887b2c8e3d4007598e4cbe6957
+        fees:
+          ledger:
+            amount: 2.75
+            currency: USD
+    Money:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: number
+          format: float
+        currency:
+          type: string
+          description: Fiat currency at the ISO-4217 standard.
+      example:
+        amount: 100.00
+        currency: USD
+    CryptoMoney:
+      type: object
+      required:
+        - amount
+        - currency
+        - blockchain
+      properties:
+        amount:
+          type: number
+          format: float
+        currency:
+          type: string
+          description: Crypto currency id of the provider.
+        blockchain:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+          description: present for evm chains only
+        address:
+          type: string
+          description: present for tokens only, not sent for coins
+      example:
+        amount: 100.00
+        currency: ETH
+        blockchain: ethereum
+        chainId: 1

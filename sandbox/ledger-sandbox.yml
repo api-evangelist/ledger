@@ -1,0 +1,81 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/simulator/introduction,
+  https://developers.ledger.com/docs/ledger-live/exchange/swap,
+  https://developers.ledger.com/docs/ai-tools/ledger-cli,
+  https://help.multisig.ledger.com/guides/api-guides/1.-querying-safe-data,
+  https://help.multisig.ledger.com/guides/cli-guides/building-agent-workflows
+note: >-
+  Ledger has no test-vs-live API key duality and publishes no magic test card numbers — the
+  equivalent of a payments sandbox here is a device emulator and a set of public testnets. Every
+  value below is published by Ledger; none is invented.
+test_live_separation:
+  model: testnet-vs-mainnet, not test-key-vs-live-key
+  detail: >-
+    There are no `sk_test_` style key prefixes anywhere in the estate. Isolation is achieved by
+    pointing at a test chain (Sepolia, Bitcoin testnet, Solana devnet) or by running against a device
+    emulator instead of real hardware.
+environments:
+  - name: Wallet API Simulator
+    kind: mock server
+    package: '@ledgerhq/wallet-api-simulator'
+    url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/simulator/introduction
+    capability: >-
+      A fake connection to a Simulator acting as a Wallet API Server, with predefined responses per
+      Wallet API action and exportable "profiles" you can customise. Ledger calls out error
+      simulation specifically — "Simulate errors that are hard to reproduce ... you should also test
+      your error handling code." Suitable for E2E, integration and unit tests with no device present.
+  - name: Speculos
+    kind: device emulator
+    url: https://github.com/LedgerHQ/speculos
+    capability: >-
+      Emulates Ledger hardware so a device app can be exercised without physical hardware. Ledger's
+      bug-bounty proof-of-concept requirements name it as an acceptable reproduction environment
+      alongside real devices.
+    transport_package: '@ledgerhq/device-transport-kit-node-hid (USB Speculos transport)'
+  - name: Ragger
+    kind: test framework
+    url: https://github.com/LedgerHQ/ragger
+    capability: Python testing framework for device apps, paired with Speculos.
+  - name: Ledger Wallet Developer Mode
+    kind: end-to-end integration test
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/providers-test-and-submit
+    capability: >-
+      Load an unreleased LiveApp manifest into Ledger Wallet and run the full exchange flow before
+      submitting the API, manifest and public key for Ledger review.
+  - name: Multisig testnet
+    kind: public testnet
+    chain: Sepolia
+    chain_id: 11155111
+    base_url: https://app.multisig.ledger.com/api/safe-transaction-service/11155111
+    capability: >-
+      All Ledger Multisig API tutorials are written against Sepolia. Read-only queries need no
+      private key and no API key at all — "No private key or API key is needed for read-only
+      queries."
+    source: https://help.multisig.ledger.com/guides/api-guides/1.-querying-safe-data
+deterministic_test_signers:
+  mechanism: 'lem --salt <secret> --index <n>'
+  detail: >-
+    The multisig CLI derives a stable test signer from a single secret plus an index, so a CI job or
+    agent loop gets a reproducible signer without plumbing a mnemonic through the runtime. Ledger
+    warns that the salt is itself a secret — "Anyone with the salt + index can sign as that signer."
+  warning: >-
+    Ledger states plainly that `--seed` is "a footgun outside of testnets" and that an agent should
+    never be given direct access to a mainnet mnemonic; on mainnet the agent should only PROPOSE
+    (`lem tx propose`) against a Safe whose owners are real Ledger devices.
+  source: https://help.multisig.ledger.com/guides/cli-guides/building-agent-workflows
+dry_run:
+  - 'wallet-cli send --dry-run  (preview fees before hardware signing)'
+  - 'POST /transactions/estimate-fees  (Vault API fee estimation with no transaction created)'
+  - 'wallet-cli genuine-check  (verify device authenticity; non-zero exit on failure, usable as a CI guard)'
+read_only_safe_commands:
+  note: >-
+    Ledger explicitly designates a read-only command set as safe to run in CI or from an untrusted
+    agent, because none of them touches the device.
+  commands: [balances, operations, 'earn yields', 'earn positions']
+  source: https://developers.ledger.com/docs/ai-tools/ledger-cli
+test_values_published: false
+test_values_note: >-
+  No test card numbers, test IBANs, magic identifiers or hosted test tokens are published anywhere in
+  the estate. None were invented for this artifact.

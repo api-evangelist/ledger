@@ -1,0 +1,508 @@
+generated: '2026-08-25'
+method: derived
+source: openapi/ledger-*-openapi.yml (7 documents, 108 operations)
+format: bespoke
+format_note: 'No Ledger API uses RFC 9457 application/problem+json. Three different error envelopes coexist:
+  the Vault API returns {"code": <int>, "message": <string>}; the multisig service returns CodeErrorResponse
+  {"code", "message", "arguments"[]}; the exchange buy contract returns text/plain for its 400s while
+  sell/card/earn return application/json. Adopting RFC 9457 across the estate is the cheapest error-semantics
+  win available.'
+status_code_census:
+  '400': 40
+  '401': 5
+  '404': 80
+  '405': 1
+  '422': 13
+  '451': 5
+  '500': 3
+  '501': 1
+  '503': 1
+notable:
+- status: 420
+  where: Ledger Enterprise API rate limiting
+  note: Documented on the rate-limits page but NOT declared in the OpenAPI. 420 is non-standard; a client
+    keying on 429 will not back off.
+  source: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+- status: 451
+  where: POST /sell (card provider)
+  note: Unavailable For Legal Reasons — returned when the user's IP address is in a restricted region.
+  source: openapi/ledger-card-provider-openapi.yml#postSell
+- status: 401
+  where: exchange status webhooks
+  note: Ledger deliberately returns the same 401 for an invalid key and for an unknown or unsupported
+    provider so a caller cannot probe which providers exist.
+  source: openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 422
+  where: swap status webhook
+  note: A providerStatus value Ledger cannot map to an internal status is rejected with 422 and nothing
+    is persisted.
+  source: openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 501
+  where: GET /accounts/{account_id}/balances/history
+  note: Not supported for this currency — a capability gap surfaced as a status code.
+  source: openapi/ledger-enterprise-vault-openapi.yml
+- status: 503
+  where: GET /tx-service/eth/api/v1/safes/{address}/creation/
+  note: Problem connecting to Ethereum network — an upstream-chain dependency leaking through.
+  source: openapi/ledger-enterprise-multisig-openapi.yml#safes_creation_retrieve
+problems:
+- status: 400
+  title: Invalid search parameters
+  media_type: application/json
+  occurrences: 7
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /digests
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /groups
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /messages
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /requests
+- status: 400
+  title: Invalid search parameter
+  media_type: application/json
+  occurrences: 5
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{parent_account_id}/erc20-children-accounts
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /cardano/accounts/{account_id}/stakes
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /solana/accounts/{account_id}/stakes
+- status: 400
+  title: Deposit wallet not available.
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-card-provider-openapi.yml#postSell
+  - openapi/ledger-sell-provider-openapi.yml#postSell
+  - openapi/ledger-swap-provider-openapi.yml#postSwapFixed
+  - openapi/ledger-swap-provider-openapi.yml#postSwapFloat
+- status: 400
+  title: Invalid data
+  media_type: null
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#delegates_list_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_multisig_transactions_list_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_multisig_transactions_create_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#safe_operations_confirmations_list
+- status: 400
+  title: invalid search parameters
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /entities
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /labels
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /pledges
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /settlements
+- status: 400
+  title: Malformed data
+  media_type: null
+  occurrences: 3
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#delegates_create_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#delegates_destroy_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#safe_operations_confirmations_create
+- status: 400
+  title: Bad Request
+  media_type: text/plain
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-buy-provider-openapi.yml#buy-redirect
+  - openapi/ledger-sell-provider-openapi.yml#sell-redirect
+- status: 400
+  title: Invalid secret
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /compliance/address-risk/{address}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /compliance/sanctions/{address}
+- status: 400
+  title: Invalid request data
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /requests
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /settlements
+- status: 400
+  title: 'Invalid value for: query parameter from, Invalid value for: query parameter to, Invalid value
+    for: query parameter payment-method, Invalid value for: query parameter amount, Invali'
+  media_type: text/plain
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-buy-provider-openapi.yml#getQuote
+- status: 400
+  title: Bad request
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-earn-provider-openapi.yml#getV0NetworkStakes
+- status: 400
+  title: Settlement cannot be canceled
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /settlements/{settlement_id}/cancel
+- status: 400
+  title: Settlement cannot be recovered
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /settlements/{settlement_id}/recover
+- status: 400
+  title: Invalid transaction parameters
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /transactions/estimate-fees
+- status: 400
+  title: 'Invalid value for: query parameter from,'
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-sell-provider-openapi.yml#getQuote
+- status: 400
+  title: 'This error indicates a violation of one or more constraints within the partner''s system regarding
+    the quote request. '
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#postQuote
+- status: 401
+  title: Unauthorized
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-earn-provider-openapi.yml#getV0NetworkStakes
+  - openapi/ledger-earn-provider-openapi.yml#getV0Grow
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /auth/token
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /auth/token/refresh
+- status: 401
+  title: Missing or invalid `x-api-key`, or an unknown / unsupported provider (uniform and fail-closed).
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 404
+  title: Account not found
+  media_type: application/json
+  occurrences: 12
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/balances
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/currency
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/history
+- status: 404
+  title: Account or Stake not found
+  media_type: application/json
+  occurrences: 7
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /cardano/accounts/{account_id}/periodic-rewards
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /cardano/accounts/{account_id}/rewards
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /cardano/accounts/{account_id}/stakes/{stake_uid}/rewards
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /ethereum/accounts/{account_id}/stakes/{stake_uid}/rewards
+- status: 404
+  title: Safe not found
+  media_type: null
+  occurrences: 5
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_balances_retrieve_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_collectibles_retrieve
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_retrieve
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_export_retrieve
+- status: 404
+  title: This search parameter doesn't exist
+  media_type: application/json
+  occurrences: 5
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{parent_account_id}/erc20-children-accounts
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /cardano/accounts/{account_id}/stakes
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /solana/accounts/{account_id}/stakes
+- status: 404
+  title: Request not found
+  media_type: application/json
+  occurrences: 5
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /requests/{request_id}/approve
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /requests/{request_id}/challenge
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /requests/{request_id}/challenge/reject
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /requests/{request_id}/governance-status
+- status: 404
+  title: Sell transaction not found.
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-card-provider-openapi.yml#statusUpdate
+  - openapi/ledger-card-provider-openapi.yml#getStatusUpdate
+  - openapi/ledger-sell-provider-openapi.yml#statusUpdate
+  - openapi/ledger-sell-provider-openapi.yml#getStatusUpdate
+- status: 404
+  title: Transaction not found
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /transactions/{transaction_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /transactions/{transaction_id}/history
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /transactions/{transaction_id}/labels
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /transactions/{transaction_id}/reject
+- status: 404
+  title: Not found error.
+  media_type: application/json
+  occurrences: 3
+  source_operations:
+  - openapi/ledger-card-provider-openapi.yml#postSell
+  - openapi/ledger-sell-provider-openapi.yml#postSell
+  - openapi/ledger-swap-provider-openapi.yml#postSwapFixed
+- status: 404
+  title: entity not found
+  media_type: application/json
+  occurrences: 3
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /entities/{entity_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /entities/{entity_id}/history
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /entities/{entity_id}/users
+- status: 404
+  title: Settlement not found
+  media_type: application/json
+  occurrences: 3
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /settlements/{settlement_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /settlements/{settlement_id}/cancel
+  - openapi/ledger-enterprise-vault-openapi.yml#POST /settlements/{settlement_id}/recover
+- status: 404
+  title: Not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-earn-provider-openapi.yml#getV0NetworkStakes
+  - openapi/ledger-earn-provider-openapi.yml#getV0Grow
+- status: 404
+  title: No address matches
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/address
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/address/{index}
+- status: 404
+  title: Currency not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /currencies/{currency_name}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /currencies/{currency_name}/{address}
+- status: 404
+  title: Digests not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /digests/{digests_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /digests/{digests_id}/history
+- status: 404
+  title: Group not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /groups/{group_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /groups/{group_id}/history
+- status: 404
+  title: Message not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /messages/{message_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /messages/{message_id}/history
+- status: 404
+  title: User not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /users/{user_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /users/{user_id}/history
+- status: 404
+  title: Whitelist not found
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /whitelists/{whitelist_id}
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /whitelists/{whitelist_id}/history
+- status: 404
+  title: Delegate not found
+  media_type: null
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#delegates_destroy_2
+- status: 404
+  title: Safe creation not found
+  media_type: null
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_creation_retrieve
+- status: 404
+  title: Provided index invalid
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/addresses
+- status: 404
+  title: No address matches the provided index
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/addresses/{index}
+- status: 404
+  title: Account not found or feature flag desactivated
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/tokens
+- status: 404
+  title: Token not found
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /currencies/{currency_name}/tokens/{contract_address}
+- status: 404
+  title: label not found
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /labels/{label_id}
+- status: 404
+  title: Current user doesn't have any configuration
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /notifications/configuration
+- status: 404
+  title: pledge not found
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /pledges/{pledge_id}
+- status: 404
+  title: RequestWithChallenge not found
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /requests/{request_id}
+- status: 404
+  title: The pair might be currently unavailable on your end, or you might not recognize one of the currencies.
+    Please add relevant details about the causes.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#postQuote
+- status: 404
+  title: Transaction not found.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#getStatus
+- status: 404
+  title: No swap matches the given `swapId` / `providerId`.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 405
+  title: The swap is already in a final status and can no longer be updated.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 422
+  title: Safe address checksum not valid
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_balances_retrieve_2
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_collectibles_retrieve
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_export_retrieve
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_balances_retrieve_2
+- status: 422
+  title: Owner address checksum not valid
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#owners_safes_retrieve
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_creation_retrieve
+- status: 422
+  title: Invalid Ethereum address/Error processing data
+  media_type: null
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#delegates_destroy_2
+- status: 422
+  title: Invalid ethereum address
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_multisig_transactions_list_2
+- status: 422
+  title: Invalid ethereum address | User is not an owner | Invalid safeTxHash |Invalid signature | Nonce
+    already executed | Sender is not an owner
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_multisig_transactions_create_2
+- status: 422
+  title: Module address checksum not valid
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#modules_safes_retrieve
+- status: 422
+  title: Error processing data
+  media_type: null
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safe_operations_confirmations_create
+- status: 422
+  title: 'code = 1: Checksum address validation failed'
+  media_type: null
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_retrieve
+- status: 422
+  title: The provided `providerStatus` is not recognized; nothing is persisted.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 451
+  title: When the user's IP address is in a restricted region.
+  media_type: application/json
+  occurrences: 4
+  source_operations:
+  - openapi/ledger-card-provider-openapi.yml#postSell
+  - openapi/ledger-sell-provider-openapi.yml#postSell
+  - openapi/ledger-swap-provider-openapi.yml#postSwapFixed
+  - openapi/ledger-swap-provider-openapi.yml#postSwapFloat
+- status: 451
+  title: User's IP address or currency is in a restricted region.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#postQuote
+- status: 500
+  title: Server error
+  media_type: application/json
+  occurrences: 2
+  source_operations:
+  - openapi/ledger-earn-provider-openapi.yml#getV0NetworkStakes
+  - openapi/ledger-earn-provider-openapi.yml#getV0Grow
+- status: 500
+  title: Unexpected error while processing the update.
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-swap-provider-openapi.yml#statusUpdate
+- status: 501
+  title: Not supported for this currency
+  media_type: application/json
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-vault-openapi.yml#GET /accounts/{account_id}/balances/history
+- status: 503
+  title: Problem connecting to Ethereum network
+  media_type: null
+  occurrences: 1
+  source_operations:
+  - openapi/ledger-enterprise-multisig-openapi.yml#safes_creation_retrieve

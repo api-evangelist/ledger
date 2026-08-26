@@ -1,0 +1,211 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  registry.npmjs.org and pypi.org metadata endpoints, cross-checked against
+  https://developers.ledger.com/docs/device-interaction/getting-started,
+  https://developers.ledger.com/docs/ai-tools/ledger-cli and
+  https://help.multisig.ledger.com/guides/cli-guides/installation
+note: >-
+  All @ledgerhq/* npm scopes and the ledgerblue / ledgerwallet / ledgercomm PyPI projects are
+  published by Ledger SAS (GitHub org LedgerHQ). Versions and dates read from the registry metadata
+  endpoints on 2026-08-25.
+packages:
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-management-kit'
+    url: https://www.npmjs.com/package/@ledgerhq/device-management-kit
+    install: npm install @ledgerhq/device-management-kit
+    official: true
+    version: 1.8.0
+    published: '2026-08-18'
+    note: Core DMK SDK; supersedes the deprecated LedgerJS hw-app-* / hw-transport-* line.
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-cli'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-cli
+    install: npm i -g @ledgerhq/wallet-cli
+    official: true
+    version: 2.1.0
+    published: '2026-07-30'
+    note: Ledger Wallet CLI binary; since 2.1.0 the agent skill ships embedded in the binary.
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-api-client'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-api-client
+    install: npm install @ledgerhq/wallet-api-client
+    official: true
+    version: 1.15.3
+    published: '2026-08-06'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-api-core'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-api-core
+    install: npm install @ledgerhq/wallet-api-core
+    official: true
+    version: 2.0.0
+    published: '2026-08-06'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-api-server'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-api-server
+    install: npm install @ledgerhq/wallet-api-server
+    official: true
+    version: 3.4.3
+    published: '2026-08-06'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-api-client-react'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-api-client-react
+    install: npm install @ledgerhq/wallet-api-client-react
+    official: true
+    version: 1.4.34
+    published: '2026-08-06'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-api-simulator'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-api-simulator
+    install: npm install -D @ledgerhq/wallet-api-simulator
+    official: true
+    version: 2.3.3
+    published: '2026-08-06'
+    note: Mock Wallet API Server for local Live App development and E2E tests.
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/wallet-api-exchange-module'
+    url: https://www.npmjs.com/package/@ledgerhq/wallet-api-exchange-module
+    install: npm install @ledgerhq/wallet-api-exchange-module
+    official: true
+    version: 0.33.0
+    published: '2026-07-16'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-signer-kit-ethereum'
+    url: https://www.npmjs.com/package/@ledgerhq/device-signer-kit-ethereum
+    install: npm install @ledgerhq/device-signer-kit-ethereum
+    official: true
+    version: 1.16.0
+    published: '2026-05-18'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-signer-kit-bitcoin'
+    url: https://www.npmjs.com/package/@ledgerhq/device-signer-kit-bitcoin
+    install: npm install @ledgerhq/device-signer-kit-bitcoin
+    official: true
+    version: 1.3.3
+    published: '2026-08-11'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-signer-kit-solana'
+    url: https://www.npmjs.com/package/@ledgerhq/device-signer-kit-solana
+    install: npm install @ledgerhq/device-signer-kit-solana
+    official: true
+    version: 1.12.1
+    published: '2026-08-25'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-transport-kit-web-hid'
+    url: https://www.npmjs.com/package/@ledgerhq/device-transport-kit-web-hid
+    install: npm install @ledgerhq/device-transport-kit-web-hid
+    official: true
+    version: 1.2.4
+    published: '2026-06-16'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-transport-kit-web-ble'
+    url: https://www.npmjs.com/package/@ledgerhq/device-transport-kit-web-ble
+    install: npm install @ledgerhq/device-transport-kit-web-ble
+    official: true
+    version: 1.3.2
+    published: '2026-01-09'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/device-transport-kit-node-hid'
+    url: https://www.npmjs.com/package/@ledgerhq/device-transport-kit-node-hid
+    install: npm install @ledgerhq/device-transport-kit-node-hid
+    official: true
+    version: 1.0.1
+    published: '2026-04-14'
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/ledger-wallet-provider'
+    url: https://www.npmjs.com/package/@ledgerhq/ledger-wallet-provider
+    install: npm install @ledgerhq/ledger-wallet-provider
+    official: true
+    version: 1.4.2
+    published: '2026-08-18'
+    note: Web Components library embedding Ledger's connect flow, Clear Signing and Transaction Check in a dApp.
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/hw-app-eth'
+    url: https://www.npmjs.com/package/@ledgerhq/hw-app-eth
+    install: npm install @ledgerhq/hw-app-eth
+    official: true
+    version: 7.8.15
+    published: '2026-08-19'
+    deprecated: true
+    note: >-
+      LedgerJS. Ledger's own changelog states all hw-app-* / hw-transport-* packages are deprecated
+      from September 2026; migrate to @ledgerhq/device-signer-kit-ethereum.
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/hw-transport-webhid'
+    url: https://www.npmjs.com/package/@ledgerhq/hw-transport-webhid
+    install: npm install @ledgerhq/hw-transport-webhid
+    official: true
+    version: 6.36.0
+    published: '2026-06-30'
+    deprecated: true
+    note: LedgerJS transport; deprecated September 2026 in favour of @ledgerhq/device-transport-kit-web-hid.
+  - language: javascript
+    registry: npm
+    name: '@ledgerhq/connect-kit'
+    url: https://www.npmjs.com/package/@ledgerhq/connect-kit
+    install: npm install @ledgerhq/connect-kit
+    official: true
+    version: 1.1.12
+    published: '2024-02-01'
+    note: >-
+      Last published 2024-02-01 — more than two years stale against the rest of the estate; the
+      current dApp connect path is @ledgerhq/ledger-wallet-provider.
+  - language: javascript
+    registry: npm
+    name: les-multisig-cli
+    url: https://www.npmjs.com/package/les-multisig-cli
+    install: npm install -g les-multisig-cli
+    official: true
+    version: null
+    published: null
+    note: >-
+      DEFECT, verified 2026-08-25. https://help.multisig.ledger.com/guides/cli-guides/installation
+      instructs `npm install -g les-multisig-cli` and `npx les-multisig-cli@latest`, but
+      registry.npmjs.org/les-multisig-cli returns {"error":"Not found"} — the package is absent from
+      the public npm registry, so the documented install cannot succeed. Recorded as an honest null,
+      not a guess.
+  - language: python
+    registry: pypi
+    name: ledgerblue
+    url: https://pypi.org/project/ledgerblue/
+    install: pip install ledgerblue
+    official: true
+    version: 0.1.58
+    published: '2026-06-23'
+    note: Python library to communicate with Ledger devices; used for device-app loading and testing.
+  - language: python
+    registry: pypi
+    name: ledgerwallet
+    url: https://pypi.org/project/ledgerwallet/
+    install: pip install ledgerwallet
+    official: true
+    version: 0.10.0
+    published: '2026-04-08'
+  - language: python
+    registry: pypi
+    name: ledgercomm
+    url: https://pypi.org/project/ledgercomm/
+    install: pip install ledgercomm
+    official: true
+    version: 1.2.1
+    published: '2024-01-12'
+    note: >-
+      Last published 2024-01-12; still referenced by the device-app test tooling (Speculos / Ragger)
+      but effectively frozen.
