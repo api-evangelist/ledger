@@ -46,180 +46,1731 @@ tags_raw:
   - agent-skills
   - agent-native
 apis:
-  - name: Ledger Wallet Exchange Provider APIs
-    description: >-
-      Five OpenAPI contracts (Swap, Buy, Sell, Earn, Card) that an exchange, on/off-ramp, earn or
-      card provider implements so its service is offered natively inside Ledger Wallet. Ledger
-      publishes the specification and calls the partner's implementation; each swap/sell is secured
-      with a partner-signed binary payload the Ledger device clear-signs. Advertised by Ledger's own
-      /.well-known/api-catalog at developers.ledger.com.
-    humanURL: https://developers.ledger.com/docs/ledger-live/exchange
-    tags:
-      - Payments
-      - Cryptocurrency
-      - Digital Assets
-      - Staking
-    tags_raw:
-      - payments
-      - cryptocurrency
-      - digital-assets
-      - staking
-    properties:
-      - type: OpenAPI
-        url: openapi/ledger-swap-provider-openapi.yml
-      - type: OpenAPI
-        url: openapi/ledger-buy-provider-openapi.yml
-      - type: OpenAPI
-        url: openapi/ledger-sell-provider-openapi.yml
-      - type: OpenAPI
-        url: openapi/ledger-earn-provider-openapi.yml
-      - type: OpenAPI
-        url: openapi/ledger-card-provider-openapi.yml
-      - type: APIReference
-        url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
-      - type: Documentation
-        url: https://developers.ledger.com/docs/ledger-live/exchange
-      - type: Webhooks
-        url: asyncapi/ledger-exchange-webhooks.yml
-      - type: Overlay
-        url: overlays/ledger-swap-provider-overlay.yaml
-    x-base-url-note: >-
-      These contracts carry no servers[] block because the server is the PARTNER's, not Ledger's —
-      Ledger publishes the specification and calls the provider's own host. Recorded as absent
-      rather than guessed.
-  - name: Ledger Enterprise API (Vault API)
-    description: >-
-      Institutional custody REST API for the Ledger Enterprise platform — accounts and balances,
-      transaction creation and approval, governance requests and quorums, users and API operators,
-      groups, entities, whitelists, labels, currencies and tokens, compliance digests, staking
-      pledges, settlements, PKI and reporting/notification webhooks. 85 operations over 269 schemas.
-      Authenticated with X-Ledger-API-User plus an API key or store auth token.
-    humanURL: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
-    baseURL: https://api.vault.ledger.com
-    tags:
-      - Institutional Custody
-      - Digital Assets
-      - Staking
-      - Security
-      - Blockchain
-    tags_raw:
-      - institutional-custody
-      - digital-assets
-      - staking
-      - security
-      - blockchain
-    properties:
-      - type: OpenAPI
-        url: openapi/ledger-enterprise-vault-openapi.yml
-      - type: APIReference
-        url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
-      - type: Documentation
-        url: https://help.enterprise.ledger.com/api-documentation
-      - type: GettingStarted
-        url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
-      - type: Authentication
-        url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
-      - type: RateLimits
-        url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
-      - type: LLMsTxt
-        url: https://help.enterprise.ledger.com/llms.txt
-      - type: Overlay
-        url: overlays/ledger-enterprise-vault-overlay.yaml
-  - name: Ledger Enterprise Multisig API
-    description: >-
-      Ledger-hosted transaction service for Safe smart accounts, adding Ledger Clear Signing and
-      enterprise governance on top of the open-source Safe backend. Query Safe configuration,
-      balances, collectibles and history; propose, confirm and execute multisig transactions;
-      manage delegates, modules, owners and ERC-4337 user operations.
-    humanURL: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
-    baseURL: https://app.multisig.ledger.com/api/safe-transaction-service/{chainId}
-    tags:
-      - Institutional Custody
-      - Digital Assets
-      - Blockchain
-      - Security
-    tags_raw:
-      - institutional-custody
-      - digital-assets
-      - blockchain
-      - security
-    properties:
-      - type: OpenAPI
-        url: openapi/ledger-enterprise-multisig-openapi.yml
-      - type: APIReference
-        url: https://help.multisig.ledger.com/reference
-      - type: Documentation
-        url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
-      - type: LLMsTxt
-        url: https://help.multisig.ledger.com/llms.txt
-      - type: CLI
-        url: cli/ledger-cli.yml
-    x-contract-provenance: >-
-      The saved spec self-identifies as info.title "Safe Transaction Service" v5.33.1, not as a
-      Ledger product. It is kept under Ledger because Ledger's own documentation states it plainly:
-      "Ledger Enterprise Multisig is built upon the battle-tested, open-source Safe backend ... if
-      you are familiar with the Safe API you will find our endpoints and data structures virtually
-      identical. All API services are hosted under the Ledger Multisig domain", and the tutorials add
-      "This is the Ledger-hosted backend ... It is not the public Safe Transaction Service." The
-      document is uploaded to Ledger's own GitBook organisation and rendered as the Ledger Enterprise
-      Multisig API reference at help.multisig.ledger.com, against a Ledger base host. Upstream
-      project - https://github.com/safe-global/safe-transaction-service
-  - name: Ledger Wallet API
-    description: >-
-      Bi-directional JSON-RPC 2.0 interface between a Live App (dApp) and a wallet implementing the
-      Wallet API Server, such as Ledger Wallet. Currency-agnostic modules for accounts, currencies,
-      transactions, message signing, storage, exchange and device access, distributed as
-      @ledgerhq/wallet-api-client, -core, -server, -client-react and -simulator.
-    humanURL: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
-    tags:
-      - Blockchain
-      - Digital Assets
-      - Self Custody
-    tags_raw:
-      - blockchain
-      - digital-assets
-      - self-custody
-    properties:
-      - type: Documentation
-        url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
-      - type: APIReference
-        url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/core/modules/wallet
-      - type: Sandbox
-        url: https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/simulator/introduction
-      - type: SourceCode
-        url: https://github.com/LedgerHQ/wallet-api
-    x-transport-note: >-
-      JSON-RPC 2.0 over a message-port transport, not REST. No OpenAPI is published for it and none
-      was authored; the TypeScript client packages are the machine-readable surface.
-  - name: Ledger Device Management Kit
-    description: >-
-      TypeScript SDK for discovering, connecting to and driving Ledger hardware signers over WebHID,
-      Bluetooth, USB and Speculos — sessions, device state, app management, APDU exchange and
-      chain-specific signer kits for Ethereum, Bitcoin and Solana. Supersedes the deprecated LedgerJS
-      hw-app-* / hw-transport-* packages.
-    humanURL: https://developers.ledger.com/docs/device-interaction/getting-started
-    tags:
-      - Hardware Wallet
-      - Security
-      - Self Custody
-      - Blockchain
-    tags_raw:
-      - hardware-wallet
-      - security
-      - self-custody
-      - blockchain
-    properties:
-      - type: Documentation
-        url: https://developers.ledger.com/docs/device-interaction/getting-started
-      - type: APIReference
-        url: https://developers.ledger.com/docs/device-interaction/references/ts-doc
-      - type: SDKs
-        url: packages/ledger-packages.yml
-      - type: AgentSkill
-        url: skills/_index.yml
-      - type: SourceCode
-        url: https://github.com/LedgerHQ/device-sdk-ts
+- name: Ledger Wallet API
+  description: >-
+    Bi-directional JSON-RPC 2.0 interface between a Live App (dApp) and a wallet implementing the Wallet
+    API Server, such as Ledger Wallet. Currency-agnostic modules for accounts, currencies, transactions,
+    message signing, storage, exchange and device access, distributed as @ledgerhq/wallet-api-client,
+    -core, -server, -client-react and -simulator.
+  humanURL: >-
+    https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
+  tags:
+  - Blockchain
+  - Digital Assets
+  - Self Custody
+  tags_raw:
+  - blockchain
+  - digital-assets
+  - self-custody
+  properties:
+  - type: Documentation
+    url: >-
+      https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
+  - type: APIReference
+    url: >-
+      https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/core/modules/wallet
+  - type: Sandbox
+    url: >-
+      https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/simulator/introduction
+  - type: SourceCode
+    url: https://github.com/LedgerHQ/wallet-api
+  x-transport-note: >-
+    JSON-RPC 2.0 over a message-port transport, not REST. No OpenAPI is published for it and none was
+    authored; the TypeScript client packages are the machine-readable surface.
+- name: Ledger Device Management Kit
+  description: >-
+    TypeScript SDK for discovering, connecting to and driving Ledger hardware signers over WebHID, Bluetooth,
+    USB and Speculos — sessions, device state, app management, APDU exchange and chain-specific signer
+    kits for Ethereum, Bitcoin and Solana. Supersedes the deprecated LedgerJS hw-app-* / hw-transport-*
+    packages.
+  humanURL: https://developers.ledger.com/docs/device-interaction/getting-started
+  tags:
+  - Hardware Wallet
+  - Security
+  - Self Custody
+  - Blockchain
+  tags_raw:
+  - hardware-wallet
+  - security
+  - self-custody
+  - blockchain
+  properties:
+  - type: Documentation
+    url: https://developers.ledger.com/docs/device-interaction/getting-started
+  - type: APIReference
+    url: https://developers.ledger.com/docs/device-interaction/references/ts-doc
+  - type: SDKs
+    url: packages/ledger-packages.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: SourceCode
+    url: https://github.com/LedgerHQ/device-sdk-ts
+- aid: ledger:ledger-4337-api
+  name: Ledger 4337 API
+  description: The 4337 API from Ledger — 5 operation(s) for 4337.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - '4337'
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-4337-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-accounts-api
+  name: Ledger Accounts API
+  description: The Accounts API from Ledger — 17 operation(s) for accounts.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-accounts-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-authentication-api
+  name: Ledger Authentication API
+  description: The Authentication API from Ledger — 2 operation(s) for authentication.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-authentication-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-buy-redirect-api
+  name: Ledger Buy Redirect API
+  description: The Buy Redirect API from Ledger — 1 operation(s) for buy redirect.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Buy Redirect
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-buy-redirect-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-capabilities-api
+  name: Ledger Capabilities API
+  description: The Capabilities API from Ledger — 1 operation(s) for capabilities.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Capabilities
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-capabilities-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-cardano-api
+  name: Ledger Cardano API
+  description: The Cardano API from Ledger — 4 operation(s) for cardano.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Cardano
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-cardano-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-compliance-api
+  name: Ledger Compliance API
+  description: The Compliance API from Ledger — 2 operation(s) for compliance.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Compliance
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-compliance-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-crypto-currencies-api
+  name: Ledger Crypto Currencies API
+  description: The Crypto Currencies API from Ledger — 1 operation(s) for crypto currencies.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Crypto Currencies
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-crypto-currencies-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-currencies-api
+  name: Ledger Currencies API
+  description: The Currencies API from Ledger — 5 operation(s) for currencies.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Currencies
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-currencies-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-delegates-api
+  name: Ledger Delegates API
+  description: The delegates API from Ledger — 2 operation(s) for delegates.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - delegates
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-delegates-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-digests-api
+  name: Ledger Digests API
+  description: The Digests API from Ledger — 3 operation(s) for digests.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Digests
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-digests-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-entities-api
+  name: Ledger Entities API
+  description: The Entities API from Ledger — 4 operation(s) for entities.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Entities
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-entities-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-ethereum-api
+  name: Ledger Ethereum API
+  description: The Ethereum API from Ledger — 3 operation(s) for ethereum.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Ethereum
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-ethereum-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-groups-api
+  name: Ledger Groups API
+  description: The Groups API from Ledger — 3 operation(s) for groups.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-groups-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-grow-api
+  name: Ledger Grow API
+  description: The Grow API from Ledger — 1 operation(s) for grow.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Grow
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-grow-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-labels-api
+  name: Ledger Labels API
+  description: The Labels API from Ledger — 2 operation(s) for labels.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Labels
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-labels-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-messages-api
+  name: Ledger Messages API
+  description: The Messages API from Ledger — 3 operation(s) for messages.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Messages
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-messages-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-modules-api
+  name: Ledger Modules API
+  description: The modules API from Ledger — 1 operation(s) for modules.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - modules
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-modules-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-notifications-api
+  name: Ledger Notifications API
+  description: >-
+    The notification feature allows you to be notified when an API user
+
+    receives an important event.
+
+
+    To receive a webhook notification, you must first register your
+
+    target endpoint via `PUT /notifications/configuration`
+
+
+    Once done, your web server will be called via POST with a json payload
+
+    such as this one:
+
+    ```
+     {'payload_type': 'TRANSACTION', 'event_type': 'NEW_TRANSACTION_HAS_BEEN_RECEIVED', 'id': 10}
+    ```
+
+
+    - `payload_type`: Enum identifying the type of the Vault object the notification is about.
+
+    - `event_type`: Enum identifying uniquely the exact event that triggered the notification.
+
+    Can be used to run specific actions for specific events.
+
+    - `id`: Id of the Vault object. Together with `payload_type` they allow you to fetch the full
+
+    object with the corresponding endpoint.
+
+
+    Below is a list and short description of the event types API operators can receive:
+
+
+    | Event Type | Payload Type | Description |
+
+    |------------|--------------|-------------|
+
+    | NEW_TRANSACTION_HAS_BEEN_SIGNED | TRANSACTION | A new transaction has been signed by the HSM |
+
+    | NEW_TRANSACTION_HAS_BEEN_BROADCASTED | TRANSACTION | An new transaction has been broadcast |
+
+    | NEW_TRANSACTION_HAS_FAILED | TRANSACTION | A new transaction has failed upon broadcast |
+
+    | NEW_TRANSACTION_HAS_BEEN_ABORTED | TRANSACTION | A new transaction has been aborted by a User |
+
+    | NEW_TRANSACTION_HAS_BEEN_RECEIVED | TRANSACTION | A new transaction has been received |
+
+    | NEW_TRANSACTION_HAS_BEEN_SCORED | TRANSACTION | A new transaction has been scored by a KYT provider
+    |
+
+    | REQUEST_HAS_BEEN_CREATED | REQUEST | A new request has been created |
+
+    | REQUEST_HAS_RECEIVED_AN_APPROVAL | REQUEST | A request has received an approval |
+
+    | REQUEST_HAS_REACHED_STEP | REQUEST | A request has reached a new approval step |
+
+    | REQUEST_HAS_REACHED_QUORUM | REQUEST | A request has reached the required quorum |
+
+    | REQUEST_HAS_BEEN_ABORTED | REQUEST | A request has been aborted |
+
+    | REQUEST_HAS_EXPIRED | REQUEST | A request has been pending for too long and has expired |
+
+    | NEW_USER_HAS_BEEN_CREATED | USER | A new user  has been created |
+
+    | USER_HAS_BEEN_EDITED | USER | A user has been edited |
+
+    | USER_HAS_BEEN_REVOKED | USER | A user has been revoked |
+
+    | USER_HAS_BEEN_SUSPENDED | USER | A user has been suspended |
+
+    | USER_HAS_BEEN_UNSUSPENDED | USER | A user has been unsuspended |
+
+    | NEW_GROUP_HAS_BEEN_CREATED | GROUP | A new group  has been created |
+
+    | GROUP_HAS_BEEN_EDITED | GROUP | A group has been edited |
+
+    | GROUP_HAS_BEEN_REVOKED | GROUP | A group has been revoked |
+
+    | NEW_ACCOUNT_HAS_BEEN_CREATED | X_ACCOUNT | A new account has been created |
+
+    | ACCOUNT_HAS_BEEN_EDITED | X_ACCOUNT | An account has been edited |
+
+    | NEW_ENTITY_HAS_BEEN_CREATED | ENTITY | A new entity has been created |
+
+    | ENTITY_HAS_BEEN_EDITED | ENTITY | An entity has been edited |
+
+    | ENTITY_HAS_BEEN_REVOKED | ENTITY | An entity has been revoked |
+
+    | NEW_WHITELIST_HAS_BEEN_CREATED | WHITELIST | A new whitelist has been created |
+
+    | WHITELIST_HAS_BEEN_EDITED | WHITELIST | A whitelist has been edited |
+
+
+    Note: `X_ACCOUNT` can be one of BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT, ERC20_ACCOUNT, ...
+
+
+    By design, we've reduced the number of information in the payload to the minimum
+
+    as we can't guarantee the security of the channel the same way we do with the LAM.
+
+
+    However, using the provided `id` you can query the LAM to get more information.
+
+
+    You can also make sure the payload is genuine with the shared secret you've
+
+    provided during registration.
+
+    We send you the following HTTP Header `X-Ledger-Signature: t=<timestamp>,v1=<signature>`
+      - `timestamp` is a unix epoch timestamp
+      - `signature` is a hmac sha256 signature computed with your secret and the
+     concatenation of the:
+         - timestamp as a string
+         - character "."
+         - json payload
+
+    Here is an example of signature validation and a request to the LAM using python / flask:
+
+    ```python
+
+    SECRET = "mysecret"
+
+    USER = "api_lam_user"
+
+
+
+    @app.route("/", methods=["POST"])
+
+    def webhook():
+        ledger_signature = request.headers["X-Ledger-Signature"]
+        for elem in ledger_signature.split(","):
+            k, v = elem.split("=")
+            if k == "t":
+                timestamp = v
+            elif k == "v1":
+                signature = v
+
+        if time.time() - int(timestamp) > 5 * 60:
+            raise ValueError("message is too old, possible replay attack")
+
+        to_sign = timestamp.encode() + b"." + request.data
+        computed_signature = hmac.new(SECRET.encode(), to_sign, "sha256").hexdigest()
+        if not hmac.compare_digest(signature, computed_signature):
+            raise ValueError("signature mismatch")
+
+        if request.json.get("payload_type") == "TRANSACTION":
+            tx_id = request.json["id"]
+            tx = requests.get(
+                f"http://vault-lam:5000/transactions/{tx_id}",
+                headers={"X-Ledger-API-User": USER, "Content-Type": "application/json"},
+            )
+            print(tx.json())
+            # do something with the transaction
+    ```
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Notifications
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-notifications-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-organizations-api
+  name: Ledger Organizations API
+  description: The Organizations API from Ledger — 1 operation(s) for organizations.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-organizations-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-owners-api
+  name: Ledger Owners API
+  description: The owners API from Ledger — 1 operation(s) for owners.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - owners
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-owners-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-pairs-api
+  name: Ledger Pairs API
+  description: The Pairs API from Ledger — 1 operation(s) for pairs.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Pairs
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-pairs-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-pki-api
+  name: Ledger PKI API
+  description: The PKI API from Ledger — 1 operation(s) for pki.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - PKI
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-pki-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-pledges-api
+  name: Ledger Pledges API
+  description: The Pledges API from Ledger — 2 operation(s) for pledges.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Pledges
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-pledges-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-quote-api
+  name: Ledger Quote API
+  description: The Quote API from Ledger — 1 operation(s) for quote.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Quote
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-quote-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-requests-api
+  name: Ledger Requests API
+  description: >-
+    A Request represents the intent of creating or changing an object in the system.
+
+
+    For example, when you create a transaction, a *Create transaction* request is created.
+
+
+    You can observe all the changes in the system via `GET /requests`.
+
+    Every request has a `target_type` and `target_id` that you can use to fetch
+
+    the object targeted by this request.
+
+
+    For example, you can list all requests waiting for approval:
+
+    ```
+
+    GET /requests?status=PENDING_APPROVAL
+
+    {
+      "edges": [
+        {
+          "cursor": 0,
+          "node": {
+            "created_by": 5,
+            "created_on": "2020-09-25T13:52:38.377654+00:00",
+            "expires_at": "2020-10-02T13:52:38.377605+00:00",
+            "id": 20,
+            "status": "PENDING_APPROVAL",
+            "target_id": 13,
+            "target_type": "USER",
+            "type": "REVOKE_USER"
+          }
+        },
+        {
+          "cursor": 1,
+          "node": {
+            "created_by": 11,
+            "created_on": "2020-09-25T13:52:53.421567+00:00",
+            "expires_at": "2020-10-02T13:52:53.421502+00:00",
+            "id": 21,
+            "status": "PENDING_APPROVAL",
+            "target_id": 3681,
+            "target_type": "TRANSACTION",
+            "type": "CREATE_TRANSACTION"
+          }
+        }
+      ],
+      "page_info": {
+        "count": 2,
+        "has_next_page": false
+      }
+    }
+
+    ```
+
+    Here we have 2 requests waiting for approval. You can have more info on
+
+    those 2 objects via
+
+    ```
+
+    GET /users/13
+
+    GET /transactions/3681
+
+    ```
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Requests
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-requests-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-safes-api
+  name: Ledger Safes API
+  description: The safes API from Ledger — 6 operation(s) for safes.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - safes
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-safes-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-sell-api
+  name: Ledger Sell API
+  description: The Sell API from Ledger — 1 operation(s) for sell.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Sell
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-sell-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-sell-redirect-api
+  name: Ledger Sell Redirect API
+  description: The Sell Redirect API from Ledger — 1 operation(s) for sell redirect.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Sell Redirect
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-sell-redirect-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-settlements-api
+  name: Ledger Settlements API
+  description: The Settlements API from Ledger — 4 operation(s) for settlements.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Settlements
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-settlements-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-solana-api
+  name: Ledger Solana API
+  description: The Solana API from Ledger — 4 operation(s) for solana.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Solana
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-solana-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-stakes-api
+  name: Ledger Stakes API
+  description: The Stakes API from Ledger — 1 operation(s) for stakes.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Stakes
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-stakes-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-status-api
+  name: Ledger Status API
+  description: The Status API from Ledger — 1 operation(s) for status.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Status
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-status-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-swap-api
+  name: Ledger Swap API
+  description: The Swap API from Ledger — 2 operation(s) for swap.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Swap
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-swap-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-tezos-api
+  name: Ledger Tezos API
+  description: The Tezos API from Ledger — 2 operation(s) for tezos.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Tezos
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-tezos-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-transaction-api
+  name: Ledger Transaction API
+  description: The Transaction API from Ledger — 1 operation(s) for transaction.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Transaction
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-transaction-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-transactions-api
+  name: Ledger Transactions API
+  description: The transactions API from Ledger — 10 operation(s) for transactions.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - transactions
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-transactions-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-users-api
+  name: Ledger Users API
+  description: The Users API from Ledger — 3 operation(s) for users.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-users-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-webhook-api
+  name: Ledger Webhook API
+  description: The Webhook API from Ledger — 1 operation(s) for webhook.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Webhook
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-webhook-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-whitelists-api
+  name: Ledger Whitelists API
+  description: The Whitelists API from Ledger — 3 operation(s) for whitelists.
+  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Whitelists
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-whitelists-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
 common:
+  - type: Overlay
+    url: overlays/ledger-swap-provider-overlay.yaml
+  - type: Overlay
+    url: overlays/ledger-enterprise-vault-overlay.yaml
   - type: Website
     url: https://www.ledger.com/
   - type: DeveloperPortal
