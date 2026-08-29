@@ -14,6 +14,19 @@ description: >-
   complete agent surface for a hardware company: an RFC 9727 /.well-known/api-catalog, an llms.txt
   on the developer portal, and first-party Agent Skills for coding agents and the Ledger Wallet CLI.
 url: https://raw.githubusercontent.com/api-evangelist/ledger/refs/heads/main/apis.yml
+deliveryModel:
+  model: unknown
+  open_source: unknown
+  commercial: true
+  callable_host: false
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-unlicensed
+  generated: '2026-08-28'
+  method: derived
 image: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
 x-type: company
 x-source: harvest:secondary-market
