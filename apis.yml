@@ -34,17 +34,16 @@ specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
 tags:
-  - Company
-  - Cryptocurrency
-  - Digital Assets
-  - Hardware Wallet
-  - Self Custody
+  - cryptocurrency
+  - digital-assets
+  - hardware-wallet
+  - self-custody
   - Institutional Custody
   - Blockchain
   - Payments
-  - Staking
+  - staking
   - Security
-  - Agent Skills
+  - agent-skills
   - agent-native
 tags_raw:
   - cryptocurrency
@@ -69,8 +68,8 @@ apis:
     https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
   tags:
   - Blockchain
-  - Digital Assets
-  - Self Custody
+  - digital-assets
+  - self-custody
   tags_raw:
   - blockchain
   - digital-assets
@@ -98,9 +97,9 @@ apis:
     packages.
   humanURL: https://developers.ledger.com/docs/device-interaction/getting-started
   tags:
-  - Hardware Wallet
+  - hardware-wallet
   - Security
-  - Self Custody
+  - self-custody
   - Blockchain
   tags_raw:
   - hardware-wallet
@@ -160,6 +159,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Account
+  tags_raw:
   - Accounts
   properties:
   - type: OpenAPI
@@ -376,6 +377,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Cryptocurrencies
+  tags_raw:
   - Crypto Currencies
   properties:
   - type: OpenAPI
@@ -412,6 +415,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Currency
+  tags_raw:
   - Currencies
   properties:
   - type: OpenAPI
@@ -448,6 +453,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Delegates
+  tags_raw:
   - delegates
   properties:
   - type: OpenAPI
@@ -592,6 +599,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Group
+  tags_raw:
   - Groups
   properties:
   - type: OpenAPI
@@ -700,6 +709,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Message
+  tags_raw:
   - Messages
   properties:
   - type: OpenAPI
@@ -736,6 +747,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Modules
+  tags_raw:
   - modules
   properties:
   - type: OpenAPI
@@ -926,6 +939,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Notification
+  tags_raw:
   - Notifications
   properties:
   - type: OpenAPI
@@ -962,6 +977,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Organization
+  tags_raw:
   - Organizations
   properties:
   - type: OpenAPI
@@ -998,6 +1015,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Owners
+  tags_raw:
   - owners
   properties:
   - type: OpenAPI
@@ -1142,6 +1161,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Quotes
+  tags_raw:
   - Quote
   properties:
   - type: OpenAPI
@@ -1281,6 +1302,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - SAFEs
+  tags_raw:
   - safes
   properties:
   - type: OpenAPI
@@ -1389,6 +1412,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Settlement
+  tags_raw:
   - Settlements
   properties:
   - type: OpenAPI
@@ -1641,6 +1666,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - Transaction
+  tags_raw:
   - transactions
   properties:
   - type: OpenAPI
@@ -1677,6 +1704,8 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
