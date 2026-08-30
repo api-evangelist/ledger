@@ -1,0 +1,301 @@
+openapi: 3.2.0
+info:
+  title: Vault Labels API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Labels
+paths:
+  /labels:
+    get:
+      summary: Search Label
+      tags:
+      - Labels
+      description: Use the following parameters to search labels.
+      parameters:
+      - name: created_after
+        in: query
+        description: Returns objects created after the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-09-12T14:15:22Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: created_before
+        in: query
+        description: Returns objects created before the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-12-13T16:17:28Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: id
+        in: query
+        description: Returns the object corresponding to the entered ID
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: name
+        in: query
+        description: Filters the list by label name.
+        required: false
+        schema:
+          default: null
+          example: SPAM
+          type:
+          - string
+          - 'null'
+      - name: order
+        in: query
+        description: Orders the list of results
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - asc
+          - desc
+          example: desc
+          type:
+          - string
+          - 'null'
+      - name: order_by
+        in: query
+        description: criteria to order by
+        required: false
+        schema:
+          default: null
+          example: name
+          type:
+          - string
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: "Defines the number of elements displayed on a page.\n        Must be a positive number with 0 and -1 return a maximum defined in the gate"
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchLabelsResults'
+          description: label search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid search parameters
+  /labels/{label_id}:
+    get:
+      summary: Get a label by ID
+      tags:
+      - Labels
+      description: This method returns the label that matches the entered ID.
+      parameters:
+      - name: label_id
+        in: path
+        description: The label's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Label'
+          description: label object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: label not found
+components:
+  schemas:
+    Label:
+      additionalProperties: false
+      properties:
+        created_by:
+          description: id of the creator
+          example: 42
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        info:
+          $ref: '#/components/schemas/LabelInfo'
+        name:
+          description: name of the tag
+          example: SPAM
+          type: string
+        updated_by:
+          description: id of the last updater
+          example: 42
+          type: integer
+        updated_on:
+          description: date on which the tag has been last updated
+          example: '2023-02-06T02:48:59+00:00'
+          format: date-time
+          type: string
+      required:
+      - created_by
+      - created_on
+      - id
+      - info
+      - name
+      - updated_by
+      - updated_on
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    LabelSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Label'
+      required:
+      - cursor
+      - node
+      type: object
+    _APISearchLabelsResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/LabelSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    LabelInfo:
+      properties:
+        color:
+          description: color of the tag
+          example: '#FE4523'
+          type: string
+        description:
+          description: description of this tag
+          example: This is a SPAM
+          type: string
+      required:
+      - color
+      - description
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

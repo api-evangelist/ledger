@@ -1,0 +1,86 @@
+openapi: 3.2.0
+info:
+  title: Vault PKI API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: PKI
+paths:
+  /certificates/chain:
+    get:
+      summary: Get certificate chain
+      tags:
+      - PKI
+      description: This method returns the certificate chain.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  example: 308203C3308202BB02010002818100D1A9F4F7F0E5E8B3A8A6A7B0C7F2F9C8A7B5D3E4E8D4C3D2E1C0B0A0F0E0D0C0B0A0F0E0D0C0B0A0F0E0D0C0B0A0F
+                  format: hex
+                  type: string
+                type: array
+          description: List of certificates in hexadecimal format (DER encoded)
+components:
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

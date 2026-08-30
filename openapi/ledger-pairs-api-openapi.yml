@@ -1,0 +1,97 @@
+openapi: 3.2.0
+info:
+  title: Partner Swap Service Pairs API
+  version: '2.0'
+tags:
+- name: Pairs
+paths:
+  /pairs:
+    get:
+      operationId: getPairs
+      description: "Return a paginated list of supported pairs.\n\n ⚠️ If you are frequently disabling pairs,\n  please keep the currencies list static in the `/currencies` endpoint,\n  and only update pairs when necessary.\n"
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+        example: 10
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+        example: xxxxxxxx
+      responses:
+        '200':
+          description: Array of supported swap pairs.
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pairs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pair'
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+                    description: Cursor to fetch the next page of results (null if no more results).
+              example:
+                pairs:
+                - from: btc
+                  to: bat
+                  tradeMethod:
+                  - fixed
+                  - float
+                  minSwapAmount: '0.00001'
+                  maxSwapAmount: '20'
+                - from: bat
+                  to: btc
+                  tradeMethod:
+                  - fixed
+                  - float
+                  minSwapAmount: '5'
+                  maxSwapAmount: '10'
+                next_cursor: xxxxxxxx
+      tags:
+      - Pairs
+components:
+  schemas:
+    Pair:
+      required:
+      - from
+      - to
+      - tradeMethod
+      - minSwapAmount
+      - maxSwapAmount
+      type: object
+      properties:
+        from:
+          description: source currency ID in the partner's system.
+          type: string
+        to:
+          description: destination currency ID in the partner's system.
+          type: string
+        tradeMethod:
+          type: array
+          items:
+            type: string
+            enum:
+            - fixed
+            - float
+        minSwapAmount:
+          description: the minimum amount of the source currency that can be swapped. This is the lowest quantity of the initial currency that can be exchanged in a single transaction.
+          type: string
+        maxSwapAmount:
+          description: the maximum amount of the source currency that can be swapped. This represents the highest quantity of the initial currency that can be exchanged in a single transaction.
+          type: string
+  securitySchemes:
+    defaultApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header

@@ -1,0 +1,154 @@
+openapi: 3.2.0
+info:
+  title: Vault Notifications API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- description: "The notification feature allows you to be notified when an API user\nreceives an important event.\n\nTo receive a webhook notification, you must first register your\ntarget endpoint via `PUT /notifications/configuration`\n\nOnce done, your web server will be called via POST with a json payload\nsuch as this one:\n```\n {'payload_type': 'TRANSACTION', 'event_type': 'NEW_TRANSACTION_HAS_BEEN_RECEIVED', 'id': 10}\n```\n\n- `payload_type`: Enum identifying the type of the Vault object the notification is about.\n- `event_type`: Enum identifying uniquely the exact event that triggered the notification.\nCan be used to run specific actions for specific events.\n- `id`: Id of the Vault object. Together with `payload_type` they allow you to fetch the full\nobject with the corresponding endpoint.\n\nBelow is a list and short description of the event types API operators can receive:\n\n| Event Type | Payload Type | Description |\n|------------|--------------|-------------|\n| NEW_TRANSACTION_HAS_BEEN_SIGNED | TRANSACTION | A new transaction has been signed by the HSM |\n| NEW_TRANSACTION_HAS_BEEN_BROADCASTED | TRANSACTION | An new transaction has been broadcast |\n| NEW_TRANSACTION_HAS_FAILED | TRANSACTION | A new transaction has failed upon broadcast |\n| NEW_TRANSACTION_HAS_BEEN_ABORTED | TRANSACTION | A new transaction has been aborted by a User |\n| NEW_TRANSACTION_HAS_BEEN_RECEIVED | TRANSACTION | A new transaction has been received |\n| NEW_TRANSACTION_HAS_BEEN_SCORED | TRANSACTION | A new transaction has been scored by a KYT provider |\n| REQUEST_HAS_BEEN_CREATED | REQUEST | A new request has been created |\n| REQUEST_HAS_RECEIVED_AN_APPROVAL | REQUEST | A request has received an approval |\n| REQUEST_HAS_REACHED_STEP | REQUEST | A request has reached a new approval step |\n| REQUEST_HAS_REACHED_QUORUM | REQUEST | A request has reached the required quorum |\n| REQUEST_HAS_BEEN_ABORTED | REQUEST | A request has been aborted |\n| REQUEST_HAS_EXPIRED | REQUEST | A request has been pending for too long and has expired |\n| NEW_USER_HAS_BEEN_CREATED | USER | A new user  has been created |\n| USER_HAS_BEEN_EDITED | USER | A user has been edited |\n| USER_HAS_BEEN_REVOKED | USER | A user has been revoked |\n| USER_HAS_BEEN_SUSPENDED | USER | A user has been suspended |\n| USER_HAS_BEEN_UNSUSPENDED | USER | A user has been unsuspended |\n| NEW_GROUP_HAS_BEEN_CREATED | GROUP | A new group  has been created |\n| GROUP_HAS_BEEN_EDITED | GROUP | A group has been edited |\n| GROUP_HAS_BEEN_REVOKED | GROUP | A group has been revoked |\n| NEW_ACCOUNT_HAS_BEEN_CREATED | X_ACCOUNT | A new account has been created |\n| ACCOUNT_HAS_BEEN_EDITED | X_ACCOUNT | An account has been edited |\n| NEW_ENTITY_HAS_BEEN_CREATED | ENTITY | A new entity has been created |\n| ENTITY_HAS_BEEN_EDITED | ENTITY | An entity has been edited |\n| ENTITY_HAS_BEEN_REVOKED | ENTITY | An entity has been revoked |\n| NEW_WHITELIST_HAS_BEEN_CREATED | WHITELIST | A new whitelist has been created |\n| WHITELIST_HAS_BEEN_EDITED | WHITELIST | A whitelist has been edited |\n\nNote: `X_ACCOUNT` can be one of BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT, ERC20_ACCOUNT, ...\n\nBy design, we've reduced the number of information in the payload to the minimum\nas we can't guarantee the security of the channel the same way we do with the LAM.\n\nHowever, using the provided `id` you can query the LAM to get more information.\n\nYou can also make sure the payload is genuine with the shared secret you've\nprovided during registration.\nWe send you the following HTTP Header `X-Ledger-Signature: t=<timestamp>,v1=<signature>`\n  - `timestamp` is a unix epoch timestamp\n  - `signature` is a hmac sha256 signature computed with your secret and the\n concatenation of the:\n     - timestamp as a string\n     - character \".\"\n     - json payload\n\nHere is an example of signature validation and a request to the LAM using python / flask:\n```python\nSECRET = \"mysecret\"\nUSER = \"api_lam_user\"\n\n\n@app.route(\"/\", methods=[\"POST\"])\ndef webhook():\n    ledger_signature = request.headers[\"X-Ledger-Signature\"]\n    for elem in ledger_signature.split(\",\"):\n        k, v = elem.split(\"=\")\n        if k == \"t\":\n            timestamp = v\n        elif k == \"v1\":\n            signature = v\n\n    if time.time() - int(timestamp) > 5 * 60:\n        raise ValueError(\"message is too old, possible replay attack\")\n\n    to_sign = timestamp.encode() + b\".\" + request.data\n    computed_signature = hmac.new(SECRET.encode(), to_sign, \"sha256\").hexdigest()\n    if not hmac.compare_digest(signature, computed_signature):\n        raise ValueError(\"signature mismatch\")\n\n    if request.json.get(\"payload_type\") == \"TRANSACTION\":\n        tx_id = request.json[\"id\"]\n        tx = requests.get(\n            f\"http://vault-lam:5000/transactions/{tx_id}\",\n            headers={\"X-Ledger-API-User\": USER, \"Content-Type\": \"application/json\"},\n        )\n        print(tx.json())\n        # do something with the transaction\n```"
+  name: Notifications
+paths:
+  /notifications/configuration:
+    get:
+      summary: Get notification configuration
+      tags:
+      - Notifications
+      description: This method returns the notification configuration set for the current user.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+          description: Current user notification configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Current user doesn't have any configuration
+    put:
+      summary: Set notification configuration
+      tags:
+      - Notifications
+      description: This method allows you to set the notification configuration for the current user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+        description: Configuration to create
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+          description: Current user notification configuration
+components:
+  schemas:
+    Webhook:
+      properties:
+        secret:
+          description: shared secret for webhook signature check
+          example: topsecret
+          type: string
+        url:
+          description: webhook url, https only
+          example: https://vault.crypstock.com/webhook
+          format: url
+          type: string
+      required:
+      - secret
+      - url
+      type: object
+    Configuration:
+      properties:
+        all:
+          allOf:
+          - $ref: '#/components/schemas/ConfigurationProfile'
+          description: configuration for all kind of notifications
+      required:
+      - all
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    ConfigurationProfile:
+      properties:
+        webhook:
+          allOf:
+          - $ref: '#/components/schemas/Webhook'
+          default: null
+          description: webhook to be notified on
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

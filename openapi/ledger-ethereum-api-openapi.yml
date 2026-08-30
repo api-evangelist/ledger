@@ -1,0 +1,395 @@
+openapi: 3.2.0
+info:
+  title: Vault Ethereum API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Ethereum
+paths:
+  /ethereum/accounts/{account_id}/rewards:
+    get:
+      summary: Get all account's staking rewards
+      description: This method returns the account's staking rewards.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/EthereumAccountReward'
+                type: array
+          description: Staking rewards objects
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+      staking: ethereum
+      tags:
+      - Ethereum
+  /ethereum/accounts/{account_id}/stakes:
+    get:
+      summary: List an account's stakes
+      description: This method returns the account's stakes.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/_EthereumBlockchainStake'
+                type: array
+          description: Ethereum account's stakes
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+      staking: ethereum
+      tags:
+      - Ethereum
+  /ethereum/accounts/{account_id}/stakes/{stake_uid}/rewards:
+    get:
+      summary: Get the account rewards for a stake
+      description: This method returns the rewards list for the given stake
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: end_date
+        in: query
+        description: Returns rewards before this date (yyyy-mm-dd).
+        required: false
+        schema:
+          default: null
+          format: date
+          type:
+          - string
+          - 'null'
+      - name: stake_uid
+        in: path
+        description: The stake's UID
+        required: true
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: Returns rewards after this date (yyyy-mm-dd).
+        required: false
+        schema:
+          default: null
+          format: date
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/EthereumStakeReward'
+                type: array
+          description: Staking reward objects
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account or Stake not found
+      staking: ethereum
+      tags:
+      - Ethereum
+components:
+  schemas:
+    EthereumStakeReward:
+      properties:
+        amount:
+          description: Amount of rewards received
+          example: '21354'
+          type: string
+        created_on:
+          description: Indexation date by Ledger
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        info:
+          $ref: '#/components/schemas/EthereumStakeRewardInfo'
+        stake_uid:
+          description: Uid of the stake
+          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
+          type: string
+      required:
+      - amount
+      - created_on
+      - info
+      - stake_uid
+      type: object
+    EthereumStakeRewardInfo:
+      properties:
+        cl_apy:
+          description: Consensus annual percentage yield
+          example: 3.407
+          type: number
+        consensus_rewards:
+          description: Accumulated consensus rewards WEI during the day
+          example: '2988504000000000'
+          type: string
+        el_apy:
+          description: Execution annual percentage yield
+          example: 0
+          type: number
+        execution_rewards:
+          description: Accumulated execution rewards in WEI during the day
+          example: '0'
+          type: string
+        gross_apy:
+          description: Gross annual percentage yield
+          example: 3.407
+          type: number
+        stake_balance:
+          description: Staked balance in WEI that contributed to this rewards
+          example: '64000000000000000000'
+          type: string
+      required:
+      - cl_apy
+      - consensus_rewards
+      - el_apy
+      - execution_rewards
+      - gross_apy
+      - stake_balance
+      type: object
+    EthereumAccountReward:
+      properties:
+        amount:
+          description: Amount of rewards received
+          example: '21354'
+          type: string
+        created_on:
+          description: Indexation date by Ledger
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        info:
+          $ref: '#/components/schemas/EthereumStakeRewardInfo'
+      required:
+      - amount
+      - created_on
+      - info
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    _EthereumBlockchainStake:
+      properties:
+        account_id:
+          description: The account's ID from which the stake has been created
+          example: 42
+          type: integer
+        account_name:
+          description: The account's name from which the stake has been created
+          example: My Eth Staking Account
+          type: string
+        blockchain_state:
+          $ref: '#/components/schemas/EthereumStakeBlockchainState'
+        created_on:
+          description: The creation date of the stake
+          example: '2022-11-15T21:03:42+00:00'
+          type: string
+        currency:
+          description: The stake's currency
+          example: ethereum
+          type: string
+        status:
+          description: The stake's status
+          example: ''
+          type: string
+        total_reward:
+          description: The total rewards generated by the stake
+          example: '2365438513'
+          type: string
+        uid:
+          description: The stake's UID, derived from blockchain data
+          example: '0xbc5b3cf158c135a6cc2583c62e4e21650e5cb1a75bc515b7debefe456538fbf6c90f9d180e3508bac84ee9ca75a6c325'
+          type: string
+      required:
+      - account_id
+      - account_name
+      - blockchain_state
+      - created_on
+      - currency
+      - status
+      - total_reward
+      - uid
+      type: object
+    EthereumStakeBlockchainState:
+      properties:
+        activated_at:
+          default: null
+          description: Date of activation on the Ethereum consensus layer
+          example: '2023-01-14T01:13:59Z'
+          type:
+          - string
+          - 'null'
+        balance:
+          default: null
+          description: Current balance in WEI on the Ethereum consensus layer
+          example: '32076187808000000000'
+          type:
+          - string
+          - 'null'
+        consensus_rewards:
+          default: null
+          description: Sum of consensus rewards in WEI earned by this stake
+          example: '76187808000000000'
+          type:
+          - string
+          - 'null'
+        delegated_at:
+          description: Timestamp of the block at which the corresponding staking transaction was executed
+          example: '2023-01-14T01:13:59Z'
+          type: string
+        deposit_tx_sender:
+          default: null
+          description: Address of the sender of the first deposit transaction
+          example: '0xe1f4acc0affB36a805474e3b6ab786738C6900A2'
+          type:
+          - string
+          - 'null'
+        effective_balance:
+          default: null
+          description: Effective balance in WEI of the stake as seen by the Ethereum consensus layer
+          example: '32000000000000000000'
+          type:
+          - string
+          - 'null'
+        execution_rewards:
+          default: null
+          description: Sum of execution rewards in WEI earned by this stake
+          example: '0'
+          type:
+          - string
+          - 'null'
+        fee_recipient:
+          default: null
+          description: Address of the last recipient of an execution reward
+          example: '0xe1f4acc0affB36a805474e3b6ab786738C6900A2'
+          type:
+          - string
+          - 'null'
+        gross_apy:
+          default: null
+          description: Gross annual percentage yield
+          example: 3.407
+          type:
+          - number
+          - 'null'
+        state:
+          description: State of the Ethereum stake as seen by the consensus layer
+          example: active_ongoing
+          type: string
+        validator_address:
+          description: Public key of the validator
+          example: '0x95373bcf8e2c64e1c373a6e534c002f210adbcc84c5abda3b6306677e171430ae50781a51c9f579a47622e334dba2412'
+          type: string
+        withdrawal_credentials:
+          default: null
+          description: Ethereum withdrawal credentials
+          example: 010000000000000000000000e1f4acc0affb36a805474e3b6ab786738c6900a2
+          type:
+          - string
+          - 'null'
+      required:
+      - delegated_at
+      - state
+      - validator_address
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

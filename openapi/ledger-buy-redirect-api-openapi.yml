@@ -1,0 +1,126 @@
+openapi: 3.2.0
+info:
+  title: Buy Provider Server Buy Redirect API
+  version: '1.0'
+tags:
+- name: Buy Redirect
+paths:
+  /buy-redirect:
+    get:
+      operationId: buy-redirect
+      summary: Retrieve a redirect URL
+      description: Returns the URL of the on-ramp widget, including the specified buy parameters, to which the user will be redirected.
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: from
+        in: query
+        description: Fiat currency at the ISO-4217 standard.
+        required: true
+        schema:
+          type: string
+        example: EUR
+      - name: to
+        in: query
+        description: Crypto currency ID using the LedgerId format.
+        required: true
+        schema:
+          type: string
+        example: bitcoin
+      - name: payment-method
+        in: query
+        description: 'Payment method, valid values: card, googlepay, applepay, paypal, cryptocom, sepa, ach, instantach, fasterpayments, easybank, bank, cashapp, venmo, pix, mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay, eps, ideal, other, revolut, p2p, interac, payid, spei, imps, gcash, ovo, shopeepay, grabpay, linkaja, maya, pse, dana, qris'
+        required: true
+        schema:
+          type: string
+        example: paypal
+      - name: amount
+        in: query
+        description: Fiat amount to buy.
+        required: true
+        schema:
+          type: integer
+        example: 50
+      - name: country
+        in: query
+        description: Country of the user at the Alpha-2 standard (ISO3166).
+        required: true
+        schema:
+          type: string
+        example: FR
+      - name: dest
+        in: query
+        description: Destination address of the buy.
+        required: true
+        schema:
+          type: string
+        example: '0x000000000000000000000000000000'
+      - in: query
+        name: ledgerTransactionId
+        description: Ledger Wallet transaction ID. Used by Ledger to track transactions and their completion statuses.
+        required: true
+        schema:
+          type: string
+        example: 9649d677-f201-45b2-8130-0317065743de
+      - in: query
+        name: deeplinkUrl
+        description: Deeplink URL to Ledger Wallet.
+        required: false
+        schema:
+          type: string
+        example: ledgerlive://buy
+      - in: query
+        name: accountId
+        description: The Ledger Wallet ID of the account the user selected to receive the crypto.
+        required: false
+        schema:
+          type: string
+        example: d7e79746-e40c-5fab-9012-3c0bc04e8a13
+      - in: query
+        name: language
+        description: 'The language chosen by the user in Ledger Wallet. Valid values: ar, de, en, es, fr, ja, ko, pt, ru, th, tr, zh.'
+        required: false
+        schema:
+          type: string
+        example: es
+      - in: query
+        name: theme
+        description: 'The theme chosen by the user in Ledger Wallet. Valid values: light, dark.'
+        required: false
+        schema:
+          type: string
+        example: dark
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RampRedirectUrl'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+      tags:
+      - Buy Redirect
+components:
+  schemas:
+    RampRedirectUrl:
+      type: object
+      description: Redirect URL to Ramp UI widget
+      required:
+      - rampRedirectUrl
+      properties:
+        rampRedirectUrl:
+          type: string
+          format: uri
+          description: The URL of the on-ramp widget, including the specified Buy parameters, to which the user will be redirected.
+      example:
+        rampRedirectUrl: https://widget.crypto-partner.com?fiatCurrency=GBP&amount=12345&cryptoCurrency=ETH&walletAddress=0x96e2B7Bf479f84e7A0a94f0620290B7D3E08f5EF&countryCode=GB&partnerId=a01798bc-7f0b-14ed-a12b-0e3fac1209ad&externalOrderId=2d1769bc-7aab-92ed-a10b-0232ac12090d&disableFiatAmount=true&disableCryptoCurrency=true&disableWalletAddress=true&disableCountryCode=true&skipWalletAddress=true&partnerRedirectUrl=https%3A%2F%2Fcrypto.partner.com%2Forder%3ForderId%3D2d1769bc-7aab-92ed-a10b-0232ac12090d&theme=dark
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY

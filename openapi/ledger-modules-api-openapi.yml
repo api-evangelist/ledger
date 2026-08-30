@@ -1,0 +1,89 @@
+openapi: 3.2.0
+info:
+  title: Safe Transaction Service Modules API
+  version: 5.33.1
+  description: API to keep track of transactions sent via Safe smart contracts
+  x-gitbook-description-document:
+    object: document
+    data:
+      schemaVersion: 8
+    nodes:
+    - object: block
+      type: paragraph
+      isVoid: false
+      data: {}
+      nodes:
+      - object: text
+        leaves:
+        - object: leaf
+          text: API to keep track of transactions sent via Safe smart contracts
+          marks: []
+  x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
+tags:
+- name: modules
+paths:
+  /tx-service/eth/api/v1/modules/{address}/safes/:
+    get:
+      operationId: modules_safes_retrieve
+      description: Returns the list of Safes that have the provided module enabled
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - modules
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModulesResponse'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Module address checksum not valid
+components:
+  schemas:
+    CodeErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        arguments:
+          type: array
+          items: {}
+      required:
+      - arguments
+      - code
+      - message
+    ModulesResponse:
+      type: object
+      properties:
+        safes:
+          type: array
+          items:
+            type: string
+      required:
+      - safes
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+      x-gitbook-description-html: <p>Token-based authentication with required prefix "Token"</p>

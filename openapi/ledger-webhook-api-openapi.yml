@@ -1,0 +1,155 @@
+openapi: 3.2.0
+info:
+  title: Partner Swap Service Webhook API
+  version: '2.0'
+tags:
+- name: Webhook
+paths:
+  /webhook/{swapId}/status:
+    post:
+      operationId: statusUpdate
+      description: 'Real-time status webhook hosted by Ledger. Partners call this endpoint to notify Ledger whenever the status of a swap transaction changes.
+
+
+        - Authenticated with the provider-specific `x-api-key` header (a shared secret provisioned by Ledger). Calls without a valid key are rejected with `401`, and the same `401` is returned for unknown / unsupported providers so callers cannot probe which providers exist.
+
+        - Processing is asynchronous: a `200` means the update was authenticated, validated and queued, not that it has already been persisted. The update is applied shortly after, and only while the swap is still in a non-final status.
+
+        - `providerStatus` is your own status string (typically the same value your `GET /status` endpoint returns). Ledger maps it to an internal status using the same per-provider mapping it uses when polling your `/status` endpoint; a value Ledger cannot map is rejected with `422` and nothing is persisted.
+
+        '
+      parameters:
+      - name: swapId
+        in: path
+        required: true
+        description: The swap transaction id (the `swapId` returned by `/swap/fixed` or `/swap/float`).
+        schema:
+          type: string
+        example: SWAP-ID-165940
+      security:
+      - defaultApiKey: []
+      requestBody:
+        required: true
+        description: Status update payload.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusWebhookRequest'
+            example:
+              providerId: moonpaytrade
+              providerStatus: finished
+              amount: '0.1'
+              providerFees: '0.001'
+              networkFees: '0.0005'
+              payinTransactionId: 0xabc123...
+              transactionHash: 0xdef456...
+      responses:
+        '200':
+          description: The status update was accepted and queued for asynchronous processing.
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookStatusQueued'
+              example:
+                message: queued
+        '401':
+          description: Missing or invalid `x-api-key`, or an unknown / unsupported provider (uniform and fail-closed).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+              example:
+                error: unauthorized
+        '404':
+          description: No swap matches the given `swapId` / `providerId`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+              example:
+                error: transaction not found
+                transactionId: SWAP-ID-165940
+        '405':
+          description: The swap is already in a final status and can no longer be updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+              example:
+                error: transaction can no longer be updated
+        '422':
+          description: The provided `providerStatus` is not recognized; nothing is persisted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+              example:
+                error: unknown status
+        '500':
+          description: Unexpected error while processing the update.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookError'
+              example:
+                error: internal error
+      tags:
+      - Webhook
+components:
+  schemas:
+    StatusWebhookRequest:
+      required:
+      - providerId
+      - providerStatus
+      - amount
+      type: object
+      properties:
+        providerId:
+          type: string
+          description: Your provider id. Used by Ledger to authenticate the call and to select the status mapping; it must match the provider that owns the swap.
+          example: moonpaytrade
+        providerStatus:
+          type: string
+          description: Your own transaction status string, typically the same value returned by your `GET /status` endpoint. Ledger maps it to an internal status using the per-provider mapping; an unmapped value is rejected with `422`.
+          example: finished
+        amount:
+          type: string
+          description: Final amount transferred to the user, in the output currency. Required, because a finalized swap leaves the polling set and a missing amount would never be backfilled.
+        providerFees:
+          type: string
+          description: Fees paid to the provider, converted to the output currency.
+        networkFees:
+          type: string
+          description: Referral / extra fee, converted to the output currency.
+        payinTransactionId:
+          type: string
+          description: On-chain payin transaction hash.
+        transactionHash:
+          type: string
+          description: On-chain payout transaction hash.
+    WebhookStatusQueued:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+          description: Always `queued` - the update was accepted and will be applied asynchronously.
+          example: queued
+    WebhookError:
+      required:
+      - error
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error reason.
+        transactionId:
+          type: string
+          description: The `swapId` from the request path. Present only on `404` responses.
+  securitySchemes:
+    defaultApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header

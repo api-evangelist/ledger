@@ -1,0 +1,241 @@
+openapi: 3.2.0
+info:
+  title: Vault Compliance API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Compliance
+paths:
+  /compliance/address-risk/{address}:
+    get:
+      summary: GET an address' risk assessment
+      tags:
+      - Compliance
+      description: This method returns the risk assessment for an address. Please note that an Admin needs to register your compliance provider API key in the Settings section. With no or invalid credentials, this method will return a 400 error.
+      parameters:
+      - name: address
+        in: path
+        description: The address
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressRisk'
+          description: AddressRisk object
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid secret
+  /compliance/sanctions/{address}:
+    get:
+      summary: Get an address' sanctions
+      tags:
+      - Compliance
+      description: This method returns an address' sanctions from Chainalysis's public api.
+      parameters:
+      - name: address
+        in: path
+        description: The address
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressSanctions'
+          description: AddressSanctions object
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid secret
+components:
+  schemas:
+    AddressSanctions:
+      properties:
+        address:
+          description: The address that was checked
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+          type: string
+        has_sanctions:
+          description: Whether or not the address has OFAC sanctions
+          example: true
+          type: boolean
+        provider_details:
+          description: Details from the compliance provider
+          items:
+            $ref: '#/components/schemas/ChainalysisAddressSanction'
+          type: array
+      required:
+      - address
+      - has_sanctions
+      - provider_details
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    Exposure:
+      properties:
+        category:
+          description: The entity category the address has exposure to
+          example: exchange
+          type: string
+        value:
+          description: The address’s aggregate exposure to the corresponding category, denominated in USD
+          example: 424895.68594
+          type: number
+      required:
+      - category
+      - value
+      type: object
+    AddressRisk:
+      properties:
+        address:
+          description: The address that was checked
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+          type: string
+        provider_details:
+          allOf:
+          - $ref: '#/components/schemas/ChainalysisAddressRisk'
+          description: Details from the compliance provider
+        risk:
+          description: Address risk as defined by Ledger
+          enum:
+          - HIGH
+          - LOW
+          - MEDIUM
+          example: HIGH
+      required:
+      - address
+      - provider_details
+      - risk
+      type: object
+    ChainalysisAddressRisk:
+      properties:
+        exposures:
+          description: An array that contains the address's current direct exposures
+          items:
+            $ref: '#/components/schemas/Exposure'
+          type: array
+        reason:
+          default: null
+          description: A human-readable string that provides the rationale for the returned risk assessment
+          example: '> 49% Exposure To High Risk Jurisdiction'
+          type:
+          - string
+          - 'null'
+        risk:
+          description: Address risk as defined by Chainalysis
+          enum:
+          - High
+          - Low
+          - Medium
+          - Severe
+          example: Severe
+      required:
+      - exposures
+      - risk
+      type: object
+    ChainalysisAddressSanction:
+      properties:
+        category:
+          description: The Chainalysis Entity category. For sanctioned addresses, the value will be 'sanctions'
+          example: sanctions
+          type: string
+        description:
+          description: The OFAC description of the sanctioned address
+          example: "Pakistan-based Secondeye Solution (SES), also known as Forwarderz, is a synthetic identity document vendor that was added to the OFAC SDN list in April 2021.\n \n\n SES customers could buy fake identity documents to sign up for accounts with cryptocurrency exchanges, payment providers, banks, and more under false identities. According to the US Treasury Department, SES assisted the Internet Research Agency (IRA), the Russian troll farm that OFAC designated pursuant to E.O. 13848 in 2018 for interfering in the 2016 presidential election, in concealing its identity to evade sanctions.\n \n\n https://home.treasury.gov/news/press-releases/jy0126"
+          type: string
+        name:
+          description: The OFAC name associated with the sanctioned address
+          example: 'SANCTIONS: OFAC SDN Secondeye Solution 2021-04-15 1da5821544e25c636c1417ba96ade4cf6d2f9b5a'
+          type: string
+        url:
+          description: The OFAC URL for more information about the sanctioned address
+          example: https://home.treasury.gov/news/press-releases/jy0126
+          type: string
+      required:
+      - category
+      - description
+      - name
+      - url
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

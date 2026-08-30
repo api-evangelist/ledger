@@ -1,0 +1,522 @@
+openapi: 3.2.0
+info:
+  title: Vault Digests API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Digests
+paths:
+  /digests:
+    get:
+      summary: Search Digests
+      tags:
+      - Digests
+      description: Use the following parameters to search digests.
+      parameters:
+      - name: account
+        in: query
+        description: Returns digests signed by the provided account.
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            type: integer
+          type:
+          - array
+          - 'null'
+        style: form
+      - name: created_after
+        in: query
+        description: Returns objects created after the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-09-12T14:15:22Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: created_before
+        in: query
+        description: Returns objects created before the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-12-13T16:17:28Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: id
+        in: query
+        description: Returns the object corresponding to the entered ID
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: order
+        in: query
+        description: Orders the list of results
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - asc
+          - desc
+          example: desc
+          type:
+          - string
+          - 'null'
+      - name: order_by
+        in: query
+        description: criteria to order by
+        required: false
+        schema:
+          default: null
+          example: name
+          type:
+          - string
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: "Defines the number of elements displayed on a page.\n        Must be a positive number with 0 and -1 return a maximum defined in the gate"
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      - name: status
+        in: query
+        description: Returns objects that match the selected status.
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            enum:
+            - ABORTED
+            - APPROVED
+            - PENDING_APPROVAL
+            - PENDING_CREATE_IN_HSM
+            - SIGNED
+            type: string
+          type:
+          - array
+          - 'null'
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchDigestsResults'
+          description: Digests search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid search parameters
+  /digests/{digests_id}:
+    get:
+      summary: Get a digests by id
+      tags:
+      - Digests
+      description: This method returns the digests that matches the entered ID.
+      parameters:
+      - name: digests_id
+        in: path
+        description: The digests' ID.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Digests'
+          description: Digests object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Digests not found
+  /digests/{digests_id}/history:
+    get:
+      summary: Digests history
+      tags:
+      - Digests
+      description: This method returns the digests' history.
+      parameters:
+      - name: digests_id
+        in: path
+        description: The digests' ID.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIHistoryResults'
+          description: Digests history
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Digests not found
+components:
+  schemas:
+    TransactionOrMessageNote:
+      properties:
+        content:
+          example: some information about this transaction
+          type: string
+        title:
+          example: a note title
+          type: string
+      required:
+      - content
+      - title
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    DigestSignature:
+      properties:
+        der:
+          default: null
+          description: The der value of the signature
+          example: 3044022028ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276022067cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83
+          type:
+          - string
+          - 'null'
+        r:
+          description: The r value of the signature
+          example: '18515461264373351373200002665853028612451056578545711640558177340181847433846'
+          type: string
+        s:
+          description: The s value of the signature
+          example: '46948507304638947509940763649030358759909902576025900602547168820602576006531'
+          type: string
+        v:
+          default: null
+          description: The v value of the signature
+          example: 37
+          type:
+          - integer
+          - 'null'
+      required:
+      - r
+      - s
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    _APISearchDigestsResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/DigestsSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    DigestsSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Digests'
+      required:
+      - cursor
+      - node
+      type: object
+    SignedDigest:
+      properties:
+        derivation_path:
+          description: The full derivation path to sign the digests
+          example: m44'/0'/0'/0/0
+          type: string
+        digest:
+          description: A HexString digests. For currencies that use secp256K1, string must be 32 bytes long
+          example: 66f3edaac1be84dd837d5c6ded42ed61c69a4fc0e7eef48b78f68f53d5f4a5bf
+          type: string
+        pub_key:
+          description: The public key used to sign the digests
+          example: 0x
+          type: string
+        signature:
+          allOf:
+          - $ref: '#/components/schemas/DigestSignature'
+          description: The signature of the digests
+      required:
+      - derivation_path
+      - digest
+      - pub_key
+      - signature
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
+          type: string
+      required:
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    Digests:
+      additionalProperties: false
+      properties:
+        account_id:
+          example: 1
+          type: integer
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        digests_data:
+          description: The digests list signed, or to sign
+          oneOf:
+          - items:
+              $ref: '#/components/schemas/SignedDigest'
+            type: array
+          - items:
+              $ref: '#/components/schemas/ToSignDigest'
+            type: array
+        id:
+          type: integer
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        notes:
+          description: Notes attached to this message
+          items:
+            $ref: '#/components/schemas/TransactionOrMessageNote'
+          type: array
+        status:
+          enum:
+          - ABORTED
+          - APPROVED
+          - PENDING_APPROVAL
+          - PENDING_CREATE_IN_HSM
+          - SIGNED
+          example: PENDING_APPROVAL
+          type: string
+      required:
+      - account_id
+      - created_by
+      - created_on
+      - digests_data
+      - id
+      - notes
+      - status
+      type: object
+    ToSignDigest:
+      properties:
+        derivation_path:
+          description: The full derivation path to sign the digests
+          example: m44'/0'/0'/0/0
+          type: string
+        digest:
+          description: A HexString digests. For currencies that use secp256K1, string must be 32 bytes long
+          example: 66f3edaac1be84dd837d5c6ded42ed61c69a4fc0e7eef48b78f68f53d5f4a5bf
+          type: string
+      required:
+      - derivation_path
+      - digest
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

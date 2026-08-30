@@ -1,0 +1,355 @@
+openapi: 3.2.0
+info:
+  title: Vault Pledges API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Pledges
+paths:
+  /pledges:
+    get:
+      tags:
+      - Pledges
+      description: Search Pledge
+      parameters:
+      - name: account_id
+        in: query
+        description: Account id
+        required: false
+        schema:
+          default: null
+          example: 5
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+      - name: asset_manager_id
+        in: query
+        description: Asset manager id
+        required: false
+        schema:
+          default: null
+          example: 5
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+      - name: exchange_id
+        in: query
+        description: Exchange id
+        required: false
+        schema:
+          default: null
+          example: 5
+          minimum: 0
+          type:
+          - integer
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: Defines the number of elements displayed on a page. Must be a positive number with 0 and -1 being special values to return a maximum defined in the gate
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      - name: state
+        in: query
+        description: Returns objects that match the selected status.
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            enum:
+            - ASSIGNED_TO_SETTLEMENT
+            - OUTBOUND_TRANSACTION_CONFIRMED
+            - OUTBOUND_TRANSACTION_FAILED
+            - PLEDGE_APPROVED
+            - PLEDGE_CONSUMED
+            - PLEDGE_INCREMENT_PENDING_APPROVAL
+            - PLEDGE_READY
+            - PLEDGE_REJECTED
+            - RECOVERING_FROM_FAILURE
+            - REPLEDGE_APPROVED
+            - REPLEDGE_PENDING_APPROVAL
+            - REPLEDGE_REJECTED
+            - UNPLEDGE_APPROVED
+            - UNPLEDGE_PENDING_APPROVAL
+            - UNPLEDGE_REJECTED
+            type: string
+          type:
+          - array
+          - 'null'
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchPledgeResults'
+          description: pledge search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid search parameters
+  /pledges/{pledge_id}:
+    get:
+      tags:
+      - Pledges
+      description: Get a pledge by id
+      parameters:
+      - name: pledge_id
+        in: path
+        description: pledge's id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pledge'
+          description: pledge object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: pledge not found
+components:
+  schemas:
+    TradelinkAssetManager:
+      properties:
+        approver_group_id:
+          type: integer
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        whitelist_id:
+          type: integer
+      required:
+      - approver_group_id
+      - code
+      - id
+      - name
+      - role
+      - whitelist_id
+      type: object
+    PledgeSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Pledge'
+      required:
+      - cursor
+      - node
+      type: object
+    _APISearchPledgeResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/PledgeSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    Pledge:
+      additionalProperties: false
+      properties:
+        account_id:
+          type: integer
+        amount:
+          type: integer
+        asset_manager:
+          $ref: '#/components/schemas/TradelinkAssetManager'
+        custodian:
+          $ref: '#/components/schemas/TradelinkCustodian'
+        exchange:
+          $ref: '#/components/schemas/TradelinkExchange'
+        id:
+          format: uuid
+          type: string
+        pending:
+          type: integer
+        pledge_subaccount_id:
+          type: integer
+        state:
+          enum:
+          - ASSIGNED_TO_SETTLEMENT
+          - OUTBOUND_TRANSACTION_CONFIRMED
+          - OUTBOUND_TRANSACTION_FAILED
+          - PLEDGE_APPROVED
+          - PLEDGE_CONSUMED
+          - PLEDGE_INCREMENT_PENDING_APPROVAL
+          - PLEDGE_READY
+          - PLEDGE_REJECTED
+          - RECOVERING_FROM_FAILURE
+          - REPLEDGE_APPROVED
+          - REPLEDGE_PENDING_APPROVAL
+          - REPLEDGE_REJECTED
+          - UNPLEDGE_APPROVED
+          - UNPLEDGE_PENDING_APPROVAL
+          - UNPLEDGE_REJECTED
+          type: string
+      required:
+      - account_id
+      - amount
+      - asset_manager
+      - custodian
+      - exchange
+      - id
+      - pending
+      - pledge_subaccount_id
+      - state
+      type: object
+    TradelinkCustodian:
+      properties:
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+      required:
+      - code
+      - id
+      - name
+      - role
+      type: object
+    TradelinkExchange:
+      properties:
+        approver_group_id:
+          type: integer
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        whitelist_id:
+          type: integer
+      required:
+      - approver_group_id
+      - code
+      - id
+      - name
+      - role
+      - whitelist_id
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

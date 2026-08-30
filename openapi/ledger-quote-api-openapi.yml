@@ -1,0 +1,335 @@
+openapi: 3.2.0
+info:
+  title: Ledger Quote API
+  version: '1.0'
+  description: 'Operations tagged Quote across 3 of this provider''s published API definitions: ledger-buy-provider-openapi.yml, ledger-sell-provider-openapi.yml, ledger-swap-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
+tags:
+- name: Quote
+paths:
+  /quote:
+    get:
+      operationId: getQuote
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: from
+        in: query
+        description: Fiat currency at the ISO-4217 standard.
+        required: true
+        schema:
+          type: string
+        example: EUR
+      - name: to
+        in: query
+        description: Crypto currency ID using the LedgerId format.
+        required: true
+        schema:
+          type: string
+        example: bitcoin
+      - name: payment-method
+        in: query
+        description: 'Payment method, valid values : card, googlepay, applepay, paypal, cryptocom, sepa, ach, instantach, fasterpayments, easybank, bank, cashapp, venmo, pix, mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay, eps, ideal, other, revolut, p2p, interac, payid, spei, imps, gcash, ovo, shopeepay, grabpay, linkaja, maya, pse, dana, qris.'
+        required: true
+        schema:
+          type: string
+        example: paypal
+      - name: amount
+        in: query
+        description: Fiat amount to buy.
+        required: true
+        schema:
+          type: integer
+        example: 50
+      - name: country
+        in: query
+        description: Country of the user at the Alpha-2 standard (ISO3166).
+        required: true
+        schema:
+          type: string
+        example: FR
+      - name: dest
+        in: query
+        description: Destination address of the buy.
+        required: true
+        schema:
+          type: string
+        example: '0x000000000000000000000000000000'
+      responses:
+        '200':
+          description: "### Quote information about the the buy. \n- \"from\": fiat currency of the buy\n- \"to\": crypto currency ID of the buy, using the LedgerId format\n- \"amount\": fiat amount\n- \"cryptoAmount\": crypto amount the user will have, must include all the fees\n- \"dca\": must be true if recurring purchases (dca) are allowed for this specific quote\n"
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderQuoteResponse'
+              example:
+                from: EUR
+                to: bitcoin
+                fiatAmount: 50
+                cryptoAmount: 0.2
+                dca: true
+        '400':
+          description: 'Invalid value for: query parameter from, Invalid value for: query parameter to, Invalid value for: query parameter payment-method, Invalid value for: query parameter amount, Invalid value for: query parameter country, Invalid value for: query parameter dest'
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+          description: Error sent by the provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderServerError'
+      tags:
+      - Quote
+    post:
+      operationId: postQuote
+      description: 'Return a quote for a pair and amount.
+
+        - For fixed trade method, the quoteId is returned.
+
+        '
+      requestBody:
+        description: Information required for generating the payload.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+      responses:
+        '200':
+          description: Successful quote response.
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse_2'
+              example:
+                quoteId: CC14E626-CF1B-4EDA-AF5E-766FFD5A3457
+                amount: '1'
+                amountTo: '270.864632'
+                providerFees: '0.0001'
+                referralFees: '0.0001'
+                payoutNetworkFees: '0.0002'
+                tradeMethod: float
+                expiry: 2022-04-04T09:10:51+0000
+                minAmountFrom: '1'
+                maxAmountFrom: '3'
+                defaultSlippage: '0.1'
+                minSlippage: '0.1'
+                maxSlippage: '0.3'
+        '400':
+          description: "This error indicates a violation of one or more constraints within the partner's system regarding the quote request. \nIt is essential for the partner to specify the breached constraint to facilitate correction of the request. \nYou can express any other constraints in your system by extending the error payload.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload_2'
+              examples:
+                FROM_CURRENCY_MINIMUM_AMOUNT_ERROR:
+                  summary: FROM_CURRENCY_MINIMUM_AMOUNT_ERROR
+                  description: The amount of source currency is less that the minimum amount.
+                  value:
+                    messageKey: FROM_CURRENCY_MINIMUM_AMOUNT_ERROR
+                    message: Minimum error. (you can add any useful field as you want)
+                    additionalFields:
+                      minRequiredAmount: '0.01'
+                      maxRequiredAmount: '10'
+                FROM_CURRENCY_MAXIMUM_AMOUNT_ERROR:
+                  summary: FROM_CURRENCY_MAXIMUM_AMOUNT_ERROR
+                  description: The amount of destination currency exceed the maximum amount.
+                  value:
+                    messageKey: FROM_CURRENCY_MAXIMUM_AMOUNT_ERROR
+                    message: Maximum error. (you can add any useful field as you want)
+                    additionalFields:
+                      minRequiredAmount: '0.01'
+                      maxRequiredAmount: '10'
+        '404':
+          description: The pair might be currently unavailable on your end, or you might not recognize one of the currencies. Please add relevant details about the causes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload_2'
+              example:
+                messageKey: SWAP_PAIR_NOT_FOUND_ERROR
+                message: Swap pair not found. (you can add any useful field as you want)
+        '451':
+          description: User's IP address or currency is in a restricted region.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload_2'
+              examples:
+                REGION_RESTRICTED_ERROR:
+                  summary: Region Restricted Error
+                  value:
+                    messageKey: REGION_RESTRICTED_ERROR
+                    message: User's IP address is in a restricted region. (you can add any useful field as you want)
+                CURRENCY_REGION_RESTRICTED_ERROR:
+                  summary: Currency Region Restricted Error
+                  value:
+                    messageKey: CURRENCY_REGION_RESTRICTED_ERROR
+                    message: One of the swapped currencies is disabled in user's region. (you can add any useful field as you want)
+      tags:
+      - Quote
+components:
+  schemas:
+    ProviderServerError:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ProviderQuoteResponse:
+      required:
+      - from
+      - to
+      - fiatAmount
+      - cryptoAmount
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        fiatAmount:
+          type: number
+        cryptoAmount:
+          type: number
+        dca:
+          type: boolean
+    ErrorPayload:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
+    QuoteResponse:
+      required:
+      - quoteId
+      - amountTo
+      - providerFees
+      - referralFees
+      - expiry
+      type: object
+      properties:
+        quoteId:
+          type: string
+          description: Unique identifier for the quote (Required only for fixed quotes).
+        amountFrom:
+          type: string
+          description: Should be the same as the input (optional, for consistency check).
+        amountTo:
+          type: string
+          description: Estimated output amount sent to the user, in currencyTo.
+        providerFees:
+          type: string
+          description: Amount paid to the provider, converted to currencyTo.
+        referralFees:
+          type: string
+          description: Amount paid to Ledger, as a referral fee, converted to currencyTo.
+        expiry:
+          type: string
+          description: Quote expiration timestamp
+    ErrorPayload_2:
+      type: object
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
+    QuoteRequest:
+      required:
+      - from
+      - to
+      - amount
+      type: object
+      properties:
+        from:
+          type: string
+          description: Currency ID in the partner's system.
+          example: btc
+        to:
+          type: string
+          description: Currency ID in the partner's system.
+          example: eth
+        amount:
+          type: string
+          description: Or the amountTo, it's the amount that user will spend for the swap. (required only for float quotes)
+          example: '1'
+    QuoteResponse_2:
+      required:
+      - amountTo
+      - providerFees
+      - referralFees
+      - payoutNetworkFees
+      - tradeMethod
+      - expiry
+      type: object
+      properties:
+        quoteId:
+          type: string
+          description: Unique identifier for the quote (Required only for fixed quotes).
+        amount:
+          type: string
+          description: Should be the same as the input (optional, for consistency check).
+        amountTo:
+          type: string
+          description: Estimated output amount sent to the user, in currencyTo.
+        providerFees:
+          type: string
+          description: Amount paid to the provider, converted to currencyTo.
+        referralFees:
+          type: string
+          description: Amount paid to Ledger, as a referral fee, converted to currencyTo.
+        payoutNetworkFees:
+          type: string
+          description: Estimated gas fees for the payout transaction, converted to currencyTo.
+        tradeMethod:
+          type: string
+          enum:
+          - fixed
+          - float
+          description: Fixed or float
+        expiry:
+          type: string
+          description: Quote expiration timestamp (required for fixed quotes)
+        defaultSlippage:
+          type: string
+          description: Value between 0 to 1 (0.1 => 10%). Maximum difference between the amount the user has seen in his quote and the amount he might finally receive, as a ratio of the quoted amount. Otherwise, the user should be asked for his consent to the new trade or reimbursed in original coin.
+        minSlippage:
+          type: string
+          description: Minimum allowable slippage. (0.1)
+        maxSlippage:
+          type: string
+          description: Maximum allowable slippage. (0.3)
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    defaultApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+x-refined-from:
+- ledger-buy-provider-openapi.yml
+- ledger-sell-provider-openapi.yml
+- ledger-swap-provider-openapi.yml

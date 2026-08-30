@@ -1,0 +1,145 @@
+openapi: 3.2.0
+info:
+  title: Ledger Transaction API
+  version: '1.0'
+  description: 'Operations tagged Transaction across 2 of this provider''s published API definitions: ledger-card-provider-openapi.yml, ledger-sell-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
+tags:
+- name: Transaction
+paths:
+  /transaction/{sellId}/status:
+    post:
+      operationId: statusUpdate
+      description: Updates the status of a sell transaction.
+      security:
+      - defaultApiKey: []
+      parameters:
+      - name: sellId
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 1234
+      requestBody:
+        description: Status update payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusUpdate'
+      responses:
+        '200':
+          description: Status updated.
+          x-summary: OK
+        '404':
+          description: Sell transaction not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+              examples:
+                SELL_TRANSACTION_NOT_FOUND_ERROR:
+                  summary: SELL_TRANSACTION_NOT_FOUND_ERROR
+                  value:
+                    messageKey: SELL_TRANSACTION_NOT_FOUND_ERROR
+                    message: Sell transaction not found. (you can add any useful field as you want)
+      tags:
+      - Transaction
+    get:
+      operationId: getStatusUpdate
+      description: Get status of a sell transaction.
+      parameters:
+      - name: sellId
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 1234
+      security:
+      - defaultApiKey: []
+      responses:
+        '200':
+          description: Status of transaction returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Sell transaction not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+              examples:
+                SELL_TRANSACTION_NOT_FOUND_ERROR:
+                  summary: SELL_TRANSACTION_NOT_FOUND_ERROR
+                  value:
+                    messageKey: SELL_TRANSACTION_NOT_FOUND_ERROR
+                    message: Sell transaction not found. (you can add any useful field as you want)
+      tags:
+      - Transaction
+components:
+  schemas:
+    ErrorPayload:
+      type: object
+      required:
+      - messageKey
+      - message
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
+    StatusUpdate:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - FINISHED
+          - EXPIRED
+          - ON_HOLD
+          - PENDING
+          - TRANSFER_IN_COMPLETED
+          - REFUNDED
+          - UNKNOWN
+        amount:
+          type: string
+          description: as soon as this information is known, this should contain the final amount transferred to the user in output currency.
+        payinTransactionId:
+          type: string
+          description: as soon as this information is known, this should contain the payin transaction hash.
+        providerFees:
+          type: string
+          description: Fees paid to the provider.
+        referralFees:
+          type: string
+          description: Fees paid to Ledger, as a referral fee.
+    ErrorPayload_2:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
+  securitySchemes:
+    defaultApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+x-refined-from:
+- ledger-card-provider-openapi.yml
+- ledger-sell-provider-openapi.yml

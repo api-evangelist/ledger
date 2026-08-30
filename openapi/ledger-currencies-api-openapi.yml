@@ -1,0 +1,504 @@
+openapi: 3.2.0
+info:
+  title: Ledger Currencies API
+  x-refined-note:
+  - x-logo differs across the merged source definitions and was not carried
+  version: '1.0'
+  description: 'Operations tagged Currencies across 2 of this provider''s published API definitions: ledger-enterprise-vault-openapi.yml, ledger-swap-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
+tags:
+- name: Currencies
+paths:
+  /currencies:
+    get:
+      summary: List currencies
+      tags:
+      - Currencies
+      description: Returns the list of currencies supported on the Ledger Vault.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyList'
+          description: Currency list
+      security:
+      - Ledger_API_User: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+      - Ledger_API_User: []
+        Ledger_Store_Auth_Token: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+        Ledger_Store_Auth_Token: []
+  /currencies/tokens:
+    get:
+      summary: List tokens
+      tags:
+      - Currencies
+      description: Returns the list of tokens supported on the Ledger Vault.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenList'
+          description: Token list
+      security:
+      - Ledger_API_User: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+      - Ledger_API_User: []
+        Ledger_Store_Auth_Token: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+        Ledger_Store_Auth_Token: []
+  /currencies/{currency_name}:
+    get:
+      summary: Get currency by name
+      tags:
+      - Currencies
+      description: Returns the requested currency.
+      parameters:
+      - name: currency_name
+        in: path
+        description: The currency name.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Currency'
+          description: Currency object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Currency not found
+      security:
+      - Ledger_API_User: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+      - Ledger_API_User: []
+        Ledger_Store_Auth_Token: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+        Ledger_Store_Auth_Token: []
+  /currencies/{currency_name}/tokens/{contract_address}:
+    get:
+      summary: Get a token by network and address
+      tags:
+      - Currencies
+      description: Returns the token corresponding to the requested currency name and contract address.
+      parameters:
+      - name: contract_address
+        in: path
+        description: The token contract address.
+        required: true
+        schema:
+          type: string
+      - name: currency_name
+        in: path
+        description: The currency name.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: token
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Token not found
+      security:
+      - Ledger_API_User: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+      - Ledger_API_User: []
+        Ledger_Store_Auth_Token: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+        Ledger_Store_Auth_Token: []
+  /currencies/{currency_name}/{address}:
+    get:
+      summary: Check that the currency name and address pair is valid
+      tags:
+      - Currencies
+      description: Returns a boolean indicating the validity of the address.
+      parameters:
+      - name: address
+        in: path
+        description: Address to validate.
+        required: true
+        schema:
+          type: string
+      - name: currency_name
+        in: path
+        description: The currency name.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressValidation'
+          description: Address validation result
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Currency not found
+      security:
+      - Ledger_API_User: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+      - Ledger_API_User: []
+        Ledger_Store_Auth_Token: []
+      - Ledger_API_User: []
+        Ledger_API_Key: []
+        Ledger_Store_Auth_Token: []
+components:
+  schemas:
+    Token:
+      additionalProperties: false
+      properties:
+        contract_address:
+          description: The token contract address.
+          example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+          type: string
+        name:
+          description: The token name.
+          example: USD Tether (erc20)
+          type: string
+        parent_currency:
+          enum:
+          - Dollar
+          - Euro
+          - arbitrum
+          - arbitrum_goerli
+          - arbitrum_sepolia
+          - avalanche_c_chain
+          - avalanche_c_chain_fuji
+          - base
+          - base_goerli
+          - base_sepolia
+          - bitcoin
+          - bitcoin_cash
+          - bitcoin_gold
+          - bitcoin_testnet
+          - blast
+          - blast_sepolia
+          - bsc
+          - cardano
+          - celo
+          - celo_alfajores
+          - cosmos
+          - cronos
+          - cronos_testnet
+          - dash
+          - digibyte
+          - dogecoin
+          - ethereum
+          - ethereum_classic
+          - ethereum_goerli
+          - ethereum_holesky
+          - ethereum_hoodi
+          - ethereum_pow
+          - ethereum_ropsten
+          - ethereum_sepolia
+          - etherlink
+          - fantom
+          - fantom_testnet
+          - filecoin
+          - filecoin_calibration
+          - flare
+          - flare_coston
+          - kava_evm
+          - kava_evm_testnet
+          - klaytn
+          - klaytn_baobab
+          - komodo
+          - linea
+          - litecoin
+          - mantle
+          - mantle_sepolia
+          - near
+          - neon_evm
+          - optimism
+          - optimism_goerli
+          - optimism_sepolia
+          - pivx
+          - polkadot
+          - polygon
+          - polygon_amoy
+          - polygon_mumbai
+          - polygon_zk_evm
+          - polygon_zk_evm_testnet
+          - pulsechain
+          - pulsechain_testnet
+          - ripple
+          - scroll
+          - scroll_sepolia
+          - solana
+          - solana_devnet
+          - solana_testnet
+          - sonic
+          - stellar
+          - tezos
+          - tomo
+          - tomo_testnet
+          - tron
+          - vertcoin
+          - viacoin
+          - westend
+          example: ethereum
+          type: string
+        units:
+          example:
+            code: USDT
+            magnitude: 6
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+      required:
+      - contract_address
+      - name
+      - parent_currency
+      - units
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    CurrencyList:
+      properties:
+        currencies:
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+      required:
+      - currencies
+      type: object
+    TokenList:
+      properties:
+        tokens:
+          items:
+            $ref: '#/components/schemas/Token'
+          type: array
+      required:
+      - tokens
+      type: object
+    CurrencyUnit:
+      properties:
+        code:
+          example: tBTC
+          type: string
+        magnitude:
+          example: 8
+          type: integer
+      required:
+      - code
+      - magnitude
+      type: object
+    AddressValidation:
+      properties:
+        is_valid:
+          type: boolean
+      required:
+      - is_valid
+      type: object
+    Currency:
+      additionalProperties: false
+      properties:
+        family:
+          default: null
+          enum:
+          - null
+          - bitcoin
+          - cardano
+          - cosmos
+          - ethereum
+          - fiat
+          - near
+          - polkadot
+          - polygon
+          - ripple
+          - solana
+          - stellar
+          - tezos
+          - tron
+          example: bitcoin
+          type:
+          - string
+          - 'null'
+        name:
+          enum:
+          - Dollar
+          - Euro
+          - arbitrum
+          - arbitrum_goerli
+          - arbitrum_sepolia
+          - avalanche_c_chain
+          - avalanche_c_chain_fuji
+          - base
+          - base_goerli
+          - base_sepolia
+          - bitcoin
+          - bitcoin_cash
+          - bitcoin_gold
+          - bitcoin_testnet
+          - blast
+          - blast_sepolia
+          - bsc
+          - cardano
+          - celo
+          - celo_alfajores
+          - cosmos
+          - cronos
+          - cronos_testnet
+          - dash
+          - digibyte
+          - dogecoin
+          - ethereum
+          - ethereum_classic
+          - ethereum_goerli
+          - ethereum_holesky
+          - ethereum_hoodi
+          - ethereum_pow
+          - ethereum_ropsten
+          - ethereum_sepolia
+          - etherlink
+          - fantom
+          - fantom_testnet
+          - filecoin
+          - filecoin_calibration
+          - flare
+          - flare_coston
+          - kava_evm
+          - kava_evm_testnet
+          - klaytn
+          - klaytn_baobab
+          - komodo
+          - linea
+          - litecoin
+          - mantle
+          - mantle_sepolia
+          - near
+          - neon_evm
+          - optimism
+          - optimism_goerli
+          - optimism_sepolia
+          - pivx
+          - polkadot
+          - polygon
+          - polygon_amoy
+          - polygon_mumbai
+          - polygon_zk_evm
+          - polygon_zk_evm_testnet
+          - pulsechain
+          - pulsechain_testnet
+          - ripple
+          - scroll
+          - scroll_sepolia
+          - solana
+          - solana_devnet
+          - solana_testnet
+          - sonic
+          - stellar
+          - tezos
+          - tomo
+          - tomo_testnet
+          - tron
+          - vertcoin
+          - viacoin
+          - westend
+          example: bitcoin
+          type: string
+        num_confirmation_needed:
+          type: integer
+        type:
+          enum:
+          - CRYPTO
+          - FIAT
+          example: CRYPTO
+          type: string
+        units:
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+      required:
+      - name
+      - num_confirmation_needed
+      - type
+      - units
+      type: object
+    CryptoCurrencyType:
+      oneOf:
+      - $ref: '#/components/schemas/Coin'
+      - $ref: '#/components/schemas/Token_2'
+    Token_2:
+      type: string
+    Coin:
+      type: string
+    CryptoCurrencies:
+      required:
+      - id
+      - type
+      - blockchain
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          $ref: '#/components/schemas/CryptoCurrencyType'
+        blockchain:
+          type: string
+        chainId:
+          type: integer
+          format: int32
+        contract:
+          type: string
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey
+    defaultApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+x-refined-from:
+- ledger-enterprise-vault-openapi.yml
+- ledger-swap-provider-openapi.yml

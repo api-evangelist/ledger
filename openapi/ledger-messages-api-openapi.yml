@@ -1,0 +1,487 @@
+openapi: 3.2.0
+info:
+  title: Vault Messages API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Messages
+paths:
+  /messages:
+    get:
+      summary: Search Message
+      tags:
+      - Messages
+      description: Use the following parameters to search messages.
+      parameters:
+      - name: account
+        in: query
+        description: Returns messages signed by the provided account.
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            type: integer
+          type:
+          - array
+          - 'null'
+        style: form
+      - name: created_after
+        in: query
+        description: Returns objects created after the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-09-12T14:15:22Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: created_before
+        in: query
+        description: Returns objects created before the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-12-13T16:17:28Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: id
+        in: query
+        description: Returns the object corresponding to the entered ID
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: message_type
+        in: query
+        description: Filters the list of results by message type.
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - EIP191
+          - EIP712
+          type:
+          - string
+          - 'null'
+      - name: order
+        in: query
+        description: Orders the list of results
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - asc
+          - desc
+          example: desc
+          type:
+          - string
+          - 'null'
+      - name: order_by
+        in: query
+        description: criteria to order by
+        required: false
+        schema:
+          default: null
+          example: name
+          type:
+          - string
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: "Defines the number of elements displayed on a page.\n        Must be a positive number with 0 and -1 return a maximum defined in the gate"
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      - name: status
+        in: query
+        description: Returns objects that match the selected status.
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            enum:
+            - ABORTED
+            - APPROVED
+            - PENDING_APPROVAL
+            - PENDING_CREATE_IN_HSM
+            - SIGNED
+            type: string
+          type:
+          - array
+          - 'null'
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchMessageResults'
+          description: Message search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid search parameters
+  /messages/{message_id}:
+    get:
+      summary: Get a message by id
+      tags:
+      - Messages
+      description: This method returns the message that matches the entered ID.
+      parameters:
+      - name: message_id
+        in: path
+        description: The message's ID.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: Message object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Message not found
+  /messages/{message_id}/history:
+    get:
+      summary: Message history
+      tags:
+      - Messages
+      description: This method returns the message's history.
+      parameters:
+      - name: message_id
+        in: path
+        description: The message's ID.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIHistoryResults'
+          description: Message history
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Message not found
+components:
+  schemas:
+    TransactionOrMessageNote:
+      properties:
+        content:
+          example: some information about this transaction
+          type: string
+        title:
+          example: a note title
+          type: string
+      required:
+      - content
+      - title
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    _APISearchMessageResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/MessageSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    Message:
+      additionalProperties: false
+      properties:
+        account_id:
+          example: 1
+          type: integer
+        address:
+          default: null
+          description: The address used to signed the message
+          example: bc1q2kqvs8wx455lw2f69j5z34emypjup07fp0fcrp
+          type:
+          - string
+          - 'null'
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        data:
+          description: The content of the message
+          example: Welcome to the web3
+          type: string
+        id:
+          type: integer
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        message_type:
+          description: The type of the message
+          enum:
+          - EIP-191
+          - EIP-712
+          example: EIP-191
+        notes:
+          description: Notes attached to this message
+          items:
+            $ref: '#/components/schemas/TransactionOrMessageNote'
+          type: array
+        signature:
+          default: null
+          description: The DER signature of the message
+          example: 0x
+          type:
+          - string
+          - 'null'
+        status:
+          enum:
+          - ABORTED
+          - APPROVED
+          - PENDING_APPROVAL
+          - PENDING_CREATE_IN_HSM
+          - SIGNED
+          example: PENDING_APPROVAL
+          type: string
+        type:
+          default: MESSAGE_SIGNATURE
+      required:
+      - account_id
+      - created_by
+      - created_on
+      - data
+      - id
+      - message_type
+      - notes
+      - status
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    MessageSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Message'
+      required:
+      - cursor
+      - node
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
+          type: string
+      required:
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

@@ -1,0 +1,748 @@
+openapi: 3.2.0
+info:
+  title: Safe Transaction Service 4337 API
+  version: 5.33.1
+  description: API to keep track of transactions sent via Safe smart contracts
+  x-gitbook-description-document:
+    object: document
+    data:
+      schemaVersion: 8
+    nodes:
+    - object: block
+      type: paragraph
+      isVoid: false
+      data: {}
+      nodes:
+      - object: text
+        leaves:
+        - object: leaf
+          text: API to keep track of transactions sent via Safe smart contracts
+          marks: []
+  x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
+tags:
+- name: '4337'
+paths:
+  /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/:
+    get:
+      operationId: safe_operations_retrieve
+      description: Returns a SafeOperation given its Safe operation hash
+      parameters:
+      - in: path
+        name: safe_operation_hash
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeOperationWithUserOperationResponse'
+          description: ''
+  /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/confirmations/:
+    get:
+      operationId: safe_operations_confirmations_list
+      description: Get the list of confirmations for a multisig transaction
+      parameters:
+      - in: path
+        name: safe_operation_hash
+        schema:
+          type: string
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeOperationConfirmationResponseList'
+          description: ''
+        '400':
+          description: Invalid data
+    post:
+      operationId: safe_operations_confirmations_create
+      description: 'Add a confirmation for a transaction. More than one signature can be used. This endpoint does not support
+
+        the use of delegates to make a transaction trusted.'
+      parameters:
+      - in: path
+        name: safe_operation_hash
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafeOperationConfirmation'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Malformed data
+        '422':
+          description: Error processing data
+  /tx-service/eth/api/v1/safes/{address}/safe-operations/:
+    get:
+      operationId: safes_safe_operations_list
+      description: Returns the list of SafeOperations for a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: modified__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: modified__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: modified__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: modified__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_after__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: valid_until__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: module_address
+        schema:
+          type: string
+      - in: query
+        name: executed
+        schema:
+          type: boolean
+      - in: query
+        name: has_confirmations
+        schema:
+          type: boolean
+      - in: query
+        name: execution_date__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: execution_date__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submission_date__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submission_date__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: transaction_hash
+        schema:
+          type:
+          - string
+          - 'null'
+          format: byte
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeOperationWithUserOperationResponseList'
+          description: ''
+    post:
+      operationId: safes_safe_operations_create
+      description: Adds a new SafeOperation for a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafeOperation'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+                description: Unspecified response body
+          description: ''
+  /tx-service/eth/api/v1/safes/{address}/user-operations/:
+    get:
+      operationId: safes_user_operations_list
+      description: Returns the list of UserOperations for a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserOperationWithSafeOperationResponseList'
+          description: ''
+  /tx-service/eth/api/v1/user-operations/{user_operation_hash}/:
+    get:
+      operationId: user_operations_retrieve
+      description: Returns a UserOperation given its user operation hash
+      parameters:
+      - in: path
+        name: user_operation_hash
+        schema:
+          type: string
+        required: true
+      tags:
+      - '4337'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+          description: ''
+components:
+  schemas:
+    SafeOperation:
+      type: object
+      description: 'Mixin class to validate SafeOperation signatures. `_get_owners` can be overridden to define
+
+        the valid owners to sign'
+      properties:
+        nonce:
+          type: integer
+          minimum: 0
+        initCode:
+          type:
+          - string
+          - 'null'
+        callData:
+          type:
+          - string
+          - 'null'
+        callGasLimit:
+          type: integer
+          minimum: 0
+        verificationGasLimit:
+          type: integer
+          minimum: 0
+        preVerificationGas:
+          type: integer
+          minimum: 0
+        maxFeePerGas:
+          type: integer
+          minimum: 0
+        maxPriorityFeePerGas:
+          type: integer
+          minimum: 0
+        paymasterAndData:
+          type:
+          - string
+          - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+        validAfter:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        validUntil:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        moduleAddress:
+          type: string
+      required:
+      - callData
+      - callGasLimit
+      - entryPoint
+      - initCode
+      - maxFeePerGas
+      - maxPriorityFeePerGas
+      - moduleAddress
+      - nonce
+      - paymasterAndData
+      - preVerificationGas
+      - signature
+      - validAfter
+      - validUntil
+      - verificationGasLimit
+      x-gitbook-description-html: '<p>Mixin class to validate SafeOperation signatures. <code>_get_owners</code> can be overridden to define
+
+        the valid owners to sign</p>'
+    UserOperationResponse:
+      type: object
+      properties:
+        ethereumTxHash:
+          type: string
+        sender:
+          type: string
+        userOperationHash:
+          type: string
+        nonce:
+          type: string
+        initCode:
+          type:
+          - string
+          - 'null'
+        callData:
+          type:
+          - string
+          - 'null'
+        callGasLimit:
+          type: string
+        verificationGasLimit:
+          type: string
+        preVerificationGas:
+          type: string
+        maxFeePerGas:
+          type: string
+        maxPriorityFeePerGas:
+          type: string
+        paymaster:
+          type:
+          - string
+          - 'null'
+        paymasterData:
+          type:
+          - string
+          - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+      required:
+      - callData
+      - callGasLimit
+      - entryPoint
+      - ethereumTxHash
+      - initCode
+      - maxFeePerGas
+      - maxPriorityFeePerGas
+      - nonce
+      - paymaster
+      - paymasterData
+      - preVerificationGas
+      - sender
+      - signature
+      - userOperationHash
+      - verificationGasLimit
+    UserOperationWithSafeOperationResponse:
+      type: object
+      properties:
+        ethereumTxHash:
+          type: string
+        sender:
+          type: string
+        userOperationHash:
+          type: string
+        nonce:
+          type: string
+        initCode:
+          type:
+          - string
+          - 'null'
+        callData:
+          type:
+          - string
+          - 'null'
+        callGasLimit:
+          type: string
+        verificationGasLimit:
+          type: string
+        preVerificationGas:
+          type: string
+        maxFeePerGas:
+          type: string
+        maxPriorityFeePerGas:
+          type: string
+        paymaster:
+          type:
+          - string
+          - 'null'
+        paymasterData:
+          type:
+          - string
+          - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+        safeOperation:
+          oneOf:
+          - $ref: '#/components/schemas/SafeOperationResponse'
+          - type: 'null'
+          readOnly: true
+      required:
+      - callData
+      - callGasLimit
+      - entryPoint
+      - ethereumTxHash
+      - initCode
+      - maxFeePerGas
+      - maxPriorityFeePerGas
+      - nonce
+      - paymaster
+      - paymasterData
+      - preVerificationGas
+      - safeOperation
+      - sender
+      - signature
+      - userOperationHash
+      - verificationGasLimit
+    SafeOperationWithUserOperationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safeOperationHash:
+          type: string
+        validAfter:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        moduleAddress:
+          type: string
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: 'Filters confirmations queryset
+
+
+            :param obj: SafeOperation instance
+
+            :return: Serialized queryset'
+          readOnly: true
+          x-gitbook-description-html: '<p>Filters confirmations queryset</p>
+
+            <p>:param obj: SafeOperation instance
+
+            :return: Serialized queryset</p>'
+        preparedSignature:
+          type: string
+          readOnly: true
+        userOperation:
+          allOf:
+          - $ref: '#/components/schemas/UserOperationResponse'
+          readOnly: true
+      required:
+      - confirmations
+      - created
+      - modified
+      - moduleAddress
+      - preparedSignature
+      - safeOperationHash
+      - userOperation
+      - validAfter
+      - validUntil
+    PaginatedUserOperationWithSafeOperationResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+    PaginatedSafeOperationConfirmationResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeOperationConfirmationResponse'
+    SafeOperationConfirmationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        owner:
+          type: string
+        signature:
+          type: string
+        signatureType:
+          type: string
+          readOnly: true
+      required:
+      - created
+      - modified
+      - owner
+      - signature
+      - signatureType
+    SafeOperationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safeOperationHash:
+          type: string
+        validAfter:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        moduleAddress:
+          type: string
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: 'Filters confirmations queryset
+
+
+            :param obj: SafeOperation instance
+
+            :return: Serialized queryset'
+          readOnly: true
+          x-gitbook-description-html: '<p>Filters confirmations queryset</p>
+
+            <p>:param obj: SafeOperation instance
+
+            :return: Serialized queryset</p>'
+        preparedSignature:
+          type: string
+          readOnly: true
+      required:
+      - confirmations
+      - created
+      - modified
+      - moduleAddress
+      - preparedSignature
+      - safeOperationHash
+      - validAfter
+      - validUntil
+    SafeOperationConfirmation:
+      type: object
+      description: Validate new confirmations for an existing `SafeOperation`
+      properties:
+        signature:
+          type: string
+      required:
+      - signature
+      x-gitbook-description-html: <p>Validate new confirmations for an existing <code>SafeOperation</code></p>
+    PaginatedSafeOperationWithUserOperationResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeOperationWithUserOperationResponse'
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+      x-gitbook-description-html: <p>Token-based authentication with required prefix "Token"</p>

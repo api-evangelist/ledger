@@ -1,0 +1,506 @@
+openapi: 3.2.0
+info:
+  title: Vault Users API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Users
+paths:
+  /users:
+    get:
+      summary: Search User
+      tags:
+      - Users
+      description: Use the following parameters to search users.
+      parameters:
+      - name: account
+        in: query
+        description: Returns objects created in the provided account.
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: created_after
+        in: query
+        description: Returns objects created after the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-09-12T14:15:22Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: created_before
+        in: query
+        description: Returns objects created before the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-12-13T16:17:28Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: group
+        in: query
+        description: Lists users who belong to the entered groups.
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: id
+        in: query
+        description: Returns the object corresponding to the entered ID
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: order
+        in: query
+        description: Orders the list of results
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - asc
+          - desc
+          example: desc
+          type:
+          - string
+          - 'null'
+      - name: order_by
+        in: query
+        description: criteria to order by
+        required: false
+        schema:
+          default: null
+          example: name
+          type:
+          - string
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: "Defines the number of elements displayed on a page.\n        Must be a positive number with 0 and -1 return a maximum defined in the gate"
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      - name: role
+        in: query
+        description: Returns object who hold the selected user role.
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - ADMIN
+          - ADMIN_SYSTEM
+          - OPERATOR
+          - SHARED_OWNER
+          - WRAPPING_KEYS
+          type:
+          - string
+          - 'null'
+      - name: status
+        in: query
+        description: Returns users who match the selected status.
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - ACCESS_SUSPENDED
+          - ACTIVE
+          - APPROVED
+          - PENDING_APPROVAL
+          - PENDING_REGISTRATION
+          - PENDING_REVOCATION
+          - REJECTED
+          - REVOKED
+          type:
+          - string
+          - 'null'
+      - name: username
+        in: query
+        description: Returns the object who has the entered username.
+        required: false
+        schema:
+          default: null
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchUserResults'
+          description: User search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid search parameters
+  /users/{user_id}:
+    get:
+      summary: Get a user by id
+      tags:
+      - Users
+      description: This method returns the user that matches the entered ID.
+      parameters:
+      - name: user_id
+        in: path
+        description: The user's ID.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: User object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: User not found
+  /users/{user_id}/history:
+    get:
+      summary: Get user history
+      tags:
+      - Users
+      description: This method returns the user's history.
+      parameters:
+      - name: user_id
+        in: path
+        description: The user's ID.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIHistoryResults'
+          description: User history
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: User not found
+components:
+  schemas:
+    User:
+      additionalProperties: false
+      properties:
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        is_api:
+          example: false
+          type: boolean
+        key_handle:
+          default: null
+          example: 7920380c812ab0b752b5f04a2561a736f136d9937af542bce149bad075ee25f60f21dad3fa9a8a88bc3fa80a360b3680bb7e1ef6179701e41f9d90fd5f6b475d
+          type:
+          - string
+          - 'null'
+        last_request:
+          default: null
+          example: 2
+          type:
+          - integer
+          - 'null'
+        pub_key:
+          default: null
+          example: 040BAE7B34D9AB3056D575128F24B42D09705FF9CFCD860790DF8147D45888E4C8C9C19AE837298C45CBC595152EA5F43788431F6B4C0017030351C05F6C505FCA
+          type:
+          - string
+          - 'null'
+        role:
+          example: OPERATOR
+          oneOf:
+          - enum:
+            - ADMIN
+            - ADMIN_SYSTEM
+            - OPERATOR
+            - SHARED_OWNER
+            - WRAPPING_KEYS
+            type: string
+          - enum:
+            - READ_ONLY_API_KEY
+            type: string
+        status:
+          example: ACTIVE
+          oneOf:
+          - enum:
+            - ACCESS_SUSPENDED
+            - ACTIVE
+            - APPROVED
+            - PENDING_APPROVAL
+            - PENDING_REGISTRATION
+            - PENDING_REVOCATION
+            - REJECTED
+            - REVOKED
+            type: string
+          - enum:
+            - ABORTED
+            - ACTIVE
+            - PENDING_APPROVAL
+            - PENDING_SECRET
+            - REVOKED
+            - SUSPENDED
+            type: string
+        user_id:
+          default: null
+          example: 5CA88C5165CF3640
+          type:
+          - string
+          - 'null'
+        username:
+          example: operator1
+          type: string
+      required:
+      - created_by
+      - created_on
+      - id
+      - is_api
+      - role
+      - status
+      - username
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    UserSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/User'
+      required:
+      - cursor
+      - node
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
+          type: string
+      required:
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    _APISearchUserResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/UserSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

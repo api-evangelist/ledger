@@ -1,0 +1,2505 @@
+openapi: 3.2.0
+info:
+  title: Vault Accounts API
+  version: 1.35.0
+  x-logo:
+    url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
+  description: '
+
+    # Authentication
+
+
+    The Ledger Vault API offers several methods of authentication.
+
+    Depending on your LAM configuration you''ll require several of the following headers
+
+    to process API calls. Please refer to the
+
+    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
+
+
+    The `X-Ledger-API-User` header is required for all API calls to LAM
+
+    (except when you register
+
+    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
+
+
+    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
+
+    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
+
+    been set up on your LAM.
+
+    In this case, for every call made to LAM,
+
+    you''ll need to pass all three headers
+
+    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
+
+    '
+security:
+- Ledger_API_User: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+- Ledger_API_User: []
+  Ledger_Store_Auth_Token: []
+- Ledger_API_User: []
+  Ledger_API_Key: []
+  Ledger_Store_Auth_Token: []
+tags:
+- name: Accounts
+paths:
+  /accounts:
+    get:
+      summary: Search accounts
+      tags:
+      - Accounts
+      description: Use the following parameters to search accounts.
+      parameters:
+      - name: account_label
+        in: query
+        description: A list of label id to filter account by.
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        style: form
+      - name: account_type
+        in: query
+        description: Filters the results on the crypto asset type.
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - Bep20
+          - Bitcoin
+          - Cardano
+          - Cosmos
+          - Erc20
+          - Ethereum
+          - Generic
+          - Near
+          - Polkadot
+          - Polygon
+          - Ripple
+          - Solana
+          - Stellar
+          - Tezos
+          - Trc20
+          - Tron
+          type:
+          - string
+          - 'null'
+      - name: created_after
+        in: query
+        description: Returns objects created after the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-09-12T14:15:22Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: created_before
+        in: query
+        description: Returns objects created before the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-12-13T16:17:28Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: currency
+        in: query
+        description: Filters the results by the account's currency.
+        required: false
+        schema:
+          default: null
+          example: bitcoin or ethereum:0xdAC17F958D2ee523a2206206994597C13D831ec7
+          type:
+          - string
+          - 'null'
+      - name: entity
+        in: query
+        description: An entity to filter account by
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            type: integer
+          type:
+          - array
+          - 'null'
+        style: form
+      - name: group
+        in: query
+        description: Lists accounts linked to the entered group.
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: id
+        in: query
+        description: Returns the object corresponding to the entered ID
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: name
+        in: query
+        description: Filters the list by account name.
+        required: false
+        schema:
+          default: null
+          example: hot wallet 1
+          type:
+          - string
+          - 'null'
+      - name: order
+        in: query
+        description: Orders the list of results
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - asc
+          - desc
+          example: desc
+          type:
+          - string
+          - 'null'
+      - name: order_by
+        in: query
+        description: criteria to order by
+        required: false
+        schema:
+          default: null
+          example: name
+          type:
+          - string
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: "Defines the number of elements displayed on a page.\n        Must be a positive number with 0 and -1 return a maximum defined in the gate"
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      - name: parent
+        in: query
+        description: Filters the list of results to display accounts linked to the entered parent account.
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: status
+        in: query
+        description: Returns objects that match the selected status.
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - ACTIVATION_ABORTED
+          - ACTIVE
+          - APPROVED
+          - HSM_COIN_UPDATED
+          - PENDING
+          - PENDING_ACTIVATION
+          - PENDING_CREATE_IN_HSM
+          - PENDING_VIEW_ONLY
+          - REJECTED
+          - VIEW_ONLY
+          type:
+          - string
+          - 'null'
+      - name: user
+        in: query
+        description: Filters the list to display accounts the entered user belongs to.
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchAccountResults'
+          description: Account search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid search parameter
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: This search parameter doesn't exist
+  /accounts/{account_id}:
+    get:
+      summary: Get an account by ID
+      tags:
+      - Accounts
+      description: This method returns the account that matches the entered ID.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: Account object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/address:
+    get:
+      summary: Get an address for a non UTXO based account
+      tags:
+      - Accounts
+      description: 'Returns the address of an account in a JWT format.
+
+
+        The JWT is built in the following format: `base64urlEncoding(header).base64urlEncoding(payload).base64urlEncoding(signature)`
+
+        * header is an object containing: `{"alg": "ES256K, "typ": "JWT"}`
+
+        * payload is an object containing: `{"address": ..., "derivation_path": ..., "blockchain_name": ...}`
+
+        * signature is the header and payload encoded in base64 and signed with the private key of the leaf certificate.
+
+        '
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhZGRyZXNzIjoiIiwiZGVyaXZhdGlvbl9wYXRoIjoiIiwiYmxvY2tjaGFpbl9uYW1lIjoiIn0.mJnLqum1TREZPPxb5BEmF3pIq6A6Z-wepwtXislPQnaAPYqYKAK40yxUgmDDNBb92OgLx0T4AcitxqudGi0Svg
+                format: application/jwt
+                pattern: ^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]+)$
+                type: string
+          description: 'Address data in JWT format.
+
+            '
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: No address matches
+  /accounts/{account_id}/address/{index}:
+    get:
+      summary: Get a change or receive address by index for an UTXO account
+      tags:
+      - Accounts
+      description: 'Returns the receiving or change address corresponding to the specified index in a JWT format. This functionality is available for UTXO-based currencies only.
+
+
+        The JWT is built in the following format: `base64urlEncoding(header).base64urlEncoding(payload).base64urlEncoding(signature)`
+
+        * header is an object containing: `{"alg": "ES256K, "typ": "JWT"}`
+
+        * payload is an object containing: `{"address": ..., "derivation_path": ..., "blockchain_name": ...}`
+
+        * signature is the header and payload encoded in base64 and signed with the private key of the leaf certificate.
+
+
+        Change address is not supported yet.
+
+        '
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: type
+        in: query
+        description: The type of the address.
+        required: true
+        schema:
+          enum:
+          - change
+          - receive
+          example: receive
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhZGRyZXNzIjoiIiwiZGVyaXZhdGlvbl9wYXRoIjoiIiwiYmxvY2tjaGFpbl9uYW1lIjoiIn0.mJnLqum1TREZPPxb5BEmF3pIq6A6Z-wepwtXislPQnaAPYqYKAK40yxUgmDDNBb92OgLx0T4AcitxqudGi0Svg
+                format: application/jwt
+                pattern: ^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]+)$
+                type: string
+          description: 'Address data in JWT format.
+
+            '
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: No address matches
+  /accounts/{account_id}/addresses:
+    get:
+      summary: '[DEPRECATED] Get receiving addresses of an account'
+      tags:
+      - Accounts
+      description: Deprecated - For UTXO-based accounts. Returns a list of the next 3 available fresh addresses for an account. A fresh address is a newly generated address that has not received any previous transactions. It is recommended for privacy and security to use a fresh address for every transaction. On non UTXO-based accounts, this endpoint will return the single public address in use for the account.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Addresses'
+          description: New address generated
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Provided index invalid
+  /accounts/{account_id}/addresses/{index}:
+    get:
+      summary: '[DEPRECATED] Get an address by index for an account'
+      tags:
+      - Accounts
+      description: Deprecated - Returns the receiving address corresponding to the specified index. The index must already be used or be the next one available. Check the derivation path parameter number to find out how many have already been generated. This functionaltity is available for UTXO-based currencies only. On non UTXO-based accounts, this endpoint will return the single public address in use for the account.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: Address generated
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: No address matches the provided index
+  /accounts/{account_id}/balances:
+    get:
+      summary: Get an account's balances by ID
+      tags:
+      - Accounts
+      description: This method returns the account's balances that matches the entered ID.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/AccountBalances'
+                - $ref: '#/components/schemas/SolanaBalances'
+                - $ref: '#/components/schemas/BitcoinBalances'
+          description: Account object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/balances/history:
+    get:
+      summary: Get an account's balances history by ID
+      tags:
+      - Accounts
+      description: This method returns the account's balances history that matches the entered ID.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: end
+        in: query
+        description: End of the balance history time span.
+        required: false
+        schema:
+          default: '2025-06-27T13:51:52.081391+00:00'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: start
+        in: query
+        description: Start of the balance history time span.
+        required: false
+        schema:
+          default: '2025-06-27T13:51:52.081380+00:00'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalancesHistory'
+          description: Account object
+        '501':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not supported for this currency
+  /accounts/{account_id}/currency:
+    get:
+      summary: Get the account's currency
+      tags:
+      - Accounts
+      description: "This method returns the account's currency.\n\nThe currency with \"magnitude\" 0 is always the default unit, this\nwill be the unit used by `GET /transactions`.\n\nFrom this point, you can deduce all the other units.\n\nFor example, these are the units used by bitcoin accounts:\n ```\n  \"amount_units\": [\n    {\n     \"code\": \"sat\",\n     \"magnitude\": 0\n    },\n    {\n     \"code\": \"bit\",\n     \"magnitude\": 2\n    },\n    {\n     \"code\": \"mBTC\",\n     \"magnitude\": 5\n    },\n    {\n     \"code\": \"BTC\",\n     \"magnitude\": 8\n    }\n   ]\n ```\n So we know `1BTC = 100000000sat` and `1mBTC = 100bit`, and all transactions\n will be expressed in `sat`.\n"
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCurrency'
+          description: Account currency
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/history:
+    get:
+      summary: Get the account's history
+      tags:
+      - Accounts
+      description: This method returns the account's history.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIHistoryResults'
+          description: Account history
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/labels:
+    get:
+      summary: Get an account's labels
+      tags:
+      - Accounts
+      description: This method returns the account's labels.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/LiteLabel'
+                type: array
+          description: Account object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/nft-collections:
+    get:
+      summary: Retrieve an account’s NFT collections
+      tags:
+      - Accounts
+      description: Returns the NFT collections where the account owns tokens.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: Defines the number of elements displayed on a page.
+        required: false
+        schema:
+          default: 10
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNFTCollections'
+          description: Paginated NFT collection
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/nft-portfolio:
+    get:
+      summary: Retrieve an account’s NFT porftolio
+      tags:
+      - Accounts
+      description: Returns the NFT portfolio’s information
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTPortfolioValuation'
+          description: Estimated total NFT value
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/nfts:
+    get:
+      summary: Retrieve an account’s NFTs
+      tags:
+      - Accounts
+      description: Returns the NFTs that the account owns.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: Defines the number of elements displayed on a page.
+        required: false
+        schema:
+          default: 10
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNFTs'
+          description: Paginated NFT
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/sync:
+    get:
+      summary: Sync the account to update transactions with list status
+      tags:
+      - Accounts
+      description: This will synchronize the account's transactions status with the one on the blockchain
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      - name: synchronous
+        in: query
+        description: If true, the synchronization will be performed synchronously. Otherwise, it will run a a background task
+        required: false
+        schema:
+          default: false
+          example: true
+          type:
+          - boolean
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: Account object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found
+  /accounts/{account_id}/tokens:
+    get:
+      summary: Get an account's light token accounts
+      tags:
+      - Accounts
+      description: This method returns the account's light token accounts.
+      parameters:
+      - name: account_id
+        in: path
+        description: The account's ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/VaultLightTokenAccount'
+                type: array
+          description: List of light token account description
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Account not found or feature flag desactivated
+  /accounts/{parent_account_id}/erc20-children-accounts:
+    get:
+      summary: Get ERC-20 Child Accounts
+      tags:
+      - Accounts
+      description: This method lists all the ERC-20 child accounts associated with a parent EVM account
+      parameters:
+      - name: created_after
+        in: query
+        description: Returns objects created after the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-09-12T14:15:22Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: created_before
+        in: query
+        description: Returns objects created before the entered date.
+        required: false
+        schema:
+          default: null
+          example: '2020-12-13T16:17:28Z'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      - name: entity
+        in: query
+        description: Filters for accounts that belong to the specified entity
+        required: false
+        explode: true
+        schema:
+          default: null
+          items:
+            type: integer
+          type:
+          - array
+          - 'null'
+        style: form
+      - name: group
+        in: query
+        description: Lists accounts linked to the entered group.
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: id
+        in: query
+        description: Returns the object corresponding to the entered ID
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      - name: order
+        in: query
+        description: Orders the list of results
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - asc
+          - desc
+          example: desc
+          type:
+          - string
+          - 'null'
+      - name: order_by
+        in: query
+        description: criteria to order by
+        required: false
+        schema:
+          default: null
+          example: name
+          type:
+          - string
+          - 'null'
+      - name: page
+        in: query
+        description: Defines the page number to be fetched.
+        required: false
+        schema:
+          default: 1
+          example: 3
+          minimum: 1
+          type:
+          - integer
+          - 'null'
+      - name: page_size
+        in: query
+        description: "Defines the number of elements displayed on a page.\n        Must be a positive number with 0 and -1 return a maximum defined in the gate"
+        required: false
+        schema:
+          default: 20
+          example: 40
+          minimum: -1
+          type:
+          - integer
+          - 'null'
+      - name: parent_account_id
+        in: path
+        description: The ID of the parent account
+        required: true
+        schema:
+          type: integer
+      - name: status
+        in: query
+        description: Returns objects that match the selected status.
+        required: false
+        schema:
+          default: null
+          enum:
+          - null
+          - ACTIVATION_ABORTED
+          - ACTIVE
+          - APPROVED
+          - HSM_COIN_UPDATED
+          - PENDING
+          - PENDING_ACTIVATION
+          - PENDING_CREATE_IN_HSM
+          - PENDING_VIEW_ONLY
+          - REJECTED
+          - VIEW_ONLY
+          type:
+          - string
+          - 'null'
+      - name: user
+        in: query
+        description: Filters for accounts that the specified user belongs to (i.e. is part of the account’s governance rules).
+        required: false
+        schema:
+          default: null
+          type:
+          - integer
+          - 'null'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_APISearchAccountResults'
+          description: Account search results
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid search parameter
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: This search parameter doesn't exist
+components:
+  schemas:
+    EthereumAndEvmFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/EthereumStakingInfo'
+          default: null
+          description: Ethereum Staking data
+        type:
+          default: EthereumAndEvm
+      type: object
+    NFTMetadata:
+      properties:
+        description:
+          default: null
+          type:
+          - string
+          - 'null'
+        links:
+          additionalProperties:
+            default: null
+            type:
+            - string
+            - 'null'
+          default: null
+          type:
+          - object
+          - 'null'
+        media:
+          type: string
+        medias:
+          $ref: '#/components/schemas/Medias'
+        nftName:
+          default: null
+          type:
+          - string
+          - 'null'
+        properties:
+          items:
+            $ref: '#/components/schemas/Property'
+          type: array
+        staxImage:
+          default: null
+          type:
+          - string
+          - 'null'
+        tokenId:
+          type: string
+        tokenName:
+          type: string
+        tokenNameThumbnail:
+          default: null
+          type:
+          - string
+          - 'null'
+      required:
+      - media
+      - medias
+      - properties
+      - tokenId
+      - tokenName
+      type: object
+    _APISearchAccountResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/AccountSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    Media:
+      properties:
+        mediaType:
+          default: null
+          type:
+          - string
+          - 'null'
+        uri:
+          type: string
+      required:
+      - uri
+      type: object
+    NFTCollectionResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/NFTCollection'
+      required:
+      - cursor
+      - node
+      type: object
+    BitcoinBalances:
+      properties:
+        available:
+          description: Sum of balances in status available
+          example: '750'
+          type: string
+        confirmed:
+          description: Balance of confirmed UTXOs
+          example: '100'
+          type: string
+        mempool_change:
+          description: Balance of change UTXOs from transactions in mempool
+          example: '100'
+          type: string
+        mempool_in:
+          description: Balance of incoming UTXOs from transactions in mempool
+          example: '200'
+          type: string
+        mempool_out:
+          description: Balance of outgoing UTXOs from transactions in mempool
+          example: '400'
+          type: string
+        pending:
+          description: Sum of balances in status pending
+          example: '250'
+          type: string
+        total:
+          description: Total balance of the account
+          example: '1000'
+          type: string
+        under_confirmation_change:
+          description: Balance of change UTXOs from transactions with less than 6 confirmations
+          example: '500'
+          type: string
+        under_confirmation_in:
+          description: Balance of incoming UTXOs from transactions with less than 6 confirmations
+          example: '700'
+          type: string
+        under_confirmation_out:
+          description: Balance of outgoing UTXOs from transactions with less than 6 confirmations
+          example: '500'
+          type: string
+        worthless:
+          description: Balance of worthless (aka dust) UTXOs
+          example: '50'
+          type: string
+      required:
+      - available
+      - confirmed
+      - mempool_change
+      - mempool_in
+      - mempool_out
+      - pending
+      - total
+      - under_confirmation_change
+      - under_confirmation_in
+      - under_confirmation_out
+      - worthless
+      type: object
+    PaginatedNFTs:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/NFTResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    NFTCollection:
+      properties:
+        account_id:
+          type: integer
+        contract_address:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/NFTCollectionMedia'
+          default: null
+        name:
+          default: null
+          type:
+          - string
+          - 'null'
+        price:
+          allOf:
+          - $ref: '#/components/schemas/NFTPrice'
+          default: null
+        token_balance:
+          type: integer
+        token_type:
+          description: ERC-721 or ERC-1155
+          type: string
+      required:
+      - account_id
+      - contract_address
+      - token_balance
+      - token_type
+      type: object
+    CurrencyInfo:
+      properties:
+        magnitude:
+          type: integer
+        name:
+          type: string
+        network:
+          type: string
+        token_address:
+          default: null
+          type:
+          - string
+          - 'null'
+      required:
+      - magnitude
+      - name
+      - network
+      type: object
+    PolkadotFields:
+      properties:
+        anonymous_proxy:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotAnonymousProxyInfo'
+          default: null
+        balances:
+          $ref: '#/components/schemas/PolkadotBalancesWithUnbondingInfo'
+        staking:
+          $ref: '#/components/schemas/PolkadotStakingInfo'
+        type:
+          default: Polkadot
+      required:
+      - balances
+      - staking
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    AccountWhitelistRule:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/AccountWhitelistRuleEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    AccountBalancesHistory:
+      properties:
+        account_index:
+          type: integer
+        balances:
+          items:
+            $ref: '#/components/schemas/AccountBalancesHistoryEntry'
+          type: array
+        currency:
+          $ref: '#/components/schemas/CurrencyInfo'
+      required:
+      - account_index
+      - balances
+      - currency
+      type: object
+    NFTTransactionBalance:
+      properties:
+        available:
+          default: 0
+          type: integer
+        on_chain:
+          default: 0
+          type: integer
+        pending_approval:
+          default: 0
+          type: integer
+        submitted:
+          default: 0
+          type: integer
+      type: object
+    PolygonFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/MaticStakingInfo'
+          default: null
+          description: Polygon Staking data
+        type:
+          default: Polygon
+      type: object
+    Account:
+      properties:
+        address:
+          default: null
+          description: The public address of the account (if any). Note that you should use the /accounts/:id/addresses endpoint to retrieve a trusted public address.
+          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
+          type:
+          - string
+          - 'null'
+        available_balance:
+          example: '1337'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        balance:
+          example: '1338'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        coin_fields:
+          default: null
+          oneOf:
+          - $ref: '#/components/schemas/TezosFields'
+          - $ref: '#/components/schemas/PolkadotFields'
+          - $ref: '#/components/schemas/SolanaAccountFields'
+          - $ref: '#/components/schemas/EthereumAndEvmFields'
+          - $ref: '#/components/schemas/PolygonFields'
+        contract_address:
+          default: null
+          type:
+          - string
+          - 'null'
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        currency:
+          enum:
+          - Dollar
+          - Euro
+          - arbitrum
+          - arbitrum_goerli
+          - arbitrum_sepolia
+          - avalanche_c_chain
+          - avalanche_c_chain_fuji
+          - base
+          - base_goerli
+          - base_sepolia
+          - bitcoin
+          - bitcoin_cash
+          - bitcoin_gold
+          - bitcoin_testnet
+          - blast
+          - blast_sepolia
+          - bsc
+          - cardano
+          - celo
+          - celo_alfajores
+          - cosmos
+          - cronos
+          - cronos_testnet
+          - dash
+          - digibyte
+          - dogecoin
+          - ethereum
+          - ethereum_classic
+          - ethereum_goerli
+          - ethereum_holesky
+          - ethereum_hoodi
+          - ethereum_pow
+          - ethereum_ropsten
+          - ethereum_sepolia
+          - etherlink
+          - fantom
+          - fantom_testnet
+          - filecoin
+          - filecoin_calibration
+          - flare
+          - flare_coston
+          - kava_evm
+          - kava_evm_testnet
+          - klaytn
+          - klaytn_baobab
+          - komodo
+          - linea
+          - litecoin
+          - mantle
+          - mantle_sepolia
+          - near
+          - neon_evm
+          - optimism
+          - optimism_goerli
+          - optimism_sepolia
+          - pivx
+          - polkadot
+          - polygon
+          - polygon_amoy
+          - polygon_mumbai
+          - polygon_zk_evm
+          - polygon_zk_evm_testnet
+          - pulsechain
+          - pulsechain_testnet
+          - ripple
+          - scroll
+          - scroll_sepolia
+          - solana
+          - solana_devnet
+          - solana_testnet
+          - sonic
+          - stellar
+          - tezos
+          - tomo
+          - tomo_testnet
+          - tron
+          - vertcoin
+          - viacoin
+          - westend
+          example: bitcoin
+          type: string
+        derivation_path:
+          default: null
+          example: 44'/0'/0'
+          type:
+          - string
+          - 'null'
+        governance_rules:
+          items:
+            $ref: '#/components/schemas/AccountRuleSet'
+          type: array
+        id:
+          type: integer
+        index:
+          example: 0
+          type: integer
+        labels:
+          description: labels for this account
+          items:
+            $ref: '#/components/schemas/LiteLabel'
+          type: array
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        name:
+          example: hot wallet 1
+          type: string
+        parent:
+          default: null
+          type:
+          - integer
+          - 'null'
+        pending_balance:
+          example: '42'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        status:
+          enum:
+          - ACTIVATION_ABORTED
+          - ACTIVE
+          - APPROVED
+          - HSM_COIN_UPDATED
+          - PENDING
+          - PENDING_ACTIVATION
+          - PENDING_CREATE_IN_HSM
+          - PENDING_VIEW_ONLY
+          - REJECTED
+          - VIEW_ONLY
+          example: ACTIVE
+          type: string
+        token_accounts:
+          description: Light token accounts for this account
+          items:
+            $ref: '#/components/schemas/LightTokenAccount'
+          type: array
+        tradelink_data:
+          allOf:
+          - $ref: '#/components/schemas/TradelinkState'
+          default: null
+          description: Tradelink state for this account
+          example:
+            total_repledge: '0'
+        type:
+          enum:
+          - Bep20
+          - Bitcoin
+          - Cardano
+          - Cosmos
+          - Erc20
+          - Ethereum
+          - Generic
+          - Near
+          - Polkadot
+          - Polygon
+          - Ripple
+          - Solana
+          - Stellar
+          - Tezos
+          - Trc20
+          - Tron
+          example: Bitcoin
+          type: string
+        xpub:
+          default: null
+          description: The Extended Public Key of the account (if any). Note that you should use the /accounts/:id/addresses endpoint to retrieve and share a trusted public address. Only API Operators with view-all rights can retrieve the XPUB.
+          example: xpub6DGnkaitcjHaKFY18sqWhT3ghE6WWCS61BWn6BwmfzTvr3GHis274GFmXwh4P46s6ikgGEoFjzq4R3KyhUwkkGnXdrpha4QGo3n7PPSehvR
+          type:
+          - string
+          - 'null'
+      required:
+      - available_balance
+      - balance
+      - created_by
+      - created_on
+      - currency
+      - governance_rules
+      - id
+      - index
+      - name
+      - pending_balance
+      - status
+      - type
+      type: object
+    AccountSmartContractInteractionRule:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/AccountSmartContractInteractionRuleEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    AccountSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Account'
+      required:
+      - cursor
+      - node
+      type: object
+    AccountBalances:
+      properties:
+        available:
+          description: Sum of balances in status available
+          example: '750'
+          type: string
+        pending:
+          description: Sum of balances in status pending
+          example: '250'
+          type: string
+        total:
+          description: Sum of all balances
+          example: '1000'
+          type: string
+      required:
+      - available
+      - pending
+      - total
+      type: object
+    VaultLightTokenAccount:
+      properties:
+        account_name:
+          type: string
+        associated_token_account:
+          type: string
+        available:
+          type: integer
+        contract_address:
+          type: string
+        creation_transaction_hash:
+          type: string
+        parent_id:
+          type: integer
+        pending:
+          type: integer
+        status:
+          type: string
+        ticker:
+          type: string
+      required:
+      - account_name
+      - associated_token_account
+      - available
+      - contract_address
+      - creation_transaction_hash
+      - parent_id
+      - pending
+      - status
+      - ticker
+      type: object
+    AccountCurrency:
+      properties:
+        amount_units:
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+        fees_units:
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+      required:
+      - amount_units
+      - fees_units
+      type: object
+    CurrencyUnit:
+      properties:
+        code:
+          example: tBTC
+          type: string
+        magnitude:
+          example: 8
+          type: integer
+      required:
+      - code
+      - magnitude
+      type: object
+    LightTokenAccount:
+      properties:
+        account_name:
+          type: string
+        associated_token_account:
+          type: string
+        available:
+          type: integer
+        contract_address:
+          type: string
+        creation_transaction_hash:
+          type: string
+        parent_id:
+          type: integer
+        pending:
+          type: integer
+        status:
+          type: string
+        ticker:
+          type: string
+      required:
+      - account_name
+      - associated_token_account
+      - available
+      - contract_address
+      - creation_transaction_hash
+      - parent_id
+      - pending
+      - status
+      - ticker
+      type: object
+    AccountTransactionFilterRuleEntry:
+      properties:
+        condition:
+          default: null
+          enum:
+          - null
+          - ALL
+          - ANY
+          type:
+          - string
+          - 'null'
+        filters:
+          additionalProperties:
+            oneOf:
+            - items:
+                type: string
+              type: array
+            - type: string
+          default: null
+          type:
+          - object
+          - 'null'
+        preset:
+          default: null
+          type:
+          - string
+          - 'null'
+      type: object
+    AccountSmartContractInteractionRuleEntry:
+      properties:
+        enabled:
+          type: boolean
+      required:
+      - enabled
+      type: object
+    AccountThresholdRuleEntry:
+      properties:
+        currency_type:
+          type: string
+        max:
+          default: null
+          type:
+          - integer
+          - 'null'
+        min:
+          type: integer
+      required:
+      - currency_type
+      - min
+      type: object
+    LabelInfo:
+      properties:
+        color:
+          description: color of the tag
+          example: '#FE4523'
+          type: string
+        description:
+          description: description of this tag
+          example: This is a SPAM
+          type: string
+      required:
+      - color
+      - description
+      type: object
+    PolkadotAnonymousProxyInfo:
+      properties:
+        address:
+          type: string
+        balances:
+          $ref: '#/components/schemas/PolkadotBalances'
+        block_height:
+          type: integer
+        created_at:
+          type: string
+        ext_index:
+          type: integer
+        index:
+          type: integer
+        is_controller:
+          type: boolean
+        is_main:
+          type: boolean
+        kind:
+          type: string
+      required:
+      - address
+      - balances
+      - block_height
+      - created_at
+      - ext_index
+      - index
+      - is_controller
+      - is_main
+      - kind
+      type: object
+    PolkadotBalances:
+      properties:
+        available:
+          type: string
+        bonded:
+          type: string
+        free:
+          type: string
+        frozen:
+          type: string
+        reserved:
+          type: string
+        total:
+          type: string
+      required:
+      - available
+      - bonded
+      - free
+      - frozen
+      - reserved
+      - total
+      type: object
+    NFTPortfolioValuation:
+      properties:
+        portfolio_value:
+          allOf:
+          - $ref: '#/components/schemas/NFTValuation'
+          description: Estimated portfolio value based on collections' floor prices and quantity of tokens owned
+        token_quantity:
+          default: null
+          description: Total quantity of tokens owned
+          example: 777
+          type:
+          - integer
+          - 'null'
+      required:
+      - portfolio_value
+      type: object
+    Address:
+      additionalProperties: false
+      properties:
+        address:
+          type: string
+        derivation_path:
+          type: string
+      required:
+      - address
+      - derivation_path
+      type: object
+    PeriodicRewards:
+      properties:
+        last30:
+          description: Rewards generated over the last 30 days by all active stakes
+          example: '20239'
+          type: string
+        last7:
+          description: Rewards generated over the last 7 days by all active stakes
+          example: '50239'
+          type: string
+        total:
+          description: Total rewards generated by all active stakes
+          example: '100239'
+          type: string
+      required:
+      - last30
+      - last7
+      - total
+      type: object
+    NFTValuation:
+      properties:
+        eth_value:
+          description: Estimated portfolio value in ETH (in base unit WEI)
+          type: integer
+        usd_value:
+          default: null
+          description: Estimated portfolio value in USD, if available
+          type:
+          - string
+          - 'null'
+      required:
+      - eth_value
+      type: object
+    SolanaStakingInfo:
+      properties:
+        balances:
+          allOf:
+          - $ref: '#/components/schemas/SolanaBalances'
+          description: Balances of open stakes
+        rewards:
+          allOf:
+          - $ref: '#/components/schemas/PeriodicRewards'
+          description: Rewards generated by active stakes
+      required:
+      - balances
+      - rewards
+      type: object
+    NFTResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/NFT'
+      required:
+      - cursor
+      - node
+      type: object
+    SolanaBalances:
+      properties:
+        activating:
+          description: Sum of balances of open stakes in status activating
+          example: '341338'
+          type: string
+        deactivating:
+          description: Sum of balances of open stakes in status deactivating
+          example: '0'
+          type: string
+        delegated:
+          description: Sum of balances of open stakes in status delegated
+          example: '0'
+          type: string
+        token_accounts:
+          default: null
+          description: The light token accounts associated to this account
+          items:
+            $ref: '#/components/schemas/LightTokenAccount'
+          type:
+          - array
+          - 'null'
+        total_staked:
+          description: Total SOL locked into staking on this solana account
+          example: '342338'
+          type: string
+        undelegated:
+          description: Sum of balances of open stakes in status undelegated
+          example: '0'
+          type: string
+      required:
+      - activating
+      - deactivating
+      - delegated
+      - total_staked
+      - undelegated
+      type: object
+    AccountTransactionFilterRule:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/AccountTransactionFilterRuleEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    PaginatedNFTCollections:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/NFTCollectionResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    TezosFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/TezosStakeBlockchainState'
+          default: null
+          description: A valid tezos delegate
+        type:
+          default: Tezos
+      type: object
+    NFTCollectionMedia:
+      properties:
+        mediaType:
+          type: string
+        uri:
+          type: string
+      required:
+      - mediaType
+      - uri
+      type: object
+    MaticStakingInfo:
+      properties:
+        total_rewards:
+          description: Total rewards
+          type: string
+        total_staking:
+          description: Total staking
+          type: string
+        total_unbonded:
+          description: Total unbonded
+          type: string
+        total_unbonding:
+          description: Total unbonding
+          type: string
+      required:
+      - total_rewards
+      - total_staking
+      - total_unbonded
+      - total_unbonding
+      type: object
+    Medias:
+      properties:
+        big:
+          allOf:
+          - $ref: '#/components/schemas/Media'
+          default: null
+        original:
+          allOf:
+          - $ref: '#/components/schemas/Media'
+          default: null
+        preview:
+          allOf:
+          - $ref: '#/components/schemas/Media'
+          default: null
+      type: object
+    TezosStakeBlockchainState:
+      properties:
+        activated_at:
+          default: null
+          description: date on wich the stake was activated
+          example: '2023-02-06T02:48:59+00:00'
+          format: date-time
+          type:
+          - string
+          - 'null'
+        activated_cycle:
+          default: null
+          description: cycle in which the stake was activated
+          example: 575
+          type:
+          - integer
+          - 'null'
+        active_balance:
+          default: null
+          description: amount of assets generating rewards in base unit of the network
+          example: '322254'
+          type:
+          - string
+          - 'null'
+        baker_address:
+          description: baker address to which the stake was delegated
+          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
+          type: string
+        delegated_at:
+          description: date at wich the stake was delegated
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        delegated_block:
+          default: null
+          description: tezos block on which the stake was delegated
+          example: '3071075'
+          type:
+          - string
+          - 'null'
+        delegated_cycle:
+          default: null
+          description: cycle in which the stake was delegated
+          example: 568
+          type:
+          - integer
+          - 'null'
+        gross_apy:
+          default: null
+          description: total APY generated by the stake
+          example: '38.33349571462074'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        rewards:
+          default: null
+          description: the total rewards generated by the stake
+          example: '6958'
+          type:
+          - string
+          - 'null'
+        state:
+          description: status of the stake on chain
+          enum:
+          - activating
+          - active
+          - inactive
+          - syncing
+          example: active
+          type: string
+        updated_at:
+          default: null
+          description: date on wich the stake was last updated
+          example: '2023-03-10T17:38:41+00:00'
+          format: date-time
+          type:
+          - string
+          - 'null'
+      required:
+      - baker_address
+      - delegated_at
+      - state
+      type: object
+    AccountBalancesHistoryEntry:
+      properties:
+        date:
+          type: string
+        value:
+          default: null
+          type:
+          - string
+          - 'null'
+      required:
+      - date
+      type: object
+    AccountWhitelistRuleEntry:
+      properties:
+        whitelist:
+          type: integer
+      required:
+      - whitelist
+      type: object
+    PolkadotStakingInfo:
+      properties:
+        controller_address:
+          default: null
+          description: Address of the anonymous proxy
+          type:
+          - string
+          - 'null'
+        is_nominator:
+          description: True if the account is an active nominator, false if it is "chilled"
+          type: boolean
+        legacy_staking:
+          description: If true, this account uses the legacy staking flow with a PureProxy account
+          type: boolean
+        proxies:
+          description: Addresses of proxies of the controller account
+          items:
+            type: string
+          type: array
+        rewards_destination:
+          default: null
+          description: Rewards destination
+          type:
+          - string
+          - 'null'
+      required:
+      - is_nominator
+      - legacy_staking
+      - proxies
+      type: object
+    PolkadotUnbondingInfo:
+      properties:
+        amount:
+          type: string
+        waiting_time:
+          type: integer
+        withdrawable_date:
+          type: string
+      required:
+      - amount
+      - waiting_time
+      - withdrawable_date
+      type: object
+    SolanaAccountFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/SolanaStakingInfo'
+          description: Solana Staking balances and rewards
+        type:
+          default: Solana
+      required:
+      - staking
+      type: object
+    AccountThresholdRule:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/AccountThresholdRuleEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    TradelinkState:
+      properties:
+        total_repledge:
+          description: Total pending repledge balance over all account pledges
+          example: 0
+          type: string
+      required:
+      - total_repledge
+      type: object
+    EthereumStakingInfo:
+      properties:
+        available_rewards:
+          default: null
+          description: Available rewards
+          type:
+          - string
+          - 'null'
+        network_apy:
+          default: null
+          description: APY
+          type:
+          - number
+          - 'null'
+        total_rewards:
+          default: null
+          description: Total rewards
+          type:
+          - string
+          - 'null'
+        total_staking:
+          default: null
+          description: Total staking
+          type:
+          - string
+          - 'null'
+      type: object
+    LiteLabel:
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        info:
+          $ref: '#/components/schemas/LabelInfo'
+        name:
+          description: name of the tag
+          example: SPAM
+          type: string
+      required:
+      - id
+      - info
+      - name
+      type: object
+    NFT:
+      properties:
+        contract_address:
+          type: string
+        metadata:
+          allOf:
+          - $ref: '#/components/schemas/NFTMetadata'
+          default: null
+        price:
+          allOf:
+          - $ref: '#/components/schemas/NFTPrice'
+          default: null
+        token_id:
+          type: string
+        token_type:
+          description: ERC-721 or ERC-1155
+          type: string
+        tx_balance:
+          allOf:
+          - $ref: '#/components/schemas/NFTTransactionBalance'
+          default: null
+        value:
+          type: integer
+      required:
+      - contract_address
+      - token_id
+      - token_type
+      - value
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    AccountRuleSet:
+      properties:
+        id:
+          example: 1
+          type: integer
+        index:
+          example: 0
+          type: integer
+        name:
+          example: Rule 1
+          type: string
+        rules:
+          example:
+            data:
+            - group: 2
+              quorum: 1
+            - quorum: 1
+              users:
+              - 1
+              - 2
+            id: 1
+            type: MULTI_AUTHORIZATIONS
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/AccountWhitelistRule'
+            - $ref: '#/components/schemas/AccountThresholdRule'
+            - $ref: '#/components/schemas/AccountMultiauthRule'
+            - $ref: '#/components/schemas/AccountTransactionFilterRule'
+            - $ref: '#/components/schemas/AccountSmartContractInteractionRule'
+          type: array
+      required:
+      - id
+      - index
+      - name
+      - rules
+      type: object
+    AccountMultiauthRule:
+      properties:
+        data:
+          items:
+            default: null
+            oneOf:
+            - $ref: '#/components/schemas/AccountMultiauthRuleExternalGroupEntry'
+            - $ref: '#/components/schemas/AccountMultiauthRuleInternalGroupEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    AccountMultiauthRuleInternalGroupEntry:
+      properties:
+        quorum:
+          type: integer
+        users:
+          items:
+            default: null
+            type:
+            - integer
+            - 'null'
+          type: array
+      required:
+      - quorum
+      - users
+      type: object
+    Addresses:
+      additionalProperties: false
+      properties:
+        addresses:
+          items:
+            $ref: '#/components/schemas/Address'
+          type: array
+      required:
+      - addresses
+      type: object
+    PolkadotBalancesWithUnbondingInfo:
+      properties:
+        available:
+          type: string
+        bonded:
+          type: string
+        free:
+          type: string
+        frozen:
+          type: string
+        reserved:
+          type: string
+        total:
+          type: string
+        total_unbonded:
+          type: string
+        total_unbonding:
+          type: string
+        unbonded:
+          items:
+            $ref: '#/components/schemas/PolkadotUnbondingInfo'
+          type: array
+        unbonding:
+          items:
+            $ref: '#/components/schemas/PolkadotUnbondingInfo'
+          type: array
+      required:
+      - available
+      - bonded
+      - free
+      - frozen
+      - reserved
+      - total
+      - total_unbonded
+      - total_unbonding
+      - unbonded
+      - unbonding
+      type: object
+    Property:
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+      - key
+      - value
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
+          type: string
+      required:
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    AccountMultiauthRuleExternalGroupEntry:
+      properties:
+        group:
+          type: integer
+        quorum:
+          type: integer
+      required:
+      - group
+      - quorum
+      type: object
+    NFTPrice:
+      properties:
+        contract_address:
+          default: null
+          type:
+          - string
+          - 'null'
+        ticker:
+          enum:
+          - ETH
+          type: string
+        token_id:
+          default: null
+          type:
+          - string
+          - 'null'
+        value:
+          type: number
+      required:
+      - ticker
+      - value
+      type: object
+  securitySchemes:
+    Ledger_API_User:
+      description: (**required**) Username of a registered API User
+      in: header
+      name: X-Ledger-API-User
+      type: apiKey
+    Ledger_API_Key:
+      description: If you've set up your API Key when initializing your LAM, you'll need to include it as a header along with the api user header. For more details, [see step 5 of the get started documentation](https://help.vault.ledger.com/Content/api/api_getstarted.html).
+      in: header
+      name: X-Ledger-API-Key
+      type: apiKey
+    Ledger_Store_Auth_Token:
+      description: If you've set up HashiCorp Vault as an authentication service, you'll need to pass the `X-Ledger-Store-Auth-Token` header along with the API user header. For more details see [how to set up HashiCorp Vault with the LAM](https://help.vault.ledger.com/Content/api/hashicorp_vault.html).
+      in: header
+      name: X-Ledger-Store-Auth-Token
+      type: apiKey

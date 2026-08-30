@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: Ledger Crypto Currencies API
+  version: '1.0'
+  description: 'Operations tagged Crypto Currencies across 2 of this provider''s published API definitions: ledger-buy-provider-openapi.yml, ledger-sell-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
+tags:
+- name: Crypto Currencies
+paths:
+  /crypto-currencies:
+    get:
+      operationId: getCrypto-currencies
+      responses:
+        '200':
+          description: '### Available crypto currencies
+
+            Return a list of crypto currencies supported by the Buy provider. Must be an array of IDs using the LedgerId format. More details are available on the [Ledger Developer Portal](https://developers.ledger.com/docs/ledger-live/exchange/buy/providers-backend#ledger-ids-mapping).
+
+            '
+          x-summary: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+              - bitcoin
+              - solana
+              - ethereum
+              - ethereum/erc20/aave
+              - solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v
+        default:
+          description: Error sent by the provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderServerError'
+              example:
+                code: 42
+                message: Server isn't able to handle the request because of whatever.
+      tags:
+      - Crypto Currencies
+components:
+  schemas:
+    ProviderServerError:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ErrorPayload:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    defaultApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+x-refined-from:
+- ledger-buy-provider-openapi.yml
+- ledger-sell-provider-openapi.yml

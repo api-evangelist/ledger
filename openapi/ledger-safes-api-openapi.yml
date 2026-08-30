@@ -1,0 +1,726 @@
+openapi: 3.2.0
+info:
+  title: Safe Transaction Service Safes API
+  version: 5.33.1
+  description: API to keep track of transactions sent via Safe smart contracts
+  x-gitbook-description-document:
+    object: document
+    data:
+      schemaVersion: 8
+    nodes:
+    - object: block
+      type: paragraph
+      isVoid: false
+      data: {}
+      nodes:
+      - object: text
+        leaves:
+        - object: leaf
+          text: API to keep track of transactions sent via Safe smart contracts
+          marks: []
+  x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
+tags:
+- name: safes
+paths:
+  /api/v2/safes/{address}/balances/:
+    get:
+      operationId: safes_balances_retrieve_2
+      description: 'Get paginated balances for Ether and ERC20 tokens.
+
+        The maximum limit allowed is 200.'
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: trusted
+        schema:
+          type: boolean
+          default: false
+        description: If `True` just trusted tokens will be returned
+        x-gitbook-description-html: <p>If <code>True</code> just trusted tokens will be returned</p>
+      - in: query
+        name: exclude_spam
+        schema:
+          type: boolean
+          default: false
+        description: If `True` spam tokens will not be returned
+        x-gitbook-description-html: <p>If <code>True</code> spam tokens will not be returned</p>
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Number of results to return per page.
+        x-gitbook-description-html: <p>Number of results to return per page.</p>
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: The initial index from which to return the results.
+        x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeCollectibleResponseList'
+          description: ''
+        '404':
+          description: Safe not found
+          x-gitbook-description-html: <p>Safe not found</p>
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+          x-gitbook-description-html: <p>Safe address checksum not valid</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+        - object: block
+          type: paragraph
+          isVoid: false
+          data: {}
+          nodes:
+          - object: text
+            leaves:
+            - object: leaf
+              text: Get paginated balances for Ether and ERC20 tokens. The maximum limit allowed is 200.
+              marks: []
+      x-gitbook-description-html: <p>Get paginated balances for Ether and ERC20 tokens. The maximum limit allowed is 200.</p>
+  /api/v2/safes/{address}/collectibles/:
+    get:
+      operationId: safes_collectibles_retrieve
+      description: 'Get paginated collectibles (ERC721 tokens) and information about them of a given Safe account.
+
+        The maximum limit allowed is 10.'
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: trusted
+        schema:
+          type: boolean
+          default: false
+        description: If `True` just trusted tokens will be returned
+        x-gitbook-description-html: <p>If <code>True</code> just trusted tokens will be returned</p>
+      - in: query
+        name: exclude_spam
+        schema:
+          type: boolean
+          default: false
+        description: If `True` spam tokens will not be returned
+        x-gitbook-description-html: <p>If <code>True</code> spam tokens will not be returned</p>
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Number of results to return per page.
+        x-gitbook-description-html: <p>Number of results to return per page.</p>
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: The initial index from which to return the results.
+        x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeCollectibleResponseList'
+          description: ''
+        '404':
+          description: Safe not found
+          x-gitbook-description-html: <p>Safe not found</p>
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+          x-gitbook-description-html: <p>Safe address checksum not valid</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+        - object: block
+          type: paragraph
+          isVoid: false
+          data: {}
+          nodes:
+          - object: text
+            leaves:
+            - object: leaf
+              text: Get paginated collectibles (ERC721 tokens) and information about them of a given Safe account. The maximum limit allowed is 10.
+              marks: []
+      x-gitbook-description-html: <p>Get paginated collectibles (ERC721 tokens) and information about them of a given Safe account. The maximum limit allowed is 10.</p>
+  /tx-service/eth/api/v1/safes/{address}/:
+    get:
+      operationId: safes_retrieve
+      description: Returns detailed information of a given Safe account
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeInfoResponse'
+          description: ''
+        '404':
+          description: Safe not found
+        '422':
+          description: 'code = 1: Checksum address validation failed
+
+            code = 50: Cannot get Safe info'
+  /tx-service/eth/api/v1/safes/{address}/creation/:
+    get:
+      operationId: safes_creation_retrieve
+      description: 'Returns detailed information on the Safe creation transaction of a given Safe.
+
+
+        Note: When event indexing is being used and multiple Safes are deployed in the same transaction
+
+        the result might not be accurate due to the indexer not knowing which events belong to which Safe
+
+        deployment.'
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeCreationInfoResponse'
+          description: ''
+        '404':
+          description: Safe creation not found
+        '422':
+          description: Owner address checksum not valid
+        '503':
+          description: Problem connecting to Ethereum network
+  /tx-service/eth/api/v1/safes/{address}/export/:
+    get:
+      operationId: safes_export_retrieve
+      description: 'Get transactions optimized for CSV export with transfer information.
+
+        The maximum limit allowed is 1000.'
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: execution_date__gte
+        schema:
+          type: string
+          format: date-time
+        description: Filter transactions executed after this date (ISO format)
+      - in: query
+        name: execution_date__lte
+        schema:
+          type: string
+          format: date-time
+        description: Filter transactions executed before this date (ISO format)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Maximum number of transactions to return (max 1000)
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: Number of transactions to skip
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeExportTransactionList'
+          description: ''
+        '404':
+          description: Safe not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+  /tx-service/eth/api/v2/safes/{address}/balances/:
+    get:
+      operationId: safes_balances_retrieve_2
+      description: 'Get paginated balances for Ether and ERC20 tokens.
+
+        The maximum limit allowed is 200.'
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: trusted
+        schema:
+          type: boolean
+          default: false
+        description: If `True` just trusted tokens will be returned
+      - in: query
+        name: exclude_spam
+        schema:
+          type: boolean
+          default: false
+        description: If `True` spam tokens will not be returned
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Number of results to return per page.
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: The initial index from which to return the results.
+      tags:
+      - safes
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeCollectibleResponseList'
+          description: ''
+        '404':
+          description: Safe not found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeErrorResponse'
+          description: Safe address checksum not valid
+components:
+  schemas:
+    CodeErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        arguments:
+          type: array
+          items: {}
+      required:
+      - arguments
+      - code
+      - message
+    SafeInfoResponse:
+      type: object
+      properties:
+        address:
+          type: string
+        nonce:
+          type: string
+        threshold:
+          type: integer
+        owners:
+          type: array
+          items:
+            type: string
+        masterCopy:
+          type: string
+        modules:
+          type: array
+          items:
+            type: string
+        fallbackHandler:
+          type: string
+        guard:
+          type: string
+        version:
+          type:
+          - string
+          - 'null'
+      required:
+      - address
+      - fallbackHandler
+      - guard
+      - masterCopy
+      - modules
+      - nonce
+      - owners
+      - threshold
+      - version
+    SafeCollectibleResponse:
+      type: object
+      properties:
+        address:
+          type: string
+        tokenName:
+          type: string
+        tokenSymbol:
+          type: string
+        logoUri:
+          type: string
+        id:
+          type: string
+        uri:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        imageUri:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: {}
+      required:
+      - address
+      - description
+      - id
+      - imageUri
+      - logoUri
+      - metadata
+      - name
+      - tokenName
+      - tokenSymbol
+      - uri
+    UserOperationWithSafeOperationResponse:
+      type: object
+      properties:
+        ethereumTxHash:
+          type: string
+        sender:
+          type: string
+        userOperationHash:
+          type: string
+        nonce:
+          type: string
+        initCode:
+          type:
+          - string
+          - 'null'
+        callData:
+          type:
+          - string
+          - 'null'
+        callGasLimit:
+          type: string
+        verificationGasLimit:
+          type: string
+        preVerificationGas:
+          type: string
+        maxFeePerGas:
+          type: string
+        maxPriorityFeePerGas:
+          type: string
+        paymaster:
+          type:
+          - string
+          - 'null'
+        paymasterData:
+          type:
+          - string
+          - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+        safeOperation:
+          oneOf:
+          - $ref: '#/components/schemas/SafeOperationResponse'
+          - type: 'null'
+          readOnly: true
+      required:
+      - callData
+      - callGasLimit
+      - entryPoint
+      - ethereumTxHash
+      - initCode
+      - maxFeePerGas
+      - maxPriorityFeePerGas
+      - nonce
+      - paymaster
+      - paymasterData
+      - preVerificationGas
+      - safeOperation
+      - sender
+      - signature
+      - userOperationHash
+      - verificationGasLimit
+    PaginatedSafeExportTransactionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeExportTransaction'
+    SafeCreationInfoResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        creator:
+          type: string
+        transactionHash:
+          type: string
+        factoryAddress:
+          type: string
+        masterCopy:
+          type:
+          - string
+          - 'null'
+        setupData:
+          type:
+          - string
+          - 'null'
+        saltNonce:
+          type:
+          - string
+          - 'null'
+        dataDecoded:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        userOperation:
+          oneOf:
+          - $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+          - type: 'null'
+      required:
+      - created
+      - creator
+      - dataDecoded
+      - factoryAddress
+      - masterCopy
+      - saltNonce
+      - setupData
+      - transactionHash
+      - userOperation
+    PaginatedSafeCollectibleResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeCollectibleResponse'
+    SafeExportTransaction:
+      type: object
+      description: Serializer for the export endpoint that returns transaction data optimized for CSV export
+      properties:
+        safe:
+          type: string
+        From:
+          type: string
+          title: ' from'
+        to:
+          type: string
+        amount:
+          type: string
+        assetType:
+          type: string
+        assetAddress:
+          type:
+          - string
+          - 'null'
+        assetSymbol:
+          type:
+          - string
+          - 'null'
+        assetDecimals:
+          type:
+          - integer
+          - 'null'
+        proposerAddress:
+          type:
+          - string
+          - 'null'
+        proposedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        executorAddress:
+          type:
+          - string
+          - 'null'
+        executedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        note:
+          type:
+          - string
+          - 'null'
+        transactionHash:
+          type: string
+        contractAddress:
+          type:
+          - string
+          - 'null'
+        nonce:
+          type:
+          - string
+          - 'null'
+      required:
+      - From
+      - amount
+      - assetAddress
+      - assetDecimals
+      - assetSymbol
+      - assetType
+      - contractAddress
+      - executedAt
+      - executorAddress
+      - nonce
+      - note
+      - proposedAt
+      - proposerAddress
+      - safe
+      - to
+      - transactionHash
+      x-gitbook-description-html: <p>Serializer for the export endpoint that returns transaction data optimized for CSV export</p>
+    SafeOperationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safeOperationHash:
+          type: string
+        validAfter:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        moduleAddress:
+          type: string
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: 'Filters confirmations queryset
+
+
+            :param obj: SafeOperation instance
+
+            :return: Serialized queryset'
+          readOnly: true
+          x-gitbook-description-html: '<p>Filters confirmations queryset</p>
+
+            <p>:param obj: SafeOperation instance
+
+            :return: Serialized queryset</p>'
+        preparedSignature:
+          type: string
+          readOnly: true
+      required:
+      - confirmations
+      - created
+      - modified
+      - moduleAddress
+      - preparedSignature
+      - safeOperationHash
+      - validAfter
+      - validUntil
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+      x-gitbook-description-html: <p>Token-based authentication with required prefix "Token"</p>

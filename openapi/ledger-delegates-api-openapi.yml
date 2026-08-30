@@ -1,0 +1,574 @@
+openapi: 3.2.0
+info:
+  title: Safe Transaction Service Delegates API
+  version: 5.33.1
+  description: API to keep track of transactions sent via Safe smart contracts
+  x-gitbook-description-document:
+    object: document
+    data:
+      schemaVersion: 8
+    nodes:
+    - object: block
+      type: paragraph
+      isVoid: false
+      data: {}
+      nodes:
+      - object: text
+        leaves:
+        - object: leaf
+          text: API to keep track of transactions sent via Safe smart contracts
+          marks: []
+  x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
+tags:
+- name: delegates
+paths:
+  /api/v2/delegates/:
+    get:
+      operationId: delegates_list_2
+      description: Returns a list with all the delegates
+      parameters:
+      - in: query
+        name: safe
+        schema:
+          type:
+          - string
+          - 'null'
+      - in: query
+        name: delegate
+        schema:
+          type: string
+      - in: query
+        name: delegator
+        schema:
+          type: string
+      - in: query
+        name: label
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+        x-gitbook-description-html: <p>Number of results to return per page.</p>
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+        x-gitbook-description-html: <p>The initial index from which to return the results.</p>
+      tags:
+      - delegates
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSafeDelegateResponseList'
+          description: ''
+        '400':
+          description: Invalid data
+          x-gitbook-description-html: <p>Invalid data</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+        - object: block
+          type: paragraph
+          isVoid: false
+          data: {}
+          nodes:
+          - object: text
+            leaves:
+            - object: leaf
+              text: Returns a list with all the delegates
+              marks: []
+      x-gitbook-description-html: <p>Returns a list with all the delegates</p>
+    post:
+      operationId: delegates_create_2
+      description: "Adds a new Safe delegate with a custom label. Calls with same delegate but different label or\nsigner will update the label or delegator if a different one is provided.\nTo generate the signature, the following EIP712 data hash needs to be signed:\n\n```python\n {\n    \"types\": {\n        \"EIP712Domain\": [\n            {\"name\": \"name\", \"type\": \"string\"},\n            {\"name\": \"version\", \"type\": \"string\"},\n            {\"name\": \"chainId\", \"type\": \"uint256\"},\n        ],\n        \"Delegate\": [\n            {\"name\": \"delegateAddress\", \"type\": \"address\"},\n            {\"name\": \"totp\", \"type\": \"uint256\"},\n        ],\n    },\n    \"primaryType\": \"Delegate\",\n    \"domain\": {\n        \"name\": \"Safe Transaction Service\",\n        \"version\": \"1.0\",\n        \"chainId\": chain_id,\n    },\n    \"message\": {\n        \"delegateAddress\": delegate_address,\n        \"totp\": totp,\n    },\n}\n```\n\nFor the signature we use `TOTP` with `T0=0` and `Tx=3600`. `TOTP` is calculated by taking the\nUnix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals)."
+      tags:
+      - delegates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelegateSerializerV2'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '202':
+          description: Accepted
+          x-gitbook-description-html: <p>Accepted</p>
+        '400':
+          description: Malformed data
+          x-gitbook-description-html: <p>Malformed data</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+        - object: block
+          type: paragraph
+          isVoid: false
+          data: {}
+          nodes:
+          - object: text
+            leaves:
+            - object: leaf
+              text: 'Adds a new Safe delegate with a custom label. Calls with same delegate but different label or signer will update the label or delegator if a different one is provided. To generate the signature, the following EIP712 data hash needs to be signed:'
+              marks: []
+        - object: block
+          type: code
+          isVoid: false
+          data:
+            syntax: python
+          nodes:
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: ' {'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    "types": {'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "EIP712Domain": ['
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '            {"name": "name", "type": "string"},'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '            {"name": "version", "type": "string"},'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '            {"name": "chainId", "type": "uint256"},'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        ],'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "Delegate": ['
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '            {"name": "delegateAddress", "type": "address"},'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '            {"name": "totp", "type": "uint256"},'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        ],'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    },'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    "primaryType": "Delegate",'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    "domain": {'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "name": "Safe Transaction Service",'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "version": "1.0",'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "chainId": chain_id,'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    },'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    "message": {'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "delegateAddress": delegate_address,'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '        "totp": totp,'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '    },'
+                marks: []
+          - object: block
+            type: code-line
+            isVoid: false
+            data: {}
+            nodes:
+            - object: text
+              leaves:
+              - object: leaf
+                text: '}'
+                marks: []
+        - object: block
+          type: paragraph
+          isVoid: false
+          data: {}
+          nodes:
+          - object: text
+            leaves:
+            - object: leaf
+              text: 'For the signature we use '
+              marks: []
+            - object: leaf
+              text: TOTP
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: ' with '
+              marks: []
+            - object: leaf
+              text: T0=0
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: ' and '
+              marks: []
+            - object: leaf
+              text: Tx=3600
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: '. '
+              marks: []
+            - object: leaf
+              text: TOTP
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: ' is calculated by taking the Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals).'
+              marks: []
+      x-gitbook-description-html: "<p>Adds a new Safe delegate with a custom label. Calls with same delegate but different label or signer will update the label or delegator if a different one is provided. To generate the signature, the following EIP712 data hash needs to be signed:</p><pre class=\"language-python\"><code class=\"lang-python\"> {\n    \"types\": {\n        \"EIP712Domain\": [\n            {\"name\": \"name\", \"type\": \"string\"},\n            {\"name\": \"version\", \"type\": \"string\"},\n            {\"name\": \"chainId\", \"type\": \"uint256\"},\n        ],\n        \"Delegate\": [\n            {\"name\": \"delegateAddress\", \"type\": \"address\"},\n            {\"name\": \"totp\", \"type\": \"uint256\"},\n        ],\n    },\n    \"primaryType\": \"Delegate\",\n    \"domain\": {\n        \"name\": \"Safe Transaction Service\",\n        \"version\": \"1.0\",\n        \"chainId\": chain_id,\n    },\n    \"message\": {\n        \"delegateAddress\": delegate_address,\n        \"totp\": totp,\n    },\n}\n</code></pre><p>For the signature we use <code>TOTP</code> with <code>T0=0</code> and <code>Tx=3600</code>. <code>TOTP</code> is calculated by taking the Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals).</p>"
+  /api/v2/delegates/{delegate_address}/:
+    delete:
+      operationId: delegates_destroy_2
+      description: 'Removes every delegate/delegator pair found associated with a given delegate address. The
+
+        signature is built the same way as for adding a delegate, but in this case the signer can be
+
+        either the `delegator` (owner) or the `delegate` itself. Check `POST /delegates/` to learn more.'
+      parameters:
+      - in: path
+        name: delegate_address
+        schema:
+          type: string
+        required: true
+      tags:
+      - delegates
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '204':
+          description: Deleted
+          x-gitbook-description-html: <p>Deleted</p>
+        '400':
+          description: Malformed data
+          x-gitbook-description-html: <p>Malformed data</p>
+        '404':
+          description: Delegate not found
+          x-gitbook-description-html: <p>Delegate not found</p>
+        '422':
+          description: Invalid Ethereum address/Error processing data
+          x-gitbook-description-html: <p>Invalid Ethereum address/Error processing data</p>
+      x-gitbook-description-document:
+        object: document
+        data:
+          schemaVersion: 8
+        nodes:
+        - object: block
+          type: paragraph
+          isVoid: false
+          data: {}
+          nodes:
+          - object: text
+            leaves:
+            - object: leaf
+              text: 'Removes every delegate/delegator pair found associated with a given delegate address. The signature is built the same way as for adding a delegate, but in this case the signer can be either the '
+              marks: []
+            - object: leaf
+              text: delegator
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: ' (owner) or the '
+              marks: []
+            - object: leaf
+              text: delegate
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: ' itself. Check '
+              marks: []
+            - object: leaf
+              text: POST /delegates/
+              marks:
+              - object: mark
+                type: code
+                data: {}
+            - object: leaf
+              text: ' to learn more.'
+              marks: []
+      x-gitbook-description-html: <p>Removes every delegate/delegator pair found associated with a given delegate address. The signature is built the same way as for adding a delegate, but in this case the signer can be either the <code>delegator</code> (owner) or the <code>delegate</code> itself. Check <code>POST /delegates/</code> to learn more.</p>
+components:
+  schemas:
+    SafeDelegateResponse:
+      type: object
+      properties:
+        safe:
+          type: string
+        delegate:
+          type: string
+        delegator:
+          type: string
+        label:
+          type: string
+          maxLength: 50
+        expiryDate:
+          type: string
+          format: date-time
+      required:
+      - delegate
+      - delegator
+      - expiryDate
+      - label
+      - safe
+    PaginatedSafeDelegateResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeDelegateResponse'
+    DelegateSerializerV2:
+      type: object
+      description: Mixin to validate delegate operations data
+      properties:
+        safe:
+          type:
+          - string
+          - 'null'
+        delegate:
+          type: string
+        delegator:
+          type: string
+        signature:
+          type: string
+        label:
+          type: string
+          maxLength: 50
+        expiryDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - delegate
+      - delegator
+      - label
+      - signature
+      x-gitbook-description-html: <p>Mixin to validate delegate operations data</p>
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+      x-gitbook-description-html: <p>Token-based authentication with required prefix "Token"</p>
