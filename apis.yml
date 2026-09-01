@@ -34,16 +34,16 @@ specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
 tags:
-  - cryptocurrency
-  - digital-assets
-  - hardware-wallet
-  - self-custody
-  - Institutional Custody
+  - Cryptocurrency
+  - Digital Assets
+  - Hardware Wallet
+  - Self-Custody
+  - institutional-custody
   - Blockchain
   - Payments
-  - staking
+  - Staking
   - Security
-  - agent-skills
+  - Agent Skills
   - agent-native
 tags_raw:
   - cryptocurrency
@@ -68,8 +68,8 @@ apis:
     https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
   tags:
   - Blockchain
-  - digital-assets
-  - self-custody
+  - Digital Assets
+  - Self-Custody
   tags_raw:
   - blockchain
   - digital-assets
@@ -97,9 +97,9 @@ apis:
     packages.
   humanURL: https://developers.ledger.com/docs/device-interaction/getting-started
   tags:
-  - hardware-wallet
+  - Hardware Wallet
   - Security
-  - self-custody
+  - Self-Custody
   - Blockchain
   tags_raw:
   - hardware-wallet
