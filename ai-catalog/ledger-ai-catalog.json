@@ -1,0 +1,107 @@
+{
+  "$schema": "https://agenticresourcediscovery.org/spec/schemas/ai-catalog.schema.json",
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Ledger Developer Portal",
+    "identifier": "did:web:developers.ledger.com",
+    "documentationUrl": "https://developers.ledger.com"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:developers.ledger.com:server:developer-portal",
+      "displayName": "Ledger Developer Portal MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://developers.ledger.com/.well-known/mcp/server-card.json",
+      "capabilities": [
+        "search_docs",
+        "get_doc_page",
+        "list_sections",
+        "get_agent_skills"
+      ],
+      "description": "Search Ledger developer documentation, fetch full page content, browse the documentation section tree, and retrieve Ledger AI coding skills, all from developers.ledger.com.",
+      "representativeQueries": [
+        "search the Ledger developer docs for clear signing",
+        "fetch the full content of a Ledger developer documentation page",
+        "list all documentation sections on the Ledger developer portal",
+        "find AI coding skills for building with Ledger SDKs"
+      ]
+    },
+    {
+      "identifier": "urn:air:github.com:ledgerhq:agent-skills:dmk-business-logic",
+      "displayName": "DMK Business Logic",
+      "type": "application/ai-skill+md",
+      "url": "https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/dmk/dmk-business-logic/SKILL.md",
+      "capabilities": [
+        "ClearSigning",
+        "SecureChannel",
+        "BOLOS",
+        "DeviceActions",
+        "Sessions",
+        "Transports",
+        "GenuineCheck"
+      ],
+      "description": "Explains the design rationale and domain concepts behind the Ledger Device Management Kit (DMK) API: Clear Signing, Secure Channel, Ledger OS (BOLOS), Device Actions vs Commands, sessions, transports, derivation paths, and Genuine Check.",
+      "representativeQueries": [
+        "what is Clear Signing in the Ledger Device Management Kit",
+        "why does the DMK secure channel work this way",
+        "what's the difference between Device Actions and Commands in DMK",
+        "explain BOLOS sessions and transports"
+      ]
+    },
+    {
+      "identifier": "urn:air:github.com:ledgerhq:agent-skills:dmk-intent-vocabulary",
+      "displayName": "DMK Intent Vocabulary",
+      "type": "application/ai-skill+md",
+      "url": "https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/dmk/dmk-intent-vocabulary/SKILL.md",
+      "capabilities": [
+        "IntentMapping",
+        "DMK"
+      ],
+      "description": "Maps informal developer intent and natural language to the correct Ledger Device Management Kit (DMK) components, operations, and API methods, for requests that are ambiguous, incomplete, or phrased in terms of outcomes rather than API methods.",
+      "representativeQueries": [
+        "how do I sign a transaction with a Ledger device",
+        "what DMK method do I use to get a wallet address",
+        "my Ledger device isn't responding, what API should I check"
+      ]
+    },
+    {
+      "identifier": "urn:air:github.com:ledgerhq:agent-skills:ledger-dmk-implementation",
+      "displayName": "Ledger DMK Implementation",
+      "type": "application/ai-skill+md",
+      "url": "https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/dmk/ledger-dmk-implementation/SKILL.md",
+      "capabilities": [
+        "Signing",
+        "AddressDerivation",
+        "DeviceManagement",
+        "GenuineCheck",
+        "AppInstall"
+      ],
+      "description": "Executes Ledger Device Management Kit (DMK) signing operations safely: initialize the SDK, establish a device session, verify device state, open the correct chain app, perform signing or device management operations, and return the result.",
+      "representativeQueries": [
+        "implement a transaction signing flow with the Ledger DMK",
+        "derive a wallet address from a Ledger device",
+        "run a genuine check on a Ledger device",
+        "install or uninstall an app on a Ledger device"
+      ]
+    },
+    {
+      "identifier": "urn:air:github.com:ledgerhq:agent-skills:wallet-cli-usage",
+      "displayName": "Wallet CLI Usage",
+      "type": "application/ai-skill+md",
+      "url": "https://raw.githubusercontent.com/LedgerHQ/agent-skills/main/skills/wallet-cli/wallet-cli-usage/SKILL.md",
+      "capabilities": [
+        "AccountDiscovery",
+        "Balances",
+        "Send",
+        "Swap",
+        "GenuineCheck"
+      ],
+      "description": "Official Ledger wallet-cli, a USB-based CLI for Ledger hardware wallet flows: account discovery, receive, balances, operations, send, swap quote/execute/status, genuine check, and asset lookup.",
+      "representativeQueries": [
+        "check the balance of a Ledger hardware wallet from the command line",
+        "run a swap quote using the Ledger wallet CLI",
+        "discover accounts on a connected Ledger device via CLI"
+      ]
+    }
+  ]
+}
