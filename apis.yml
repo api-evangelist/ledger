@@ -60,8 +60,8 @@ tags:
   - Security
   - Agent Skills
   - agent-native
-  - Ledger
 tags_raw:
+  - Ledger
   - cryptocurrency
   - digital-assets
   - hardware-wallet
@@ -1318,7 +1318,7 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
-  - SAFEs
+  - SAFe
   tags_raw:
   - safes
   properties:
