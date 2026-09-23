@@ -4,40 +4,10 @@ info:
   version: 1.35.0
   x-logo:
     url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
-  description: '
-
-    # Authentication
+  description: '# Authentication
 
 
-    The Ledger Vault API offers several methods of authentication.
-
-    Depending on your LAM configuration you''ll require several of the following headers
-
-    to process API calls. Please refer to the
-
-    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
-
-
-    The `X-Ledger-API-User` header is required for all API calls to LAM
-
-    (except when you register
-
-    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
-
-
-    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
-
-    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
-
-    been set up on your LAM.
-
-    In this case, for every call made to LAM,
-
-    you''ll need to pass all three headers
-
-    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
-
-    '
+    The Ledger Vault API offers several methods of authentication.'
 security:
 - Ledger_API_User: []
 - Ledger_API_User: []
@@ -205,6 +175,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Invalid search parameters
+      operationId: getWhitelists
+      x-operation-id-source: derived
   /whitelists/{whitelist_id}:
     get:
       summary: Get whitelist by id
@@ -231,6 +203,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Whitelist not found
+      operationId: getWhitelistsByWhitelistId
+      x-operation-id-source: derived
   /whitelists/{whitelist_id}/history:
     get:
       summary: Get whitelist history
@@ -257,18 +231,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Whitelist not found
+      operationId: getWhitelistsByWhitelistIdHistory
+      x-operation-id-source: derived
 components:
   schemas:
-    APIHistoryResults:
+    WhitelistSearchResult:
       properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Whitelist'
       required:
-      - history
+      - cursor
+      - node
       type: object
     Whitelist:
       additionalProperties: false
@@ -327,6 +303,18 @@ components:
       - name
       - status
       type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
     _APISearchWhitelistResults:
       properties:
         edges:
@@ -339,29 +327,16 @@ components:
       - edges
       - page_info
       type: object
-    Error:
+    APIHistoryResults:
       properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
       required:
-      - message
-      - name
-      - status_code
-      type: object
-    WhitelistSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Whitelist'
-      required:
-      - cursor
-      - node
+      - history
       type: object
     APIHistoryResult:
       properties:
@@ -548,17 +523,18 @@ components:
       - id
       - name
       type: object
-    APISearchPageInfo:
+    Error:
       properties:
-        count:
-          example: 1
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
           type: integer
-        has_next_page:
-          example: false
-          type: boolean
       required:
-      - count
-      - has_next_page
+      - message
+      - name
+      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

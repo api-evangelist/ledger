@@ -4,40 +4,10 @@ info:
   version: 1.35.0
   x-logo:
     url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
-  description: '
-
-    # Authentication
+  description: '# Authentication
 
 
-    The Ledger Vault API offers several methods of authentication.
-
-    Depending on your LAM configuration you''ll require several of the following headers
-
-    to process API calls. Please refer to the
-
-    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
-
-
-    The `X-Ledger-API-User` header is required for all API calls to LAM
-
-    (except when you register
-
-    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
-
-
-    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
-
-    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
-
-    been set up on your LAM.
-
-    In this case, for every call made to LAM,
-
-    you''ll need to pass all three headers
-
-    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
-
-    '
+    The Ledger Vault API offers several methods of authentication.'
 security:
 - Ledger_API_User: []
 - Ledger_API_User: []
@@ -153,6 +123,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: invalid search parameters
+      summary: Get pledges
+      x-summary-source: derived
+      operationId: getPledges
+      x-operation-id-source: derived
   /pledges/{pledge_id}:
     get:
       tags:
@@ -178,8 +152,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: pledge not found
+      summary: Get pledges by pledge id
+      x-summary-source: derived
+      operationId: getPledgesByPledgeId
+      x-operation-id-source: derived
 components:
   schemas:
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
     TradelinkAssetManager:
       properties:
         approver_group_id:
@@ -202,17 +192,6 @@ components:
       - role
       - whitelist_id
       type: object
-    PledgeSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Pledge'
-      required:
-      - cursor
-      - node
-      type: object
     _APISearchPledgeResults:
       properties:
         edges:
@@ -225,18 +204,21 @@ components:
       - edges
       - page_info
       type: object
-    Error:
+    TradelinkCustodian:
       properties:
-        message:
+        code:
+          type: string
+        id:
           type: string
         name:
           type: string
-        status_code:
-          type: integer
+        role:
+          type: string
       required:
-      - message
+      - code
+      - id
       - name
-      - status_code
+      - role
       type: object
     Pledge:
       additionalProperties: false
@@ -287,22 +269,6 @@ components:
       - pledge_subaccount_id
       - state
       type: object
-    TradelinkCustodian:
-      properties:
-        code:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-      required:
-      - code
-      - id
-      - name
-      - role
-      type: object
     TradelinkExchange:
       properties:
         approver_group_id:
@@ -325,17 +291,29 @@ components:
       - role
       - whitelist_id
       type: object
-    APISearchPageInfo:
+    PledgeSearchResult:
       properties:
-        count:
-          example: 1
+        cursor:
+          example: 0
           type: integer
-        has_next_page:
-          example: false
-          type: boolean
+        node:
+          $ref: '#/components/schemas/Pledge'
       required:
-      - count
-      - has_next_page
+      - cursor
+      - node
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

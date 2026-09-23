@@ -15,9 +15,7 @@ paths:
 
         - Processing is asynchronous: a `200` means the update was authenticated, validated and queued, not that it has already been persisted. The update is applied shortly after, and only while the swap is still in a non-final status.
 
-        - `providerStatus` is your own status string (typically the same value your `GET /status` endpoint returns). Ledger maps it to an internal status using the same per-provider mapping it uses when polling your `/status` endpoint; a value Ledger cannot map is rejected with `422` and nothing is persisted.
-
-        '
+        - `providerStatus` is your own status string (typically the same value your `GET /status` endpoint returns). Ledger maps it to an internal status using the same per-provider mapping it uses when polling your `/status` endpoint; a value Ledger cannot map is rejected with `422` and nothing is persisted.'
       parameters:
       - name: swapId
         in: path
@@ -96,8 +94,21 @@ paths:
                 error: internal error
       tags:
       - Webhook
+      summary: Status update
+      x-summary-source: derived
 components:
   schemas:
+    WebhookError:
+      required:
+      - error
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error reason.
+        transactionId:
+          type: string
+          description: The `swapId` from the request path. Present only on `404` responses.
     StatusWebhookRequest:
       required:
       - providerId
@@ -137,17 +148,6 @@ components:
           type: string
           description: Always `queued` - the update was accepted and will be applied asynchronously.
           example: queued
-    WebhookError:
-      required:
-      - error
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error reason.
-        transactionId:
-          type: string
-          description: The `swapId` from the request path. Present only on `404` responses.
   securitySchemes:
     defaultApiKey:
       type: apiKey

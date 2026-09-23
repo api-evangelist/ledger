@@ -1,8 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Ledger Sell API
+  title: Provider Server Sell API
   version: '1.0'
-  description: 'Operations tagged Sell across 2 of this provider''s published API definitions: ledger-card-provider-openapi.yml, ledger-sell-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Sell
 paths:
@@ -11,11 +10,9 @@ paths:
       operationId: postSell
       description: 'Generates a secure binary payload for the nano in order to authorize the transaction.
 
-        - We send on sell endpoint the quoteId. The partner should retrieve the quote data (amounts…) from this id.
+        - We send on sell endpoint the quoteId (id generated with the previous call to `/quote` ). The partner should retrieve the quote data (amounts…) from this id.
 
-        - The final source of Truth for the user is the binary payload you generate.
-
-        '
+        - The final source of Truth for the user is the binary payload you generate.'
       requestBody:
         description: Info for generating payload
         content:
@@ -90,6 +87,8 @@ paths:
                     message: One of the currencies is disabled in user's region. (you can add any useful field as you want)
       tags:
       - Sell
+      summary: Post sell
+      x-summary-source: derived
 components:
   schemas:
     SellResponse:
@@ -122,8 +121,8 @@ components:
     ErrorPayload:
       type: object
       required:
-      - messageKey
       - message
+      - messageKey
       properties:
         messageKey:
           type: string
@@ -174,56 +173,6 @@ components:
           description: Fiat currency at the ISO-4217 standard.
         payloadCryptoCurrency:
           type: string
-          description: From currency ID, using Ledger's referential. (representing currency_from in the protobuf payload
-        nonce:
-          type: string
-          description: Value for the `device_transaction_id_ng` field in the protobuf payload, in hex format of the byte array nonce received by the user.
-        slippage:
-          type: string
-          description: Value between 0 to 1 (0.1 => 10%). Maximum difference between the quoted amount and the final amount received, as a ratio. If exceeded, user consent is required or a refund is made.
-    ErrorPayload_2:
-      type: object
-      required:
-      - message
-      - messageKey
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
-    SellRequest_2:
-      required:
-      - quoteId
-      - amount
-      - refundAddress
-      - fromCryptoCurrency
-      - toFiatCurrency
-      - payloadCryptoCurrency
-      - nonce
-      type: object
-      properties:
-        quoteId:
-          type: string
-          description: Previously generated quote ID.
-        amount:
-          type: string
-          description: Amount requested by the user to be sold.
-        refundAddress:
-          type: string
-          description: User's refund address, typically the fromAddress.
-        fromCryptoCurrency:
-          type: string
-          description: From currency ID, using the provider's identifiers.
-        toFiatCurrency:
-          type: string
-          description: Fiat currency at the ISO-4217 standard.
-        payloadCryptoCurrency:
-          type: string
           description: The ticker of the currency the user wants to sell, as defined in Ledger’s referential (corresponding to currency_from in the protobuf payload). `BTC` or `ETH` for example. This ticker will be displayed on the Ledger device.
         nonce:
           type: string
@@ -236,6 +185,3 @@ components:
       type: apiKey
       name: x-api-key
       in: header
-x-refined-from:
-- ledger-card-provider-openapi.yml
-- ledger-sell-provider-openapi.yml

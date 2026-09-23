@@ -45,6 +45,8 @@ paths:
                     message: 'Provider error: Transaction with id 1234 does not exist.'
       tags:
       - Status
+      summary: Get status
+      x-summary-source: derived
 components:
   schemas:
     ErrorPayload:

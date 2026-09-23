@@ -20,7 +20,7 @@ info:
           marks: []
   x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
 tags:
-- name: modules
+- name: Modules
 paths:
   /tx-service/eth/api/v1/modules/{address}/safes/:
     get:
@@ -33,7 +33,7 @@ paths:
           type: string
         required: true
       tags:
-      - modules
+      - Modules
       security:
       - cookieAuth: []
       - tokenAuth: []
@@ -51,8 +51,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/CodeErrorResponse'
           description: Module address checksum not valid
+      summary: Modules safes retrieve
+      x-summary-source: derived
 components:
   schemas:
+    ModulesResponse:
+      type: object
+      properties:
+        safes:
+          type: array
+          items:
+            type: string
+      required:
+      - safes
     CodeErrorResponse:
       type: object
       properties:
@@ -67,15 +78,6 @@ components:
       - arguments
       - code
       - message
-    ModulesResponse:
-      type: object
-      properties:
-        safes:
-          type: array
-          items:
-            type: string
-      required:
-      - safes
   securitySchemes:
     cookieAuth:
       type: apiKey

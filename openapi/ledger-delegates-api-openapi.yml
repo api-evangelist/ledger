@@ -20,7 +20,7 @@ info:
           marks: []
   x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
 tags:
-- name: delegates
+- name: Delegates
 paths:
   /api/v2/delegates/:
     get:
@@ -60,7 +60,7 @@ paths:
           type: integer
         x-gitbook-description-html: <p>The initial index from which to return the results.</p>
       tags:
-      - delegates
+      - Delegates
       security:
       - cookieAuth: []
       - tokenAuth: []
@@ -91,11 +91,73 @@ paths:
               text: Returns a list with all the delegates
               marks: []
       x-gitbook-description-html: <p>Returns a list with all the delegates</p>
+      summary: Delegates list 2
+      x-summary-source: derived
     post:
       operationId: delegates_create_2
-      description: "Adds a new Safe delegate with a custom label. Calls with same delegate but different label or\nsigner will update the label or delegator if a different one is provided.\nTo generate the signature, the following EIP712 data hash needs to be signed:\n\n```python\n {\n    \"types\": {\n        \"EIP712Domain\": [\n            {\"name\": \"name\", \"type\": \"string\"},\n            {\"name\": \"version\", \"type\": \"string\"},\n            {\"name\": \"chainId\", \"type\": \"uint256\"},\n        ],\n        \"Delegate\": [\n            {\"name\": \"delegateAddress\", \"type\": \"address\"},\n            {\"name\": \"totp\", \"type\": \"uint256\"},\n        ],\n    },\n    \"primaryType\": \"Delegate\",\n    \"domain\": {\n        \"name\": \"Safe Transaction Service\",\n        \"version\": \"1.0\",\n        \"chainId\": chain_id,\n    },\n    \"message\": {\n        \"delegateAddress\": delegate_address,\n        \"totp\": totp,\n    },\n}\n```\n\nFor the signature we use `TOTP` with `T0=0` and `Tx=3600`. `TOTP` is calculated by taking the\nUnix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals)."
+      description: 'Adds a new Safe delegate with a custom label. Calls with same delegate but different label or
+
+        signer will update the label or delegator if a different one is provided.
+
+        To generate the signature, the following EIP712 data hash needs to be signed:
+
+
+        ```python
+
+        {
+
+        "types": {
+
+        "EIP712Domain": [
+
+        {"name": "name", "type": "string"},
+
+        {"name": "version", "type": "string"},
+
+        {"name": "chainId", "type": "uint256"},
+
+        ],
+
+        "Delegate": [
+
+        {"name": "delegateAddress", "type": "address"},
+
+        {"name": "totp", "type": "uint256"},
+
+        ],
+
+        },
+
+        "primaryType": "Delegate",
+
+        "domain": {
+
+        "name": "Safe Transaction Service",
+
+        "version": "1.0",
+
+        "chainId": chain_id,
+
+        },
+
+        "message": {
+
+        "delegateAddress": delegate_address,
+
+        "totp": totp,
+
+        },
+
+        }
+
+        ```
+
+
+        For the signature we use `TOTP` with `T0=0` and `Tx=3600`. `TOTP` is calculated by taking the
+
+        Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals).'
       tags:
-      - delegates
+      - Delegates
       requestBody:
         content:
           application/json:
@@ -411,6 +473,8 @@ paths:
               text: ' is calculated by taking the Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals).'
               marks: []
       x-gitbook-description-html: "<p>Adds a new Safe delegate with a custom label. Calls with same delegate but different label or signer will update the label or delegator if a different one is provided. To generate the signature, the following EIP712 data hash needs to be signed:</p><pre class=\"language-python\"><code class=\"lang-python\"> {\n    \"types\": {\n        \"EIP712Domain\": [\n            {\"name\": \"name\", \"type\": \"string\"},\n            {\"name\": \"version\", \"type\": \"string\"},\n            {\"name\": \"chainId\", \"type\": \"uint256\"},\n        ],\n        \"Delegate\": [\n            {\"name\": \"delegateAddress\", \"type\": \"address\"},\n            {\"name\": \"totp\", \"type\": \"uint256\"},\n        ],\n    },\n    \"primaryType\": \"Delegate\",\n    \"domain\": {\n        \"name\": \"Safe Transaction Service\",\n        \"version\": \"1.0\",\n        \"chainId\": chain_id,\n    },\n    \"message\": {\n        \"delegateAddress\": delegate_address,\n        \"totp\": totp,\n    },\n}\n</code></pre><p>For the signature we use <code>TOTP</code> with <code>T0=0</code> and <code>Tx=3600</code>. <code>TOTP</code> is calculated by taking the Unix UTC epoch time (no milliseconds) and dividing by 3600 (natural division, no decimals).</p>"
+      summary: Delegates create 2
+      x-summary-source: derived
   /api/v2/delegates/{delegate_address}/:
     delete:
       operationId: delegates_destroy_2
@@ -426,7 +490,7 @@ paths:
           type: string
         required: true
       tags:
-      - delegates
+      - Delegates
       security:
       - cookieAuth: []
       - tokenAuth: []
@@ -487,8 +551,38 @@ paths:
               text: ' to learn more.'
               marks: []
       x-gitbook-description-html: <p>Removes every delegate/delegator pair found associated with a given delegate address. The signature is built the same way as for adding a delegate, but in this case the signer can be either the <code>delegator</code> (owner) or the <code>delegate</code> itself. Check <code>POST /delegates/</code> to learn more.</p>
+      summary: Delegates destroy 2
+      x-summary-source: derived
 components:
   schemas:
+    DelegateSerializerV2:
+      type: object
+      description: Mixin to validate delegate operations data
+      properties:
+        safe:
+          type:
+          - string
+          - 'null'
+        delegate:
+          type: string
+        delegator:
+          type: string
+        signature:
+          type: string
+        label:
+          type: string
+          maxLength: 50
+        expiryDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - delegate
+      - delegator
+      - label
+      - signature
+      x-gitbook-description-html: <p>Mixin to validate delegate operations data</p>
     SafeDelegateResponse:
       type: object
       properties:
@@ -533,34 +627,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SafeDelegateResponse'
-    DelegateSerializerV2:
-      type: object
-      description: Mixin to validate delegate operations data
-      properties:
-        safe:
-          type:
-          - string
-          - 'null'
-        delegate:
-          type: string
-        delegator:
-          type: string
-        signature:
-          type: string
-        label:
-          type: string
-          maxLength: 50
-        expiryDate:
-          type:
-          - string
-          - 'null'
-          format: date-time
-      required:
-      - delegate
-      - delegator
-      - label
-      - signature
-      x-gitbook-description-html: <p>Mixin to validate delegate operations data</p>
   securitySchemes:
     cookieAuth:
       type: apiKey

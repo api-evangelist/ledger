@@ -99,6 +99,8 @@ paths:
               text: Get paginated balances for Ether and ERC20 tokens. The maximum limit allowed is 200.
               marks: []
       x-gitbook-description-html: <p>Get paginated balances for Ether and ERC20 tokens. The maximum limit allowed is 200.</p>
+      summary: Safes balances retrieve 2
+      x-summary-source: derived
   /api/v2/safes/{address}/collectibles/:
     get:
       operationId: safes_collectibles_retrieve
@@ -176,6 +178,8 @@ paths:
               text: Get paginated collectibles (ERC721 tokens) and information about them of a given Safe account. The maximum limit allowed is 10.
               marks: []
       x-gitbook-description-html: <p>Get paginated collectibles (ERC721 tokens) and information about them of a given Safe account. The maximum limit allowed is 10.</p>
+      summary: Safes collectibles retrieve
+      x-summary-source: derived
   /tx-service/eth/api/v1/safes/{address}/:
     get:
       operationId: safes_retrieve
@@ -205,6 +209,8 @@ paths:
           description: 'code = 1: Checksum address validation failed
 
             code = 50: Cannot get Safe info'
+      summary: Safes retrieve
+      x-summary-source: derived
   /tx-service/eth/api/v1/safes/{address}/creation/:
     get:
       operationId: safes_creation_retrieve
@@ -241,6 +247,8 @@ paths:
           description: Owner address checksum not valid
         '503':
           description: Problem connecting to Ethereum network
+      summary: Safes creation retrieve
+      x-summary-source: derived
   /tx-service/eth/api/v1/safes/{address}/export/:
     get:
       operationId: safes_export_retrieve
@@ -296,6 +304,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/CodeErrorResponse'
           description: Safe address checksum not valid
+      summary: Safes export retrieve
+      x-summary-source: derived
   /tx-service/eth/api/v2/safes/{address}/balances/:
     get:
       operationId: safes_balances_retrieve_2
@@ -351,8 +361,284 @@ paths:
               schema:
                 $ref: '#/components/schemas/CodeErrorResponse'
           description: Safe address checksum not valid
+      summary: Safes balances retrieve 2
+      x-summary-source: derived
 components:
   schemas:
+    SafeCreationInfoResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        creator:
+          type: string
+        transactionHash:
+          type: string
+        factoryAddress:
+          type: string
+        masterCopy:
+          type:
+          - string
+          - 'null'
+        setupData:
+          type:
+          - string
+          - 'null'
+        saltNonce:
+          type:
+          - string
+          - 'null'
+        dataDecoded:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        userOperation:
+          oneOf:
+          - $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
+          - type: 'null'
+      required:
+      - created
+      - creator
+      - dataDecoded
+      - factoryAddress
+      - masterCopy
+      - saltNonce
+      - setupData
+      - transactionHash
+      - userOperation
+    SafeExportTransaction:
+      type: object
+      description: Serializer for the export endpoint that returns transaction data optimized for CSV export
+      properties:
+        safe:
+          type: string
+        From:
+          type: string
+          title: ' from'
+        to:
+          type: string
+        amount:
+          type: string
+        assetType:
+          type: string
+        assetAddress:
+          type:
+          - string
+          - 'null'
+        assetSymbol:
+          type:
+          - string
+          - 'null'
+        assetDecimals:
+          type:
+          - integer
+          - 'null'
+        proposerAddress:
+          type:
+          - string
+          - 'null'
+        proposedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        executorAddress:
+          type:
+          - string
+          - 'null'
+        executedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        note:
+          type:
+          - string
+          - 'null'
+        transactionHash:
+          type: string
+        contractAddress:
+          type:
+          - string
+          - 'null'
+        nonce:
+          type:
+          - string
+          - 'null'
+      required:
+      - From
+      - amount
+      - assetAddress
+      - assetDecimals
+      - assetSymbol
+      - assetType
+      - contractAddress
+      - executedAt
+      - executorAddress
+      - nonce
+      - note
+      - proposedAt
+      - proposerAddress
+      - safe
+      - to
+      - transactionHash
+      x-gitbook-description-html: <p>Serializer for the export endpoint that returns transaction data optimized for CSV export</p>
+    PaginatedSafeExportTransactionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeExportTransaction'
+    PaginatedSafeCollectibleResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeCollectibleResponse'
+    SafeOperationResponse:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        safeOperationHash:
+          type: string
+        validAfter:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        moduleAddress:
+          type: string
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: 'Filters confirmations queryset
+
+
+            :param obj: SafeOperation instance
+
+            :return: Serialized queryset'
+          readOnly: true
+          x-gitbook-description-html: '<p>Filters confirmations queryset</p>
+
+            <p>:param obj: SafeOperation instance
+
+            :return: Serialized queryset</p>'
+        preparedSignature:
+          type: string
+          readOnly: true
+      required:
+      - confirmations
+      - created
+      - modified
+      - moduleAddress
+      - preparedSignature
+      - safeOperationHash
+      - validAfter
+      - validUntil
+    UserOperationWithSafeOperationResponse:
+      type: object
+      properties:
+        ethereumTxHash:
+          type: string
+        sender:
+          type: string
+        userOperationHash:
+          type: string
+        nonce:
+          type: string
+        initCode:
+          type:
+          - string
+          - 'null'
+        callData:
+          type:
+          - string
+          - 'null'
+        callGasLimit:
+          type: string
+        verificationGasLimit:
+          type: string
+        preVerificationGas:
+          type: string
+        maxFeePerGas:
+          type: string
+        maxPriorityFeePerGas:
+          type: string
+        paymaster:
+          type:
+          - string
+          - 'null'
+        paymasterData:
+          type:
+          - string
+          - 'null'
+        signature:
+          type: string
+        entryPoint:
+          type: string
+        safeOperation:
+          oneOf:
+          - $ref: '#/components/schemas/SafeOperationResponse'
+          - type: 'null'
+          readOnly: true
+      required:
+      - callData
+      - callGasLimit
+      - entryPoint
+      - ethereumTxHash
+      - initCode
+      - maxFeePerGas
+      - maxPriorityFeePerGas
+      - nonce
+      - paymaster
+      - paymasterData
+      - preVerificationGas
+      - safeOperation
+      - sender
+      - signature
+      - userOperationHash
+      - verificationGasLimit
     CodeErrorResponse:
       type: object
       properties:
@@ -439,280 +725,6 @@ components:
       - tokenName
       - tokenSymbol
       - uri
-    UserOperationWithSafeOperationResponse:
-      type: object
-      properties:
-        ethereumTxHash:
-          type: string
-        sender:
-          type: string
-        userOperationHash:
-          type: string
-        nonce:
-          type: string
-        initCode:
-          type:
-          - string
-          - 'null'
-        callData:
-          type:
-          - string
-          - 'null'
-        callGasLimit:
-          type: string
-        verificationGasLimit:
-          type: string
-        preVerificationGas:
-          type: string
-        maxFeePerGas:
-          type: string
-        maxPriorityFeePerGas:
-          type: string
-        paymaster:
-          type:
-          - string
-          - 'null'
-        paymasterData:
-          type:
-          - string
-          - 'null'
-        signature:
-          type: string
-        entryPoint:
-          type: string
-        safeOperation:
-          oneOf:
-          - $ref: '#/components/schemas/SafeOperationResponse'
-          - type: 'null'
-          readOnly: true
-      required:
-      - callData
-      - callGasLimit
-      - entryPoint
-      - ethereumTxHash
-      - initCode
-      - maxFeePerGas
-      - maxPriorityFeePerGas
-      - nonce
-      - paymaster
-      - paymasterData
-      - preVerificationGas
-      - safeOperation
-      - sender
-      - signature
-      - userOperationHash
-      - verificationGasLimit
-    PaginatedSafeExportTransactionList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/SafeExportTransaction'
-    SafeCreationInfoResponse:
-      type: object
-      properties:
-        created:
-          type: string
-          format: date-time
-        creator:
-          type: string
-        transactionHash:
-          type: string
-        factoryAddress:
-          type: string
-        masterCopy:
-          type:
-          - string
-          - 'null'
-        setupData:
-          type:
-          - string
-          - 'null'
-        saltNonce:
-          type:
-          - string
-          - 'null'
-        dataDecoded:
-          type: object
-          additionalProperties: {}
-          readOnly: true
-        userOperation:
-          oneOf:
-          - $ref: '#/components/schemas/UserOperationWithSafeOperationResponse'
-          - type: 'null'
-      required:
-      - created
-      - creator
-      - dataDecoded
-      - factoryAddress
-      - masterCopy
-      - saltNonce
-      - setupData
-      - transactionHash
-      - userOperation
-    PaginatedSafeCollectibleResponseList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/SafeCollectibleResponse'
-    SafeExportTransaction:
-      type: object
-      description: Serializer for the export endpoint that returns transaction data optimized for CSV export
-      properties:
-        safe:
-          type: string
-        From:
-          type: string
-          title: ' from'
-        to:
-          type: string
-        amount:
-          type: string
-        assetType:
-          type: string
-        assetAddress:
-          type:
-          - string
-          - 'null'
-        assetSymbol:
-          type:
-          - string
-          - 'null'
-        assetDecimals:
-          type:
-          - integer
-          - 'null'
-        proposerAddress:
-          type:
-          - string
-          - 'null'
-        proposedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        executorAddress:
-          type:
-          - string
-          - 'null'
-        executedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        note:
-          type:
-          - string
-          - 'null'
-        transactionHash:
-          type: string
-        contractAddress:
-          type:
-          - string
-          - 'null'
-        nonce:
-          type:
-          - string
-          - 'null'
-      required:
-      - From
-      - amount
-      - assetAddress
-      - assetDecimals
-      - assetSymbol
-      - assetType
-      - contractAddress
-      - executedAt
-      - executorAddress
-      - nonce
-      - note
-      - proposedAt
-      - proposerAddress
-      - safe
-      - to
-      - transactionHash
-      x-gitbook-description-html: <p>Serializer for the export endpoint that returns transaction data optimized for CSV export</p>
-    SafeOperationResponse:
-      type: object
-      properties:
-        created:
-          type: string
-          format: date-time
-        modified:
-          type: string
-          format: date-time
-        safeOperationHash:
-          type: string
-        validAfter:
-          type: string
-          format: date-time
-        validUntil:
-          type: string
-          format: date-time
-        moduleAddress:
-          type: string
-        confirmations:
-          type: object
-          additionalProperties: {}
-          description: 'Filters confirmations queryset
-
-
-            :param obj: SafeOperation instance
-
-            :return: Serialized queryset'
-          readOnly: true
-          x-gitbook-description-html: '<p>Filters confirmations queryset</p>
-
-            <p>:param obj: SafeOperation instance
-
-            :return: Serialized queryset</p>'
-        preparedSignature:
-          type: string
-          readOnly: true
-      required:
-      - confirmations
-      - created
-      - modified
-      - moduleAddress
-      - preparedSignature
-      - safeOperationHash
-      - validAfter
-      - validUntil
   securitySchemes:
     cookieAuth:
       type: apiKey

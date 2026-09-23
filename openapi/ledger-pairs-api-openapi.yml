@@ -8,7 +8,14 @@ paths:
   /pairs:
     get:
       operationId: getPairs
-      description: "Return a paginated list of supported pairs.\n\n ⚠️ If you are frequently disabling pairs,\n  please keep the currencies list static in the `/currencies` endpoint,\n  and only update pairs when necessary.\n"
+      description: 'Return a paginated list of supported pairs.
+
+
+        ⚠️ If you are frequently disabling pairs,
+
+        please keep the currencies list static in the `/currencies` endpoint,
+
+        and only update pairs when necessary.'
       parameters:
       - name: limit
         in: query
@@ -60,6 +67,8 @@ paths:
                 next_cursor: xxxxxxxx
       tags:
       - Pairs
+      summary: Get pairs
+      x-summary-source: derived
 components:
   schemas:
     Pair:

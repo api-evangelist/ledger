@@ -4,40 +4,10 @@ info:
   version: 1.35.0
   x-logo:
     url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
-  description: '
-
-    # Authentication
+  description: '# Authentication
 
 
-    The Ledger Vault API offers several methods of authentication.
-
-    Depending on your LAM configuration you''ll require several of the following headers
-
-    to process API calls. Please refer to the
-
-    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
-
-
-    The `X-Ledger-API-User` header is required for all API calls to LAM
-
-    (except when you register
-
-    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
-
-
-    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
-
-    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
-
-    been set up on your LAM.
-
-    In this case, for every call made to LAM,
-
-    you''ll need to pass all three headers
-
-    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
-
-    '
+    The Ledger Vault API offers several methods of authentication.'
 security:
 - Ledger_API_User: []
 - Ledger_API_User: []
@@ -67,6 +37,8 @@ paths:
                   type: string
                 type: array
           description: List of certificates in hexadecimal format (DER encoded)
+      operationId: getCertificatesChain
+      x-operation-id-source: derived
 components:
   securitySchemes:
     Ledger_API_User:

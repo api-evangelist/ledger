@@ -20,7 +20,7 @@ info:
           marks: []
   x-gitbook-description-html: <p>API to keep track of transactions sent via Safe smart contracts</p>
 tags:
-- name: owners
+- name: Owners
 paths:
   /tx-service/eth/api/v1/owners/{address}/safes/:
     get:
@@ -33,7 +33,7 @@ paths:
           type: string
         required: true
       tags:
-      - owners
+      - Owners
       security:
       - cookieAuth: []
       - tokenAuth: []
@@ -51,6 +51,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/CodeErrorResponse'
           description: Owner address checksum not valid
+      summary: Owners safes retrieve
+      x-summary-source: derived
 components:
   schemas:
     OwnerResponse:

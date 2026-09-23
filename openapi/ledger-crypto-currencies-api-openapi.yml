@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Ledger Crypto Currencies API
   version: '1.0'
-  description: 'Operations tagged Crypto Currencies across 2 of this provider''s published API definitions: ledger-buy-provider-openapi.yml, ledger-sell-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Crypto Currencies across 2 of this provider''s published API definitions: ledger-buy-provider-openapi-original.yml, ledger-sell-provider-openapi-original.yml. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Crypto Currencies
 paths:
@@ -40,6 +40,8 @@ paths:
                 message: Server isn't able to handle the request because of whatever.
       tags:
       - Crypto Currencies
+      summary: Get crypto currencies
+      x-summary-source: derived
 components:
   schemas:
     ProviderServerError:
@@ -78,5 +80,5 @@ components:
       name: x-api-key
       in: header
 x-refined-from:
-- ledger-buy-provider-openapi.yml
-- ledger-sell-provider-openapi.yml
+- ledger-buy-provider-openapi-original.yml
+- ledger-sell-provider-openapi-original.yml

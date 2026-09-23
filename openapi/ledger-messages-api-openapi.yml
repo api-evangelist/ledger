@@ -4,40 +4,10 @@ info:
   version: 1.35.0
   x-logo:
     url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
-  description: '
-
-    # Authentication
+  description: '# Authentication
 
 
-    The Ledger Vault API offers several methods of authentication.
-
-    Depending on your LAM configuration you''ll require several of the following headers
-
-    to process API calls. Please refer to the
-
-    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
-
-
-    The `X-Ledger-API-User` header is required for all API calls to LAM
-
-    (except when you register
-
-    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
-
-
-    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
-
-    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
-
-    been set up on your LAM.
-
-    In this case, for every call made to LAM,
-
-    you''ll need to pass all three headers
-
-    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
-
-    '
+    The Ledger Vault API offers several methods of authentication.'
 security:
 - Ledger_API_User: []
 - Ledger_API_User: []
@@ -192,6 +162,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Invalid search parameters
+      operationId: getMessages
+      x-operation-id-source: derived
   /messages/{message_id}:
     get:
       summary: Get a message by id
@@ -218,6 +190,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Message not found
+      operationId: getMessagesByMessageId
+      x-operation-id-source: derived
   /messages/{message_id}/history:
     get:
       summary: Message history
@@ -244,8 +218,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Message not found
+      operationId: getMessagesByMessageIdHistory
+      x-operation-id-source: derived
 components:
   schemas:
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
     TransactionOrMessageNote:
       properties:
         content:
@@ -268,18 +256,6 @@ components:
           type: array
       required:
       - history
-      type: object
-    _APISearchMessageResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/MessageSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
       type: object
     Message:
       additionalProperties: false
@@ -350,30 +326,6 @@ components:
       - message_type
       - notes
       - status
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    MessageSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Message'
-      required:
-      - cursor
-      - node
       type: object
     APIHistoryResult:
       properties:
@@ -457,17 +409,41 @@ components:
       - status
       - type
       type: object
-    APISearchPageInfo:
+    Error:
       properties:
-        count:
-          example: 1
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
           type: integer
-        has_next_page:
-          example: false
-          type: boolean
       required:
-      - count
-      - has_next_page
+      - message
+      - name
+      - status_code
+      type: object
+    MessageSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Message'
+      required:
+      - cursor
+      - node
+      type: object
+    _APISearchMessageResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/MessageSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
       type: object
   securitySchemes:
     Ledger_API_User:

@@ -54,34 +54,26 @@ paths:
                 $ref: '#/components/schemas/ServerError'
       tags:
       - Grow
+      summary: Get V0 grow
+      x-summary-source: derived
 components:
   schemas:
-    ServerError:
-      title: ServerError
+    ProtocolInterestView:
+      title: InterestView
       type: object
       required:
-      - msg
+      - type
+      - value
+      - currency
       properties:
-        msg:
+        type:
+          description: The type of interest - APY
           type: string
-    Failure1:
-      title: Failure
-      type: object
-      required:
-      - network
-      - error
-      properties:
-        network:
+        value:
+          description: The protocol's Net APY interest rate.
           type: string
-        error:
-          $ref: '#/components/schemas/FailureView'
-    NotFound:
-      title: NotFound
-      type: object
-      required:
-      - what
-      properties:
-        what:
+        currency:
+          description: Ledger crypto currency ID
           type: string
     Success1:
       title: Success
@@ -100,41 +92,30 @@ components:
         interest:
           $ref: '#/components/schemas/ProtocolInterestView'
           description: The interest information
-    ProtocolInterestView:
-      title: InterestView
+    Failure1:
+      title: Failure
       type: object
       required:
-      - type
-      - value
-      - currency
+      - network
+      - error
       properties:
-        type:
-          description: The type of interest - APY
+        network:
           type: string
-        value:
-          description: The protocol's Net APY interest rate.
-          type: string
-        currency:
-          description: Ledger crypto currency ID
-          type: string
-    Map_String:
-      title: Map_String
-      type: object
-      additionalProperties:
-        type: string
-    Unauthorized:
-      title: Unauthorized
-      type: object
-      required:
-      - realm
-      properties:
-        realm:
-          type: string
+        error:
+          $ref: '#/components/schemas/FailureView'
     GrowResponse:
       title: GrowResponse
       oneOf:
       - $ref: '#/components/schemas/Success1'
       - $ref: '#/components/schemas/Failure1'
+    NotFound:
+      title: NotFound
+      type: object
+      required:
+      - what
+      properties:
+        what:
+          type: string
     FailureView:
       title: FailureView
       type: object
@@ -153,3 +134,24 @@ components:
         details:
           $ref: '#/components/schemas/Map_String'
           description: The error details
+    Map_String:
+      title: Map_String
+      type: object
+      additionalProperties:
+        type: string
+    Unauthorized:
+      title: Unauthorized
+      type: object
+      required:
+      - realm
+      properties:
+        realm:
+          type: string
+    ServerError:
+      title: ServerError
+      type: object
+      required:
+      - msg
+      properties:
+        msg:
+          type: string

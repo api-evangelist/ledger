@@ -12,9 +12,7 @@ paths:
 
         - For swap with fixed trade method, we send on swap endpoint the quoteId (id generated with the previouse call to `/quote` ). The partner should retrieve the quote data (amounts…) from this id.
 
-        - The final source of Truth for the user is the binary payload you generate.
-
-        '
+        - The final source of Truth for the user is the binary payload you generate.'
       requestBody:
         description: Info for generating payload
         content:
@@ -89,6 +87,8 @@ paths:
                     message: One of the swapped currencies is disabled in user's region. (you can add any useful field as you want)
       tags:
       - Swap
+      summary: Post swap fixed
+      x-summary-source: derived
   /swap/float:
     post:
       operationId: postSwapFloat
@@ -96,9 +96,7 @@ paths:
 
         - For swap with floating trade method, we send on swap endpoint the amount. This exact value should be used to generate the swap order and the binary payload, but the amount to might be updated.
 
-        - The final source of Truth for the user is the binary payload you generate.
-
-        '
+        - The final source of Truth for the user is the binary payload you generate.'
       requestBody:
         description: Info for generating payload
         content:
@@ -151,6 +149,8 @@ paths:
                     message: User's currency is in a restricted region. (you can add any useful field as you want)
       tags:
       - Swap
+      summary: Post swap float
+      x-summary-source: derived
 components:
   schemas:
     ErrorPayload:
@@ -196,9 +196,9 @@ components:
           description: estimated gas fees that will be used for the payout transaction (as an output coin floating amount).
         providerSig:
           $ref: '#/components/schemas/ProviderSig'
-    SwapRequestFixed:
+    SwapRequestFloat:
       required:
-      - quoteId
+      - amount
       - refundAddress
       - payoutAddress
       - currencyFrom
@@ -208,9 +208,9 @@ components:
       - nonce
       type: object
       properties:
-        quoteId:
+        amount:
           type: string
-          description: Previously generated quote ID.
+          description: Amount requested by the user to be swap (or amountFrom).
         refundAddress:
           type: string
           description: User's refund address, typically the fromAddress.
@@ -253,9 +253,9 @@ components:
         signature:
           type: string
           description: Payload signed in JWS format.
-    SwapRequestFloat:
+    SwapRequestFixed:
       required:
-      - amount
+      - quoteId
       - refundAddress
       - payoutAddress
       - currencyFrom
@@ -265,9 +265,9 @@ components:
       - nonce
       type: object
       properties:
-        amount:
+        quoteId:
           type: string
-          description: Amount requested by the user to be swap (or amountFrom).
+          description: Previously generated quote ID.
         refundAddress:
           type: string
           description: User's refund address, typically the fromAddress.

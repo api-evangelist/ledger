@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Ledger Quote API
   version: '1.0'
-  description: 'Operations tagged Quote across 3 of this provider''s published API definitions: ledger-buy-provider-openapi.yml, ledger-sell-provider-openapi.yml, ledger-swap-provider-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Quote across 3 of this provider''s published API definitions: ledger-buy-provider-openapi-original.yml, ledger-sell-provider-openapi-original.yml, ledger-swap-provider-openapi-original.yml. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Quote
 paths:
@@ -82,13 +82,13 @@ paths:
                 $ref: '#/components/schemas/ProviderServerError'
       tags:
       - Quote
+      summary: Get quote
+      x-summary-source: derived
     post:
       operationId: postQuote
       description: 'Return a quote for a pair and amount.
 
-        - For fixed trade method, the quoteId is returned.
-
-        '
+        - For fixed trade method, the quoteId is returned.'
       requestBody:
         description: Information required for generating the payload.
         content:
@@ -170,19 +170,10 @@ paths:
                     message: One of the swapped currencies is disabled in user's region. (you can add any useful field as you want)
       tags:
       - Quote
+      summary: Post quote
+      x-summary-source: derived
 components:
   schemas:
-    ProviderServerError:
-      required:
-      - code
-      - message
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     ProviderQuoteResponse:
       required:
       - from
@@ -201,6 +192,17 @@ components:
           type: number
         dca:
           type: boolean
+    ProviderServerError:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     ErrorPayload:
       type: object
       required:
@@ -255,25 +257,6 @@ components:
         additionalFields:
           type: object
           description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
-    QuoteRequest:
-      required:
-      - from
-      - to
-      - amount
-      type: object
-      properties:
-        from:
-          type: string
-          description: Currency ID in the partner's system.
-          example: btc
-        to:
-          type: string
-          description: Currency ID in the partner's system.
-          example: eth
-        amount:
-          type: string
-          description: Or the amountTo, it's the amount that user will spend for the swap. (required only for float quotes)
-          example: '1'
     QuoteResponse_2:
       required:
       - amountTo
@@ -320,6 +303,25 @@ components:
         maxSlippage:
           type: string
           description: Maximum allowable slippage. (0.3)
+    QuoteRequest:
+      required:
+      - from
+      - to
+      - amount
+      type: object
+      properties:
+        from:
+          type: string
+          description: Currency ID in the partner's system.
+          example: btc
+        to:
+          type: string
+          description: Currency ID in the partner's system.
+          example: eth
+        amount:
+          type: string
+          description: Or the amountTo, it's the amount that user will spend for the swap. (required only for float quotes)
+          example: '1'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
@@ -330,6 +332,6 @@ components:
       name: x-api-key
       in: header
 x-refined-from:
-- ledger-buy-provider-openapi.yml
-- ledger-sell-provider-openapi.yml
-- ledger-swap-provider-openapi.yml
+- ledger-buy-provider-openapi-original.yml
+- ledger-sell-provider-openapi-original.yml
+- ledger-swap-provider-openapi-original.yml

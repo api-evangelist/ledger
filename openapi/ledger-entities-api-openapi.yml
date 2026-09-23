@@ -4,40 +4,10 @@ info:
   version: 1.35.0
   x-logo:
     url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
-  description: '
-
-    # Authentication
+  description: '# Authentication
 
 
-    The Ledger Vault API offers several methods of authentication.
-
-    Depending on your LAM configuration you''ll require several of the following headers
-
-    to process API calls. Please refer to the
-
-    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
-
-
-    The `X-Ledger-API-User` header is required for all API calls to LAM
-
-    (except when you register
-
-    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
-
-
-    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
-
-    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
-
-    been set up on your LAM.
-
-    In this case, for every call made to LAM,
-
-    you''ll need to pass all three headers
-
-    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
-
-    '
+    The Ledger Vault API offers several methods of authentication.'
 security:
 - Ledger_API_User: []
 - Ledger_API_User: []
@@ -188,6 +158,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: invalid search parameters
+      operationId: getEntities
+      x-operation-id-source: derived
   /entities/{entity_id}:
     get:
       summary: Get an entity by ID
@@ -214,6 +186,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: entity not found
+      operationId: getEntitiesByEntityId
+      x-operation-id-source: derived
   /entities/{entity_id}/history:
     get:
       summary: Get the entity's history
@@ -240,6 +214,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: entity not found
+      operationId: getEntitiesByEntityIdHistory
+      x-operation-id-source: derived
   /entities/{entity_id}/users:
     get:
       summary: Get users of an entity
@@ -266,8 +242,184 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: entity not found
+      operationId: getEntitiesByEntityIdUsers
+      x-operation-id-source: derived
 components:
   schemas:
+    EntitySearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Entity'
+      required:
+      - cursor
+      - node
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    Entity:
+      additionalProperties: false
+      properties:
+        accounts:
+          items:
+            type: integer
+          type: array
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
+        status:
+          type: string
+      required:
+      - accounts
+      - created_by
+      - created_on
+      - id
+      - name
+      - status
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
+          type: string
+      required:
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    _APISearchEntitiesResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/EntitySearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
     User:
       additionalProperties: false
       properties:
@@ -352,157 +504,6 @@ components:
       - status
       - username
       type: object
-    Entity:
-      additionalProperties: false
-      properties:
-        accounts:
-          items:
-            type: integer
-          type: array
-        created_by:
-          example: 5
-          type: integer
-        created_on:
-          format: date-time
-          type: string
-        id:
-          type: integer
-        last_request:
-          default: null
-          example: 3
-          type:
-          - integer
-          - 'null'
-        name:
-          type: string
-        status:
-          type: string
-      required:
-      - accounts
-      - created_by
-      - created_on
-      - id
-      - name
-      - status
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    _APISearchEntitiesResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/EntitySearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    APIHistoryResult:
-      properties:
-        created_by:
-          default: null
-          example: 5
-          type:
-          - integer
-          - 'null'
-        created_on:
-          format: date-time
-          type: string
-        expired_at:
-          format: date-time
-          type: string
-        id:
-          example: 1
-          type: integer
-        is_complete:
-          type: boolean
-        status:
-          enum:
-          - ACTIVE
-          - APPROVED
-          - BLOCKED
-          - EXPIRED
-          - PENDING_APPROVAL
-          - PENDING_FIRST_APPROVAL
-          - PENDING_REGISTRATION
-          - REJECTED
-          - SIGNED
-          - SUBMITTED
-          example: ACTIVE
-          type: string
-        type:
-          enum:
-          - ACTIVATE
-          - CREATE_ACCOUNT
-          - CREATE_ADMIN
-          - CREATE_ADMIN_GROUP
-          - CREATE_API_USER
-          - CREATE_API_USER_ACCESS
-          - CREATE_DAPPS_CONFIG
-          - CREATE_ENTITY
-          - CREATE_FORCED_UNPLEDGE
-          - CREATE_GROUP
-          - CREATE_OPERATOR
-          - CREATE_PLEDGE_INCREMENT
-          - CREATE_POLICY
-          - CREATE_REPLEDGE
-          - CREATE_TRADELINK
-          - CREATE_TRADELINK_ASSET_MANAGER
-          - CREATE_TRADELINK_EXCHANGE
-          - CREATE_TRANSACTION
-          - CREATE_WHITELIST
-          - EDIT_ACCOUNT
-          - EDIT_ADMIN_GROUP
-          - EDIT_DAPPS_CONFIG
-          - EDIT_ENTITY
-          - EDIT_GROUP
-          - EDIT_POLICY
-          - EDIT_WHITELIST
-          - MESSAGE_SIGNING
-          - MIGRATE_ACCOUNT
-          - MIGRATE_ADMIN
-          - MIGRATE_GROUP
-          - MIGRATE_OPERATOR
-          - MIGRATE_WHITELIST
-          - REVOKE_ENTITY
-          - REVOKE_GROUP
-          - REVOKE_USER
-          - SIGN_DIGESTS
-          - UPDATE_QUORUM
-          example: CREATE_ACCOUNT
-          type: string
-      required:
-      - created_on
-      - expired_at
-      - id
-      - is_complete
-      - status
-      - type
-      type: object
     Users:
       properties:
         users:
@@ -511,29 +512,6 @@ components:
           type: array
       required:
       - users
-      type: object
-    EntitySearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Entity'
-      required:
-      - cursor
-      - node
-      type: object
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
       type: object
   securitySchemes:
     Ledger_API_User:

@@ -4,40 +4,10 @@ info:
   version: 1.35.0
   x-logo:
     url: https://www.ledger.com/wp-content/themes/ledger-v2/public/images/ledger-logo-long.svg
-  description: '
-
-    # Authentication
+  description: '# Authentication
 
 
-    The Ledger Vault API offers several methods of authentication.
-
-    Depending on your LAM configuration you''ll require several of the following headers
-
-    to process API calls. Please refer to the
-
-    [help center](https://help.vault.ledger.com/Content/api/api_overview.html) for more details.
-
-
-    The `X-Ledger-API-User` header is required for all API calls to LAM
-
-    (except when you register
-
-    [API users on LAM](https://help.vault.ledger.com/Content/api/api_apiusers.html)).
-
-
-    Note that the `X-Ledger-API-Key` authorization header can be used alongside the
-
-    `X-Ledger-Store-Auth-Token` if both a LAM API key and HashiCorp Vault have
-
-    been set up on your LAM.
-
-    In this case, for every call made to LAM,
-
-    you''ll need to pass all three headers
-
-    `X-Ledger-API-User`, `X-Ledger-API-Key`, and `X-Ledger-Store-Auth-Token`.
-
-    '
+    The Ledger Vault API offers several methods of authentication.'
 security:
 - Ledger_API_User: []
 - Ledger_API_User: []
@@ -76,6 +46,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Invalid secret
+      operationId: getComplianceAddressRiskByAddress
+      x-operation-id-source: derived
   /compliance/sanctions/{address}:
     get:
       summary: Get an address' sanctions
@@ -102,55 +74,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Invalid secret
+      operationId: getComplianceSanctionsByAddress
+      x-operation-id-source: derived
 components:
   schemas:
-    AddressSanctions:
-      properties:
-        address:
-          description: The address that was checked
-          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
-          type: string
-        has_sanctions:
-          description: Whether or not the address has OFAC sanctions
-          example: true
-          type: boolean
-        provider_details:
-          description: Details from the compliance provider
-          items:
-            $ref: '#/components/schemas/ChainalysisAddressSanction'
-          type: array
-      required:
-      - address
-      - has_sanctions
-      - provider_details
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    Exposure:
-      properties:
-        category:
-          description: The entity category the address has exposure to
-          example: exchange
-          type: string
-        value:
-          description: The address’s aggregate exposure to the corresponding category, denominated in USD
-          example: 424895.68594
-          type: number
-      required:
-      - category
-      - value
-      type: object
     AddressRisk:
       properties:
         address:
@@ -172,6 +99,26 @@ components:
       - address
       - provider_details
       - risk
+      type: object
+    AddressSanctions:
+      properties:
+        address:
+          description: The address that was checked
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+          type: string
+        has_sanctions:
+          description: Whether or not the address has OFAC sanctions
+          example: true
+          type: boolean
+        provider_details:
+          description: Details from the compliance provider
+          items:
+            $ref: '#/components/schemas/ChainalysisAddressSanction'
+          type: array
+      required:
+      - address
+      - has_sanctions
+      - provider_details
       type: object
     ChainalysisAddressRisk:
       properties:
@@ -199,6 +146,20 @@ components:
       - exposures
       - risk
       type: object
+    Exposure:
+      properties:
+        category:
+          description: The entity category the address has exposure to
+          example: exchange
+          type: string
+        value:
+          description: The address’s aggregate exposure to the corresponding category, denominated in USD
+          example: 424895.68594
+          type: number
+      required:
+      - category
+      - value
+      type: object
     ChainalysisAddressSanction:
       properties:
         category:
@@ -222,6 +183,19 @@ components:
       - description
       - name
       - url
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:
