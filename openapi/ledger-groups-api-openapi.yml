@@ -226,29 +226,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
-      type: object
     Group:
       additionalProperties: false
       properties:
@@ -298,6 +275,29 @@ components:
       - members
       - name
       - status
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    GroupSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Group'
+      required:
+      - cursor
+      - node
       type: object
     APIHistoryResult:
       properties:
@@ -394,17 +394,6 @@ components:
       - name
       - status_code
       type: object
-    GroupSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Group'
-      required:
-      - cursor
-      - node
-      type: object
     _APISearchGroupResults:
       properties:
         edges:
@@ -416,6 +405,17 @@ components:
       required:
       - edges
       - page_info
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
       type: object
   securitySchemes:
     Ledger_API_User:

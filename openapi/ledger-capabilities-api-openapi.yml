@@ -71,7 +71,123 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    Venmo:
+      type: object
+    Interac:
+      type: object
+    Pix:
+      type: object
+    Paypal:
+      type: object
+    Other:
+      type: object
+    Bancontact:
+      type: object
+    Fasterpayments:
+      type: object
     Bank:
+      type: object
+    Instantach:
+      type: object
+    Maya:
+      type: object
+    Sofort:
+      type: object
+    Giropay:
+      type: object
+    Cryptocom:
+      type: object
+    Applepay:
+      type: object
+    Eps:
+      type: object
+    BuyPaymentMethod:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PaymentMethod'
+    Spei:
+      type: object
+    Googlepay:
+      type: object
+    Easypay:
+      type: object
+    Dana:
+      type: object
+    Gcash:
+      type: object
+    FiatCurrencyCapability:
+      required:
+      - fiat
+      - minAmount
+      - maxAmount
+      type: object
+      properties:
+        fiat:
+          type: string
+        minAmount:
+          type: integer
+        maxAmount:
+          type: integer
+    CountryCapability:
+      required:
+      - country
+      type: object
+      properties:
+        country:
+          type: string
+        paymentMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BuyPaymentMethod'
+    P2p:
+      type: object
+    Revolut:
+      type: object
+    Pse:
+      type: object
+    Easybank:
+      type: object
+    Linkaja:
+      type: object
+    Imps:
+      type: object
+    Payid:
+      type: object
+    ProviderServerError:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Shopeepay:
+      type: object
+    Card:
+      type: object
+    Mobikwik:
+      type: object
+    Ovo:
+      type: object
+    Astropay:
+      type: object
+    Cashapp:
+      type: object
+    Upibanktransfer:
+      type: object
+    Ach:
+      type: object
+    Ideal:
+      type: object
+    Qris:
+      type: object
+    Grabpay:
       type: object
     PaymentMethod:
       oneOf:
@@ -114,109 +230,7 @@ components:
       - $ref: '#/components/schemas/Pse'
       - $ref: '#/components/schemas/Dana'
       - $ref: '#/components/schemas/Qris'
-    Spei:
-      type: object
-    Googlepay:
-      type: object
-    Giropay:
-      type: object
-    Instantach:
-      type: object
-    Card:
-      type: object
-    Dana:
-      type: object
-    Venmo:
-      type: object
-    Imps:
-      type: object
-    Astropay:
-      type: object
-    Mobikwik:
-      type: object
-    Cashapp:
-      type: object
-    Linkaja:
-      type: object
-    Pse:
-      type: object
-    Shopeepay:
-      type: object
-    FiatCurrencyCapability:
-      required:
-      - fiat
-      - minAmount
-      - maxAmount
-      type: object
-      properties:
-        fiat:
-          type: string
-        minAmount:
-          type: integer
-        maxAmount:
-          type: integer
-    BuyPaymentMethod:
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/PaymentMethod'
-    Grabpay:
-      type: object
-    Qris:
-      type: object
-    Eps:
-      type: object
-    Paypal:
-      type: object
-    Applepay:
-      type: object
-    Ideal:
-      type: object
-    Maya:
-      type: object
     Sepa:
-      type: object
-    ProviderServerError:
-      required:
-      - code
-      - message
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    Sofort:
-      type: object
-    CountryCapability:
-      required:
-      - country
-      type: object
-      properties:
-        country:
-          type: string
-        paymentMethods:
-          type: array
-          items:
-            $ref: '#/components/schemas/BuyPaymentMethod'
-    Easypay:
-      type: object
-    Gcash:
-      type: object
-    Ach:
-      type: object
-    Upibanktransfer:
-      type: object
-    Payid:
-      type: object
-    P2p:
-      type: object
-    Interac:
-      type: object
-    Easybank:
       type: object
     BuyProviderCapabilities:
       type: object
@@ -230,32 +244,6 @@ components:
           items:
             $ref: '#/components/schemas/CountryCapability'
       description: "# Buy Provider Capabilities \n- \"fiatCurrencyCapabilities.[].fiat\": fiat currency supported at the ISO-4217 standard,\n- \"fiatCurrencyCapabilities.[].minAmount\": minimum amount in fiat the user can buy crypto,\n- \"fiatCurrencyCapabilities.[].maxAmount \": minimum amount in fiat the user can buy crypto,\n- \"cryptoCurrencies\": list of supported crypto currencies supported. The crypto currencies must be at the ledgerId format (see ledger_tokens.json and ledger_coins.json files),\n- \"coutriesCapabilities.[].country\": available at the Alpha-2 standard (ISO3166),\n- \"coutriesCapabilities.[].paymentMethods.[].name\": Available payment method, valid values : card, pix, mobikwik, easypay, astropay, upibanktransfer, sofort, bancontact, giropay, googlepay, applepay, paypal, sepa, ach, fasterpayments, easybank, bank, gbpbank, eps, ideal, revolut\n- \"countriesCapabilities.[].paymentMethods.[].successRate\": percentage of success of the transaction.\n"
-    Ovo:
-      type: object
-    Pix:
-      type: object
-    Cryptocom:
-      type: object
-    Bancontact:
-      type: object
-    Fasterpayments:
-      type: object
-    Revolut:
-      type: object
-    Other:
-      type: object
-    SellPaymentMethod:
-      required:
-      - name
-      - minMaxRestrictions
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/PaymentMethod'
-        minMaxRestrictions:
-          type: array
-          items:
-            $ref: '#/components/schemas/FiatCurrencyCapabilityPaymentMethods'
     CryptoCurrencyCapability:
       required:
       - id
@@ -269,45 +257,6 @@ components:
           type: number
         maxAmount:
           type: number
-    FiatCurrencyCapability_2:
-      required:
-      - fiat
-      type: object
-      properties:
-        fiat:
-          type: string
-          description: Currency code of the ISO-4217 standard.
-    ErrorPayload:
-      type: object
-      required:
-      - message
-      - messageKey
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
-    FiatCurrencyCapabilityPaymentMethods:
-      required:
-      - fiat
-      - minAmount
-      - maxAmount
-      type: object
-      properties:
-        fiat:
-          type: string
-          description: Currency code of the ISO-4217 standard.
-        minAmount:
-          type: string
-          description: Miniumum supported amount of this currency
-        maxAmount:
-          type: string
-          description: Maximum supported amount of this currency
     SellProviderCapabilities:
       type: object
       properties:
@@ -336,6 +285,30 @@ components:
         - "countriesCapabilities.[].paymentMethods.[].name": Available payment method, valid values : card, sepa, bank, other
 
         '
+    FiatCurrencyCapabilityPaymentMethods:
+      required:
+      - fiat
+      - minAmount
+      - maxAmount
+      type: object
+      properties:
+        fiat:
+          type: string
+          description: Currency code of the ISO-4217 standard.
+        minAmount:
+          type: string
+          description: Miniumum supported amount of this currency
+        maxAmount:
+          type: string
+          description: Maximum supported amount of this currency
+    FiatCurrencyCapability_2:
+      required:
+      - fiat
+      type: object
+      properties:
+        fiat:
+          type: string
+          description: Currency code of the ISO-4217 standard.
     CountryCapability_2:
       required:
       - country
@@ -347,6 +320,33 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SellPaymentMethod'
+    SellPaymentMethod:
+      required:
+      - name
+      - minMaxRestrictions
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PaymentMethod'
+        minMaxRestrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FiatCurrencyCapabilityPaymentMethods'
+    ErrorPayload:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

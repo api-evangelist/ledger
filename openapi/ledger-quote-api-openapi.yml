@@ -203,21 +203,6 @@ components:
           format: int32
         message:
           type: string
-    ErrorPayload:
-      type: object
-      required:
-      - message
-      - messageKey
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
     QuoteResponse:
       required:
       - quoteId
@@ -245,6 +230,21 @@ components:
         expiry:
           type: string
           description: Quote expiration timestamp
+    ErrorPayload:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
     ErrorPayload_2:
       type: object
       properties:

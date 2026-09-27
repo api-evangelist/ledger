@@ -77,18 +77,27 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Error:
+    RefreshJWTRequest:
       properties:
-        message:
+        refresh_token:
+          description: The refresh_token used to get new JWTs
           type: string
-        name:
-          type: string
-        status_code:
-          type: integer
       required:
-      - message
-      - name
-      - status_code
+      - refresh_token
+      type: object
+    ApiAuthRequest:
+      properties:
+        api_key_id:
+          description: The API Key ID of your API user
+          example: 2khK02ZRc_TE9nYJyGIfIQ
+          type: string
+        api_key_secret:
+          description: The API Key Secret of your API user
+          example: jI0X2n55EHnNaZasmzfOL36wXx6b4D7Wmw-riZCeGWE
+          type: string
+      required:
+      - api_key_id
+      - api_key_secret
       type: object
     AuthResponse:
       properties:
@@ -116,27 +125,18 @@ components:
       - session_state
       - token_type
       type: object
-    ApiAuthRequest:
+    Error:
       properties:
-        api_key_id:
-          description: The API Key ID of your API user
-          example: 2khK02ZRc_TE9nYJyGIfIQ
+        message:
           type: string
-        api_key_secret:
-          description: The API Key Secret of your API user
-          example: jI0X2n55EHnNaZasmzfOL36wXx6b4D7Wmw-riZCeGWE
+        name:
           type: string
+        status_code:
+          type: integer
       required:
-      - api_key_id
-      - api_key_secret
-      type: object
-    RefreshJWTRequest:
-      properties:
-        refresh_token:
-          description: The refresh_token used to get new JWTs
-          type: string
-      required:
-      - refresh_token
+      - message
+      - name
+      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

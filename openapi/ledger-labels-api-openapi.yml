@@ -159,19 +159,41 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    LabelInfo:
+    Label:
+      additionalProperties: false
       properties:
-        color:
-          description: color of the tag
-          example: '#FE4523'
+        created_by:
+          description: id of the creator
+          example: 42
+          type: integer
+        created_on:
+          format: date-time
           type: string
-        description:
-          description: description of this tag
-          example: This is a SPAM
+        id:
+          type: integer
+        info:
+          $ref: '#/components/schemas/LabelInfo'
+        name:
+          description: name of the tag
+          example: SPAM
+          type: string
+        updated_by:
+          description: id of the last updater
+          example: 42
+          type: integer
+        updated_on:
+          description: date on which the tag has been last updated
+          example: '2023-02-06T02:48:59+00:00'
+          format: date-time
           type: string
       required:
-      - color
-      - description
+      - created_by
+      - created_on
+      - id
+      - info
+      - name
+      - updated_by
+      - updated_on
       type: object
     APISearchPageInfo:
       properties:
@@ -221,41 +243,19 @@ components:
       - cursor
       - node
       type: object
-    Label:
-      additionalProperties: false
+    LabelInfo:
       properties:
-        created_by:
-          description: id of the creator
-          example: 42
-          type: integer
-        created_on:
-          format: date-time
+        color:
+          description: color of the tag
+          example: '#FE4523'
           type: string
-        id:
-          type: integer
-        info:
-          $ref: '#/components/schemas/LabelInfo'
-        name:
-          description: name of the tag
-          example: SPAM
-          type: string
-        updated_by:
-          description: id of the last updater
-          example: 42
-          type: integer
-        updated_on:
-          description: date on which the tag has been last updated
-          example: '2023-02-06T02:48:59+00:00'
-          format: date-time
+        description:
+          description: description of this tag
+          example: This is a SPAM
           type: string
       required:
-      - created_by
-      - created_on
-      - id
-      - info
-      - name
-      - updated_by
-      - updated_on
+      - color
+      - description
       type: object
   securitySchemes:
     Ledger_API_User:

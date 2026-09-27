@@ -81,21 +81,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ErrorPayload:
-      type: object
-      required:
-      - message
-      - messageKey
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
     StatusUpdate:
       required:
       - status
@@ -123,6 +108,21 @@ components:
         referralFees:
           type: string
           description: Fees paid to Ledger, as a referral fee.
+    ErrorPayload:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
   securitySchemes:
     defaultApiKey:
       type: apiKey

@@ -67,19 +67,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
     Webhook:
       properties:
         secret:
@@ -111,6 +98,19 @@ components:
           description: configuration for all kind of notifications
       required:
       - all
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

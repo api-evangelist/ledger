@@ -222,6 +222,29 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    _APISearchMessageResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/MessageSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    MessageSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Message'
+      required:
+      - cursor
+      - node
+      type: object
     APISearchPageInfo:
       properties:
         count:
@@ -233,99 +256,6 @@ components:
       required:
       - count
       - has_next_page
-      type: object
-    TransactionOrMessageNote:
-      properties:
-        content:
-          example: some information about this transaction
-          type: string
-        title:
-          example: a note title
-          type: string
-      required:
-      - content
-      - title
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
-      type: object
-    Message:
-      additionalProperties: false
-      properties:
-        account_id:
-          example: 1
-          type: integer
-        address:
-          default: null
-          description: The address used to signed the message
-          example: bc1q2kqvs8wx455lw2f69j5z34emypjup07fp0fcrp
-          type:
-          - string
-          - 'null'
-        created_by:
-          example: 5
-          type: integer
-        created_on:
-          format: date-time
-          type: string
-        data:
-          description: The content of the message
-          example: Welcome to the web3
-          type: string
-        id:
-          type: integer
-        last_request:
-          default: null
-          example: 3
-          type:
-          - integer
-          - 'null'
-        message_type:
-          description: The type of the message
-          enum:
-          - EIP-191
-          - EIP-712
-          example: EIP-191
-        notes:
-          description: Notes attached to this message
-          items:
-            $ref: '#/components/schemas/TransactionOrMessageNote'
-          type: array
-        signature:
-          default: null
-          description: The DER signature of the message
-          example: 0x
-          type:
-          - string
-          - 'null'
-        status:
-          enum:
-          - ABORTED
-          - APPROVED
-          - PENDING_APPROVAL
-          - PENDING_CREATE_IN_HSM
-          - SIGNED
-          example: PENDING_APPROVAL
-          type: string
-        type:
-          default: MESSAGE_SIGNATURE
-      required:
-      - account_id
-      - created_by
-      - created_on
-      - data
-      - id
-      - message_type
-      - notes
-      - status
       type: object
     APIHistoryResult:
       properties:
@@ -422,28 +352,98 @@ components:
       - name
       - status_code
       type: object
-    MessageSearchResult:
+    TransactionOrMessageNote:
       properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Message'
+        content:
+          example: some information about this transaction
+          type: string
+        title:
+          example: a note title
+          type: string
       required:
-      - cursor
-      - node
+      - content
+      - title
       type: object
-    _APISearchMessageResults:
+    Message:
+      additionalProperties: false
       properties:
-        edges:
+        account_id:
+          example: 1
+          type: integer
+        address:
+          default: null
+          description: The address used to signed the message
+          example: bc1q2kqvs8wx455lw2f69j5z34emypjup07fp0fcrp
+          type:
+          - string
+          - 'null'
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        data:
+          description: The content of the message
+          example: Welcome to the web3
+          type: string
+        id:
+          type: integer
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        message_type:
+          description: The type of the message
+          enum:
+          - EIP-191
+          - EIP-712
+          example: EIP-191
+        notes:
+          description: Notes attached to this message
           items:
-            $ref: '#/components/schemas/MessageSearchResult'
+            $ref: '#/components/schemas/TransactionOrMessageNote'
           type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
+        signature:
+          default: null
+          description: The DER signature of the message
+          example: 0x
+          type:
+          - string
+          - 'null'
+        status:
+          enum:
+          - ABORTED
+          - APPROVED
+          - PENDING_APPROVAL
+          - PENDING_CREATE_IN_HSM
+          - SIGNED
+          example: PENDING_APPROVAL
+          type: string
+        type:
+          default: MESSAGE_SIGNATURE
       required:
-      - edges
-      - page_info
+      - account_id
+      - created_by
+      - created_on
+      - data
+      - id
+      - message_type
+      - notes
+      - status
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
       type: object
   securitySchemes:
     Ledger_API_User:

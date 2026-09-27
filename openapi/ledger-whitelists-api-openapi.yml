@@ -246,6 +246,30 @@ components:
       - cursor
       - node
       type: object
+    _APISearchWhitelistResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/WhitelistSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
     Whitelist:
       additionalProperties: false
       properties:
@@ -302,41 +326,6 @@ components:
       - id
       - name
       - status
-      type: object
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
-      type: object
-    _APISearchWhitelistResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/WhitelistSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
       type: object
     APIHistoryResult:
       properties:
@@ -419,6 +408,19 @@ components:
       - is_complete
       - status
       - type
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
       type: object
     WhitelistAddress:
       properties:
@@ -523,18 +525,16 @@ components:
       - id
       - name
       type: object
-    Error:
+    APIHistoryResults:
       properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
       required:
-      - message
-      - name
-      - status_code
+      - history
       type: object
   securitySchemes:
     Ledger_API_User:

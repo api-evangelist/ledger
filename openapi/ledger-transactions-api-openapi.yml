@@ -1495,29 +1495,292 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PaginatedAllTransactionsSchemaSerializerV2List:
+    EthereumTxWithTransfersResponse:
       type: object
-      required:
-      - count
-      - results
       properties:
-        count:
-          type: integer
-          example: 123
-        next:
+        executionDate:
           type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
+          format: date-time
+        to:
+          type:
+          - string
+          - 'null'
+        data:
           type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
+        txHash:
+          type: string
+        blockNumber:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+        transfers:
           type: array
           items:
-            $ref: '#/components/schemas/AllTransactionsSchemaSerializerV2'
+            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
+        txType:
+          type: string
+          readOnly: true
+        from:
+          type: string
+      required:
+      - blockNumber
+      - data
+      - executionDate
+      - from
+      - to
+      - transfers
+      - txHash
+      - txType
+    SafeMultisigTransaction:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: integer
+          minimum: 0
+        data:
+          type:
+          - string
+          - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+          - string
+          - 'null'
+        safeTxGas:
+          type: integer
+          minimum: 0
+        baseGas:
+          type: integer
+          minimum: 0
+        gasPrice:
+          type: integer
+          minimum: 0
+        refundReceiver:
+          type:
+          - string
+          - 'null'
+        nonce:
+          type: integer
+          minimum: 0
+        contractTransactionHash:
+          type: string
+        sender:
+          type: string
+        signature:
+          type:
+          - string
+          - 'null'
+        origin:
+          type:
+          - string
+          - 'null'
+          maxLength: 200
+      required:
+      - baseGas
+      - contractTransactionHash
+      - gasPrice
+      - nonce
+      - operation
+      - safe
+      - safeTxGas
+      - sender
+      - to
+      - value
+    TokenInfoResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          readOnly: true
+        address:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        decimals:
+          type: integer
+        logoUri:
+          type: string
+          readOnly: true
+        trusted:
+          type: boolean
+      required:
+      - address
+      - decimals
+      - logoUri
+      - name
+      - symbol
+      - trusted
+      - type
+    SafeMultisigTransactionResponseSerializerV2:
+      type: object
+      properties:
+        safe:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        data:
+          type:
+          - string
+          - 'null'
+        operation:
+          type: integer
+          minimum: 0
+        gasToken:
+          type:
+          - string
+          - 'null'
+        safeTxGas:
+          type: string
+        baseGas:
+          type: string
+        gasPrice:
+          type: string
+        refundReceiver:
+          type:
+          - string
+          - 'null'
+        nonce:
+          type: string
+        executionDate:
+          type: string
+          format: date-time
+        submissionDate:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        blockNumber:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+        transactionHash:
+          type: string
+        safeTxHash:
+          type: string
+        proposer:
+          type: string
+        proposedByDelegate:
+          type:
+          - string
+          - 'null'
+        executor:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        isExecuted:
+          type: boolean
+        isSuccessful:
+          type:
+          - boolean
+          - 'null'
+          readOnly: true
+        ethGasPrice:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        maxFeePerGas:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        maxPriorityFeePerGas:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        gasUsed:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+        fee:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+        origin:
+          type: string
+          readOnly: true
+        dataDecoded:
+          type: string
+          deprecated: true
+          description: This field is deprecated and will be removed in future versions. Refer to decoder service [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder) for decoding guidance.
+          readOnly: true
+          x-gitbook-description-html: <p>This field is deprecated and will be removed in future versions. Refer to decoder service <a href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a> for decoding guidance.</p>
+        confirmationsRequired:
+          type: integer
+        confirmations:
+          type: object
+          additionalProperties: {}
+          description: 'Validate and check integrity of confirmations queryset
+
+
+            :param obj: MultisigConfirmation instance
+
+            :return: Serialized queryset
+
+            :raises InternalValidationError: If any inconsistency is detected'
+          readOnly: true
+          x-gitbook-description-html: '<p>Validate and check integrity of confirmations queryset</p>
+
+            <p>:param obj: MultisigConfirmation instance
+
+            :return: Serialized queryset
+
+            :raises InternalValidationError: If any inconsistency is detected</p>'
+        trusted:
+          type: boolean
+        signatures:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+      required:
+      - baseGas
+      - blockNumber
+      - confirmations
+      - confirmationsRequired
+      - dataDecoded
+      - ethGasPrice
+      - executionDate
+      - executor
+      - fee
+      - gasPrice
+      - gasUsed
+      - isExecuted
+      - isSuccessful
+      - maxFeePerGas
+      - maxPriorityFeePerGas
+      - modified
+      - nonce
+      - operation
+      - origin
+      - proposedByDelegate
+      - proposer
+      - safe
+      - safeTxGas
+      - safeTxHash
+      - signatures
+      - submissionDate
+      - to
+      - transactionHash
+      - trusted
+      - value
     TransferWithTokenInfoResponse:
       type: object
       properties:
@@ -1584,95 +1847,20 @@ components:
       - transferId
       - type
       - value
-    SafeModuleTransactionWithTransfersResponse:
+    CodeErrorResponse:
       type: object
       properties:
-        created:
-          type: string
-          format: date-time
-          readOnly: true
-        executionDate:
-          type: string
-          format: date-time
-        blockNumber:
+        code:
           type: integer
-        isSuccessful:
-          type: boolean
-          readOnly: true
-        transactionHash:
+        message:
           type: string
-        safe:
-          type: string
-        module:
-          type: string
-        to:
-          type: string
-        value:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,78}(?:\.\d{0,0})?$
-        data:
-          type:
-          - string
-          - 'null'
-        operation:
-          enum:
-          - 0
-          - 1
-          - 2
-          type: integer
-          description: '* `0` - CALL
-
-            * `1` - DELEGATE_CALL
-
-            * `2` - CREATE'
-          x-spec-enum-id: 73baf6048b75e41c
-          minimum: 0
-          maximum: 32767
-          x-gitbook-description-html: '<ul>
-
-            <li><code>0</code> - CALL</li>
-
-            <li><code>1</code> - DELEGATE_CALL</li>
-
-            <li><code>2</code> - CREATE</li>
-
-            </ul>'
-        dataDecoded:
-          type: string
-          deprecated: true
-          description: This field is deprecated and will be removed in future versions. Refer to decoder service [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder) for decoding guidance.
-          readOnly: true
-          x-gitbook-description-html: <p>This field is deprecated and will be removed in future versions. Refer to decoder service <a href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a> for decoding guidance.</p>
-        moduleTransactionId:
-          type: string
-          description: "Internally calculated parameter to uniquely identify a moduleTransaction \n`ModuleTransactionId = i+tx_hash+trace_address`"
-          x-gitbook-description-html: '<p>Internally calculated parameter to uniquely identify a moduleTransaction
-
-            <code>ModuleTransactionId = i+tx_hash+trace_address</code></p>'
-        transfers:
+        arguments:
           type: array
-          items:
-            $ref: '#/components/schemas/TransferWithTokenInfoResponse'
-        txType:
-          type: string
-          readOnly: true
+          items: {}
       required:
-      - blockNumber
-      - created
-      - data
-      - dataDecoded
-      - executionDate
-      - isSuccessful
-      - module
-      - moduleTransactionId
-      - operation
-      - safe
-      - to
-      - transactionHash
-      - transfers
-      - txType
-      - value
+      - arguments
+      - code
+      - message
     PaginatedSafeMultisigTransactionResponseSerializerV2List:
       type: object
       required:
@@ -1696,123 +1884,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SafeMultisigTransactionResponseSerializerV2'
-    TokenInfoResponse:
-      type: object
-      properties:
-        type:
-          type: string
-          readOnly: true
-        address:
-          type: string
-        name:
-          type: string
-        symbol:
-          type: string
-        decimals:
-          type: integer
-        logoUri:
-          type: string
-          readOnly: true
-        trusted:
-          type: boolean
-      required:
-      - address
-      - decimals
-      - logoUri
-      - name
-      - symbol
-      - trusted
-      - type
-    CodeErrorResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-        message:
-          type: string
-        arguments:
-          type: array
-          items: {}
-      required:
-      - arguments
-      - code
-      - message
-    SafeMultisigTransaction:
-      type: object
-      properties:
-        safe:
-          type: string
-        to:
-          type: string
-        value:
-          type: integer
-          minimum: 0
-        data:
-          type:
-          - string
-          - 'null'
-        operation:
-          type: integer
-          minimum: 0
-        gasToken:
-          type:
-          - string
-          - 'null'
-        safeTxGas:
-          type: integer
-          minimum: 0
-        baseGas:
-          type: integer
-          minimum: 0
-        gasPrice:
-          type: integer
-          minimum: 0
-        refundReceiver:
-          type:
-          - string
-          - 'null'
-        nonce:
-          type: integer
-          minimum: 0
-        contractTransactionHash:
-          type: string
-        sender:
-          type: string
-        signature:
-          type:
-          - string
-          - 'null'
-        origin:
-          type:
-          - string
-          - 'null'
-          maxLength: 200
-      required:
-      - baseGas
-      - contractTransactionHash
-      - gasPrice
-      - nonce
-      - operation
-      - safe
-      - safeTxGas
-      - sender
-      - to
-      - value
-    AllTransactionsSchemaSerializerV2:
-      type: object
-      description: Just for the purpose of documenting, don't use it
-      properties:
-        txType1:
-          $ref: '#/components/schemas/SafeModuleTransactionWithTransfersResponse'
-        txType2:
-          $ref: '#/components/schemas/SafeMultisigTransactionWithTransfersResponseSerializerV2'
-        txType3:
-          $ref: '#/components/schemas/EthereumTxWithTransfersResponse'
-      required:
-      - txType1
-      - txType2
-      - txType3
-      x-gitbook-description-html: <p>Just for the purpose of documenting, don't use it</p>
     SafeMultisigTransactionWithTransfersResponseSerializerV2:
       type: object
       properties:
@@ -1983,25 +2054,110 @@ components:
       - trusted
       - txType
       - value
-    EthereumTxWithTransfersResponse:
+    PaginatedAllTransactionsSchemaSerializerV2List:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllTransactionsSchemaSerializerV2'
+    AllTransactionsSchemaSerializerV2:
+      type: object
+      description: Just for the purpose of documenting, don't use it
+      properties:
+        txType1:
+          $ref: '#/components/schemas/SafeModuleTransactionWithTransfersResponse'
+        txType2:
+          $ref: '#/components/schemas/SafeMultisigTransactionWithTransfersResponseSerializerV2'
+        txType3:
+          $ref: '#/components/schemas/EthereumTxWithTransfersResponse'
+      required:
+      - txType1
+      - txType2
+      - txType3
+      x-gitbook-description-html: <p>Just for the purpose of documenting, don't use it</p>
+    SafeModuleTransactionWithTransfersResponse:
       type: object
       properties:
+        created:
+          type: string
+          format: date-time
+          readOnly: true
         executionDate:
           type: string
           format: date-time
+        blockNumber:
+          type: integer
+        isSuccessful:
+          type: boolean
+          readOnly: true
+        transactionHash:
+          type: string
+        safe:
+          type: string
+        module:
+          type: string
         to:
+          type: string
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,78}(?:\.\d{0,0})?$
+        data:
           type:
           - string
           - 'null'
-        data:
+        operation:
+          enum:
+          - 0
+          - 1
+          - 2
+          type: integer
+          description: '* `0` - CALL
+
+            * `1` - DELEGATE_CALL
+
+            * `2` - CREATE'
+          x-spec-enum-id: 73baf6048b75e41c
+          minimum: 0
+          maximum: 32767
+          x-gitbook-description-html: '<ul>
+
+            <li><code>0</code> - CALL</li>
+
+            <li><code>1</code> - DELEGATE_CALL</li>
+
+            <li><code>2</code> - CREATE</li>
+
+            </ul>'
+        dataDecoded:
           type: string
-        txHash:
-          type: string
-        blockNumber:
-          type:
-          - integer
-          - 'null'
+          deprecated: true
+          description: This field is deprecated and will be removed in future versions. Refer to decoder service [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder) for decoding guidance.
           readOnly: true
+          x-gitbook-description-html: <p>This field is deprecated and will be removed in future versions. Refer to decoder service <a href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a> for decoding guidance.</p>
+        moduleTransactionId:
+          type: string
+          description: "Internally calculated parameter to uniquely identify a moduleTransaction \n`ModuleTransactionId = i+tx_hash+trace_address`"
+          x-gitbook-description-html: '<p>Internally calculated parameter to uniquely identify a moduleTransaction
+
+            <code>ModuleTransactionId = i+tx_hash+trace_address</code></p>'
         transfers:
           type: array
           items:
@@ -2009,888 +2165,33 @@ components:
         txType:
           type: string
           readOnly: true
-        from:
-          type: string
       required:
       - blockNumber
+      - created
       - data
-      - executionDate
-      - from
-      - to
-      - transfers
-      - txHash
-      - txType
-    SafeMultisigTransactionResponseSerializerV2:
-      type: object
-      properties:
-        safe:
-          type: string
-        to:
-          type: string
-        value:
-          type: string
-        data:
-          type:
-          - string
-          - 'null'
-        operation:
-          type: integer
-          minimum: 0
-        gasToken:
-          type:
-          - string
-          - 'null'
-        safeTxGas:
-          type: string
-        baseGas:
-          type: string
-        gasPrice:
-          type: string
-        refundReceiver:
-          type:
-          - string
-          - 'null'
-        nonce:
-          type: string
-        executionDate:
-          type: string
-          format: date-time
-        submissionDate:
-          type: string
-          format: date-time
-        modified:
-          type: string
-          format: date-time
-        blockNumber:
-          type:
-          - integer
-          - 'null'
-          readOnly: true
-        transactionHash:
-          type: string
-        safeTxHash:
-          type: string
-        proposer:
-          type: string
-        proposedByDelegate:
-          type:
-          - string
-          - 'null'
-        executor:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        isExecuted:
-          type: boolean
-        isSuccessful:
-          type:
-          - boolean
-          - 'null'
-          readOnly: true
-        ethGasPrice:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        maxFeePerGas:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        maxPriorityFeePerGas:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        gasUsed:
-          type:
-          - integer
-          - 'null'
-          readOnly: true
-        fee:
-          type:
-          - integer
-          - 'null'
-          readOnly: true
-        origin:
-          type: string
-          readOnly: true
-        dataDecoded:
-          type: string
-          deprecated: true
-          description: This field is deprecated and will be removed in future versions. Refer to decoder service [documentation](https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder) for decoding guidance.
-          readOnly: true
-          x-gitbook-description-html: <p>This field is deprecated and will be removed in future versions. Refer to decoder service <a href="https://docs.safe.global/core-api/safe-decoder-service-reference#Data-decoder">documentation</a> for decoding guidance.</p>
-        confirmationsRequired:
-          type: integer
-        confirmations:
-          type: object
-          additionalProperties: {}
-          description: 'Validate and check integrity of confirmations queryset
-
-
-            :param obj: MultisigConfirmation instance
-
-            :return: Serialized queryset
-
-            :raises InternalValidationError: If any inconsistency is detected'
-          readOnly: true
-          x-gitbook-description-html: '<p>Validate and check integrity of confirmations queryset</p>
-
-            <p>:param obj: MultisigConfirmation instance
-
-            :return: Serialized queryset
-
-            :raises InternalValidationError: If any inconsistency is detected</p>'
-        trusted:
-          type: boolean
-        signatures:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-      required:
-      - baseGas
-      - blockNumber
-      - confirmations
-      - confirmationsRequired
       - dataDecoded
-      - ethGasPrice
       - executionDate
-      - executor
-      - fee
-      - gasPrice
-      - gasUsed
-      - isExecuted
       - isSuccessful
-      - maxFeePerGas
-      - maxPriorityFeePerGas
-      - modified
-      - nonce
+      - module
+      - moduleTransactionId
       - operation
-      - origin
-      - proposedByDelegate
-      - proposer
       - safe
-      - safeTxGas
-      - safeTxHash
-      - signatures
-      - submissionDate
       - to
       - transactionHash
-      - trusted
+      - transfers
+      - txType
       - value
-    SolanaAccountFields:
+    TransactionFailureReasons:
       properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/SolanaStakingInfo'
-          description: Solana Staking balances and rewards
-        type:
-          default: Solana
-      required:
-      - staking
-      type: object
-    SolanaSendSplTokenTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/SolanaSendSplTokenTransactionData'
-          description: Data to send SPL tokens.
-        transaction_type:
-          description: Type indicator for Solana-like light token send transactions.
-          enum:
-          - SOLANA_LIKE_SEND_SPL_TOKEN_CHECKED
-          example: SOLANA_LIKE_SEND_SPL_TOKEN_CHECKED
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    PolkadotSendTransactionData:
-      properties:
-        account_name:
-          description: Account name to execute transaction.
-          example: Polkadot Wallet 1
+        client_reason:
+          example: human readable message
           type: string
-        amount:
-          description: Transaction amount for Polkadot, in the smallest currency unit.
-          example: '100000'
-          type: string
-        currency:
-          description: Account currency for Polkadot transactions.
-          enum:
-          - polkadot
-          - westend
-          example: polkadot
-        recipient:
-          description: Transaction recipient address for Polkadot.
-          example: 1FR...4fg
+        reason:
+          example: detail
           type: string
       required:
-      - account_name
-      - amount
-      - currency
-      - recipient
-      type: object
-    EthereumSCDTransactionData:
-      properties:
-        account_name:
-          description: The name of the account initiating the transaction.
-          example: ETH Wallet 1
-          type: string
-        amount:
-          default: null
-          description: The amount to be transferred, in the smallest currency unit.
-          example: '1267887898998'
-          type:
-          - string
-          - 'null'
-        currency:
-          description: Specific currency for Ethereum Smart Contract deployment.
-          enum:
-          - arbitrum
-          - arbitrum_goerli
-          - arbitrum_sepolia
-          - avalanche_c_chain
-          - avalanche_c_chain_fuji
-          - base
-          - base_goerli
-          - base_sepolia
-          - blast
-          - blast_sepolia
-          - bsc
-          - celo
-          - celo_alfajores
-          - cronos
-          - cronos_testnet
-          - ethereum
-          - ethereum_classic
-          - ethereum_goerli
-          - ethereum_holesky
-          - ethereum_hoodi
-          - ethereum_pow
-          - ethereum_ropsten
-          - ethereum_sepolia
-          - etherlink
-          - fantom
-          - fantom_testnet
-          - filecoin
-          - filecoin_calibration
-          - flare
-          - flare_coston
-          - kava_evm
-          - kava_evm_testnet
-          - klaytn
-          - klaytn_baobab
-          - komodo
-          - linea
-          - mantle
-          - mantle_sepolia
-          - neon_evm
-          - optimism
-          - optimism_goerli
-          - optimism_sepolia
-          - polygon
-          - polygon_amoy
-          - polygon_mumbai
-          - polygon_zk_evm
-          - polygon_zk_evm_testnet
-          - pulsechain
-          - pulsechain_testnet
-          - scroll
-          - scroll_sepolia
-          - sonic
-          - tomo
-          - tomo_testnet
-          - tron
-          - viction
-          - viction_testnet
-          example: ethereum
-          type: string
-        encoded_contract_bytecode:
-          description: Encoded bytecode for the smart contract deployment.
-          example: 0x123abc...
-          type: string
-        max_fees:
-          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
-          example: '123908790'
-          type: string
-      required:
-      - account_name
-      - currency
-      - encoded_contract_bytecode
-      - max_fees
-      type: object
-    AccountTransactionFilterRuleEntry:
-      properties:
-        condition:
-          default: null
-          enum:
-          - null
-          - ALL
-          - ANY
-          type:
-          - string
-          - 'null'
-        filters:
-          additionalProperties:
-            oneOf:
-            - items:
-                type: string
-              type: array
-            - type: string
-          default: null
-          type:
-          - object
-          - 'null'
-        preset:
-          default: null
-          type:
-          - string
-          - 'null'
-      type: object
-    Block:
-      properties:
-        details:
-          additionalProperties: {}
-          default: null
-          description: The block's details
-          type:
-          - object
-          - 'null'
-        hash:
-          example: '0x3bb33b6cc7c4aeea0e7383ddd8ef238c44abe8e3d73ffa27b78dd130a2a56687'
-          type: string
-        height:
-          example: 7463221
-          type: integer
-        time:
-          example: '2020-12-11T12:56:35.370946+00:00'
-          format: date-time
-          type: string
-      required:
-      - hash
-      - height
-      - time
-      type: object
-    BitcoinFields:
-      properties:
-        fees_per_byte:
-          default: null
-          description: fees per bytes
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type:
-          - string
-          - 'null'
-        type:
-          enum:
-          - Bitcoin
-        utxo_picking_strategy:
-          default: null
-          description: UTXO strategy used for this transaction
-          enum:
-          - null
-          - DEEP_OUTPUTS_FIRST
-          - MERGE_OUTPUTS
-          - OPTIMIZE_SIZE
-          type:
-          - string
-          - 'null'
-      required:
-      - type
-      type: object
-    LightTokenAccount:
-      properties:
-        account_name:
-          type: string
-        associated_token_account:
-          type: string
-        available:
-          type: integer
-        contract_address:
-          type: string
-        creation_transaction_hash:
-          type: string
-        parent_id:
-          type: integer
-        pending:
-          type: integer
-        status:
-          type: string
-        ticker:
-          type: string
-      required:
-      - account_name
-      - associated_token_account
-      - available
-      - contract_address
-      - creation_transaction_hash
-      - parent_id
-      - pending
-      - status
-      - ticker
-      type: object
-    TezosSendTransactionData:
-      properties:
-        account_name:
-          description: The name of the account initiating the transaction.
-          example: ETH Wallet 1
-          type: string
-        amount:
-          description: The amount to be transferred, in the smallest currency unit.
-          example: '1267887898998'
-          type: string
-        currency:
-          description: Specific currency for Tezos transactions.
-          enum:
-          - tezos
-          example: tezos
-        max_fees:
-          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
-          example: '123908790'
-          type: string
-        recipient:
-          description: The recipient's address for the transaction.
-          example: 0x1234...abcd
-          type: string
-      required:
-      - account_name
-      - amount
-      - currency
-      - max_fees
-      - recipient
-      type: object
-    SolanaStakingInfo:
-      properties:
-        balances:
-          allOf:
-          - $ref: '#/components/schemas/SolanaBalances'
-          description: Balances of open stakes
-        rewards:
-          allOf:
-          - $ref: '#/components/schemas/PeriodicRewards'
-          description: Rewards generated by active stakes
-      required:
-      - balances
-      - rewards
-      type: object
-    PolkadotAnonymousProxyFields:
-      properties:
-        anonymousproxy_address:
-          default: null
-          description: Address of the proxy created
-          type:
-          - string
-          - 'null'
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        kind:
-          description: Type of the proxy to create
-          example: Any
-          type: string
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: Anonymous
-      required:
-      - kind
-      type: object
-    EthereumSmartContractFields:
-      properties:
-        contract_data:
-          description: The transaction data provided to the smart contract, encoded according to the ABI specification
-          example: '0x42842e0e000000000000000000000000b13bb982865b222c2e62b665512e2dbc9187453500000000000000000000000053d4a2e021ceec9d58127071499ac88c782d91ac0000000000000000000000000000000000000000000000000000000000000002'
-          type: string
-        contract_name:
-          default: null
-          description: The Etherscan name of the smart contract executed
-          example: 'Lido: stETH Token'
-          type:
-          - string
-          - 'null'
-        dapp:
-          default: null
-          description: The name of the Ledger Enterprise DApp
-          example: lido
-          type:
-          - string
-          - 'null'
-        function_arguments:
-          additionalProperties: {}
-          default: null
-          description: The JSON object with the arguments for the smart contract function execution, as per the contract's ABI specification.
-          example: '{amount: 123, spender: 0x123456789abcedf}'
-          type:
-          - object
-          - 'null'
-        function_name:
-          default: null
-          description: The name of the smart contract function executed, as per the contract's ABI specification.
-          example: safeTransferFrom
-          type:
-          - string
-          - 'null'
-        smart_contract_interaction_type:
-          default: null
-          description: The internal Ledger Enterprise type for the contract interaction
-          example: swap
-          type:
-          - string
-          - 'null'
-      required:
-      - contract_data
-      type: object
-    EthereumEIP1559FeesStrategyData:
-      properties:
-        gas_limit:
-          description: The gas limit for the Ethereum transaction, in the smallest currency unit.
-          example: '21000'
-          type: string
-        priority_fees:
-          description: The maximum priority fee per gas for the Ethereum transaction, in the smallest currency unit.
-          example: '2000'
-          type: string
-      required:
-      - gas_limit
-      - priority_fees
-      type: object
-    ProviderTransactionRiskDetails:
-      properties:
-        chainalysis:
-          default: null
-          description: Chainalysis's transaction risk scoring and details
-          items:
-            $ref: '#/components/schemas/ChainalysisTransactionAlert'
-          type:
-          - array
-          - 'null'
-      type: object
-    SolanaSendTransactionData:
-      properties:
-        account_name:
-          description: Sender account name for Solana transaction.
-          example: Solana Wallet 1
-          type: string
-        amount:
-          description: Transaction amount for Solana, in the smallest currency unit.
-          example: '100000'
-          type: string
-        currency:
-          description: Account currency for Solana transactions.
-          enum:
-          - solana
-          - solana_devnet
-          - solana_testnet
-          example: solana
-        max_priority_fee:
-          default: null
-          description: Max priority fee to use for the transaction. Please refer to the `recommended_max_priority_fees` field from fee estimation or choose your own value. Once the feature is enabled, this field will become mandatory.
-          example: '5000'
-          type:
-          - string
-          - 'null'
-        recipient:
-          description: Transaction recipient address for Solana.
-          example: 4Pf...Nmo
-          type: string
-      required:
-      - account_name
-      - amount
-      - currency
-      - recipient
-      type: object
-    EthereumSendTransactionData:
-      properties:
-        account_name:
-          description: The name of the account initiating the transaction.
-          example: ETH Wallet 1
-          type: string
-        amount:
-          description: The amount to be transferred, in the smallest currency unit.
-          example: '1267887898998'
-          type: string
-        contract_address:
-          default: null
-          description: The contract address of the ERC20 token, in case of a ERC20 send transaction.
-          example: 0x1234...abcd
-          type:
-          - string
-          - 'null'
-        currency:
-          description: Specific currency for Ethereum transactions.
-          enum:
-          - arbitrum
-          - arbitrum_goerli
-          - arbitrum_sepolia
-          - avalanche_c_chain
-          - avalanche_c_chain_fuji
-          - base
-          - base_goerli
-          - base_sepolia
-          - blast
-          - blast_sepolia
-          - bsc
-          - celo
-          - celo_alfajores
-          - cronos
-          - cronos_testnet
-          - ethereum
-          - ethereum_classic
-          - ethereum_goerli
-          - ethereum_holesky
-          - ethereum_hoodi
-          - ethereum_pow
-          - ethereum_ropsten
-          - ethereum_sepolia
-          - etherlink
-          - fantom
-          - fantom_testnet
-          - filecoin
-          - filecoin_calibration
-          - flare
-          - flare_coston
-          - kava_evm
-          - kava_evm_testnet
-          - klaytn
-          - klaytn_baobab
-          - komodo
-          - linea
-          - mantle
-          - mantle_sepolia
-          - neon_evm
-          - optimism
-          - optimism_goerli
-          - optimism_sepolia
-          - polygon
-          - polygon_amoy
-          - polygon_mumbai
-          - polygon_zk_evm
-          - polygon_zk_evm_testnet
-          - pulsechain
-          - pulsechain_testnet
-          - scroll
-          - scroll_sepolia
-          - sonic
-          - tomo
-          - tomo_testnet
-          - tron
-          - viction
-          - viction_testnet
-          example: ethereum
-          type: string
-        max_fees:
-          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
-          example: '123908790'
-          type: string
-        recipient:
-          description: The recipient's address for the transaction.
-          example: 0x1234...abcd
-          type: string
-      required:
-      - account_name
-      - amount
-      - currency
-      - max_fees
-      - recipient
-      type: object
-    PolkadotSetPayeeFields:
-      properties:
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        payee:
-          description: Rewards destination
-          type: string
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: SetPayee
-      required:
-      - payee
-      type: object
-    GenericFeesStrategyData:
-      properties:
-        speed:
-          description: The desired speed of the transaction.
-          enum:
-          - FAST
-          - NORMAL
-          - SLOW
-          example: FAST
-          type: string
-      required:
-      - speed
-      type: object
-    EthereumDeployContractTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        fees_strategy:
-          description: The fee strategy for an Ethereum deploy contract transaction.
-          oneOf:
-          - $ref: '#/components/schemas/EthereumFeesStrategy'
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/EthereumSCDTransactionData'
-          description: Data specific to an Ethereum deploy smart contract.
-        transaction_type:
-          description: Type indicator for Ethereum-like deploy contract transactions.
-          enum:
-          - ETHEREUM_LIKE_DEPLOY_CONTRACT
-          example: ETHEREUM_LIKE_DEPLOY_CONTRACT
-      required:
-      - account_id
-      - fees_strategy
-      - transaction_data
-      - transaction_type
-      type: object
-    ChainalysisTransactionAlert:
-      properties:
-        category_id:
-          default: null
-          description: The identifier of the entity category the alert rule is tracking
-          example: 3
-          type:
-          - integer
-          - 'null'
-        exposure_type:
-          description: Defines the exposure direction as DIRECT or INDIRECT
-          enum:
-          - DIRECT
-          - INDIRECT
-          example: DIRECT
-        provider_id:
-          description: A unique identifier of the alert
-          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
-          type: string
-        risk:
-          description: Address risk as defined by Chainalysis
-          enum:
-          - High
-          - Low
-          - Medium
-          - Severe
-          example: Severe
-        service:
-          default: null
-          description: The name of the service as defined by Chainalysis
-          example: OFAC SDN Blender.io 2022-05-06
-          type:
-          - string
-          - 'null'
-        value:
-          description: The USD amount that caused the alert to trigger
-          example: 8868.24
-          type: number
-      required:
-      - exposure_type
-      - provider_id
-      - risk
-      - value
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    BitcoinTransactionFeeEstimation:
-      properties:
-        coin_fields:
-          $ref: '#/components/schemas/BitcoinFeesFields'
-        max_fees:
-          type: string
-      required:
-      - coin_fields
-      - max_fees
-      type: object
-    StellarMemoHash1:
-      properties:
-        MEMO_HASH:
-          description: Transaction Hash Memo (64 bytes hexadecimal string)
-          maxLength: 64
-          minLength: 64
-          type: string
-      required:
-      - MEMO_HASH
-      type: object
-    TezosFields:
-      properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/TezosStakeBlockchainState'
-          default: null
-          description: A valid tezos delegate
-        type:
-          default: Tezos
-      type: object
-    TezosTransactionFeeEstimation:
-      properties:
-        coin_fields:
-          $ref: '#/components/schemas/TezosFeesFields'
-        max_fees:
-          type: string
-      required:
-      - coin_fields
-      - max_fees
-      type: object
-    EthereumStakingInfo:
-      properties:
-        available_rewards:
-          default: null
-          description: Available rewards
-          type:
-          - string
-          - 'null'
-        network_apy:
-          default: null
-          description: APY
-          type:
-          - number
-          - 'null'
-        total_rewards:
-          default: null
-          description: Total rewards
-          type:
-          - string
-          - 'null'
-        total_staking:
-          default: null
-          description: Total staking
-          type:
-          - string
-          - 'null'
+      - client_reason
+      - reason
       type: object
     SolanaCreateSPLTokenAccountFields:
       properties:
@@ -2900,322 +2201,22 @@ components:
       required:
       - token_mint
       type: object
-    PolkadotBondExtraStakingTransactionData:
+    TransactionRisk:
       properties:
-        account_name:
-          description: Account name to execute transaction.
-          example: Polkadot Wallet 1
-          type: string
-        amount:
-          description: Amount for Polkadot bond extra transaction, in the smallest currency unit.
-          example: '100000'
-          type: string
-        currency:
-          description: Account currency for Polkadot transactions.
-          enum:
-          - polkadot
-          - westend
-          example: polkadot
-      required:
-      - account_name
-      - amount
-      - currency
-      type: object
-    EthereumAndEvmFieldsEip1559:
-      properties:
-        contract_deployment:
+        provider_details:
           allOf:
-          - $ref: '#/components/schemas/EthereumContractDeploymentFields'
+          - $ref: '#/components/schemas/ProviderTransactionRiskDetails'
           default: null
-        contract_interaction:
-          allOf:
-          - $ref: '#/components/schemas/EthereumSmartContractFields'
-          default: null
-        gas_limit:
-          description: gas limit in wei
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type: string
-        priority_fees:
-          description: The maximum priority fee per gas for the Ethereum transaction, in the smallest currency unit.
-          example: '2000'
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type: string
-        type:
-          default: EthereumAndEvm
-      required:
-      - gas_limit
-      - priority_fees
-      type: object
-    CardanoSendTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        fees_strategy:
-          allOf:
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-          description: Strategy for calculating transaction fees.
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/CardanoSendTransactionData'
-          description: Data specific to a Cardano send transaction.
-        transaction_type:
-          description: Type indicator for Cardano-like send transactions.
+          description: Details from compliance providers
+        risk:
+          description: Transaction risk as defined by Ledger
           enum:
-          - CARDANO_LIKE_SEND
-          example: CARDANO_LIKE_SEND
+          - HIGH
+          - LOW
+          - MEDIUM
+          example: HIGH
       required:
-      - account_id
-      - fees_strategy
-      - transaction_data
-      - transaction_type
-      type: object
-    PolkadotSetPayeeStakingTransactionData:
-      properties:
-        account_name:
-          description: Account name to execute transaction.
-          example: Polkadot Wallet 1
-          type: string
-        currency:
-          description: Account currency for Polkadot transactions.
-          enum:
-          - polkadot
-          - westend
-          example: polkadot
-        payee:
-          description: The new payee for the staking rewards.
-          enum:
-          - Staked
-          - Stash
-          example: stash
-          type: string
-      required:
-      - account_name
-      - currency
-      - payee
-      type: object
-    SolanaTxMetadata:
-      properties:
-        stake_pubkey:
-          default: null
-          type:
-          - string
-          - 'null'
-      type: object
-    PolkadotWithdrawTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotWithdrawStakingTransactionData'
-          description: Data specific to a Polkadot withdraw transaction.
-        transaction_type:
-          description: Type indicator for Polkadot-like withdraw staking transactions.
-          enum:
-          - POLKADOT_LIKE_WITHDRAWUNBONDED
-          example: POLKADOT_LIKE_WITHDRAWUNBONDED
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    PolkadotWithdrawStakingTransactionData:
-      properties:
-        account_name:
-          description: Account name to execute transaction.
-          example: Polkadot Wallet 1
-          type: string
-        currency:
-          description: Account currency for Polkadot transactions.
-          enum:
-          - polkadot
-          - westend
-          example: polkadot
-      required:
-      - account_name
-      - currency
-      type: object
-    BaseModel:
-      properties: {}
-      type: object
-    EthereumEIP1559FeesFields:
-      properties:
-        gas_limit:
-          type: integer
-        priority_fees:
-          type: integer
-      required:
-      - gas_limit
-      - priority_fees
-      type: object
-    PolkadotFields1:
-      properties:
-        tx_parameters:
-          description: Fields for specific transaction types
-          oneOf:
-          - $ref: '#/components/schemas/PolkadotBondFields'
-          - $ref: '#/components/schemas/PolkadotSetControllerFields'
-          - $ref: '#/components/schemas/PolkadotSetPayeeFields'
-          - $ref: '#/components/schemas/PolkadotAddProxyFields'
-          - $ref: '#/components/schemas/PolkadotKillAnonymousFields'
-          - $ref: '#/components/schemas/PolkadotAnonymousProxyFields'
-          - $ref: '#/components/schemas/PolkadotCommonFields'
-        type:
-          enum:
-          - Polkadot
-      required:
-      - tx_parameters
-      - type
-      type: object
-    SolanaSendSplTokenTransactionData:
-      properties:
-        account_name:
-          description: Sender account name for Solana transaction.
-          example: Solana Wallet 1
-          type: string
-        amount:
-          description: Transaction amount for Solana, in the smallest currency unit.
-          example: '100000'
-          type: string
-        currency:
-          description: Account currency for Solana transactions.
-          enum:
-          - solana
-          - solana_devnet
-          - solana_testnet
-          example: solana
-        max_priority_fee:
-          default: null
-          description: Max priority fee to use for the transaction. Please refer to the `recommended_max_priority_fees` field from fee estimation or choose your own value. Once the feature is enabled, this field will become mandatory.
-          example: '5000'
-          type:
-          - string
-          - 'null'
-        recipient:
-          description: Transaction recipient address for Solana.
-          example: 4Pf...Nmo
-          type: string
-        token_mint:
-          description: The token mint address of the token to interact with
-          example: Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
-          type: string
-      required:
-      - account_name
-      - amount
-      - currency
-      - recipient
-      - token_mint
-      type: object
-    EthereumContractDeploymentFields:
-      properties:
-        creation_bytecode:
-          default: null
-          description: The contract compiled bytecode
-          example: 60806040526b06765c793fa10079d00000006000553480156200002157600080fd5b506040516200341338038062003413833981016040819052620000449162000171565b42811015620000705760405162461bcd60e51b8152600401620000679062000273
-          type:
-          - string
-          - 'null'
-      type: object
-    _APISearchTransactionResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/TransactionSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    StellarMemoText1:
-      properties:
-        MEMO_TEXT:
-          description: Text Memo (at most a 28 bytes string)
-          maxLength: 28
-          minLength: 0
-          type: string
-      required:
-      - MEMO_TEXT
-      type: object
-    EthereumAndEvmFields:
-      properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/EthereumStakingInfo'
-          default: null
-          description: Ethereum Staking data
-        type:
-          default: EthereumAndEvm
-      type: object
-    TronSendTransactionData:
-      properties:
-        account_name:
-          description: The name of the account initiating the transaction.
-          example: ETH Wallet 1
-          type: string
-        amount:
-          description: The amount to be transferred, in the smallest currency unit.
-          example: '1267887898998'
-          type: string
-        currency:
-          description: Specific currency for Tron transactions.
-          enum:
-          - tron
-          example: tron
-        max_fees:
-          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
-          example: '123908790'
-          type: string
-        recipient:
-          description: The recipient's address for the transaction.
-          example: 0x1234...abcd
-          type: string
-      required:
-      - account_name
-      - amount
-      - currency
-      - max_fees
-      - recipient
-      type: object
-    BitcoinFeesStrategy:
-      properties:
-        data:
-          allOf:
-          - $ref: '#/components/schemas/BitcoinFeesStrategyData'
-          description: Data specific to the Bitcoin fee strategy.
-        type:
-          description: Indicates a custom fee strategy for Bitcoin transactions.
-          enum:
-          - CUSTOM
-          example: CUSTOM
-      required:
-      - data
-      - type
-      type: object
-    PolkadotChillTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotChillStakingTransactionData'
-          description: Data specific to a Polkadot chill transaction.
-        transaction_type:
-          description: Type indicator for Polkadot-like chill staking transactions.
-          enum:
-          - POLKADOT_LIKE_CHILL
-          example: POLKADOT_LIKE_CHILL
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
+      - risk
       type: object
     TronSendTransactionCreationData:
       properties:
@@ -3242,144 +2243,6 @@ components:
       - transaction_data
       - transaction_type
       type: object
-    StellarMemoReturn1:
-      properties:
-        MEMO_RETURN:
-          description: A 64 bytes hexadecimal string intended to be interpreted as the hash of the transaction the sender is refunding.
-          maxLength: 64
-          minLength: 64
-          type: string
-      required:
-      - MEMO_RETURN
-      type: object
-    AccountThresholdRule:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/AccountThresholdRuleEntry'
-          type: array
-        id:
-          type: integer
-        type:
-          enum:
-          - MULTI_AUTHORIZATIONS
-          - SMART_CONTRACT_INTERACTION
-          - THRESHOLD
-          - TRANSACTION_FILTER
-          - WHITELIST
-          type: string
-      required:
-      - data
-      - id
-      - type
-      type: object
-    PolkadotSetPayeeTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotSetPayeeStakingTransactionData'
-          description: Data specific to a Polkadot set payee transaction.
-        transaction_type:
-          description: Type indicator for Polkadot-like set payee staking transactions.
-          enum:
-          - POLKADOT_LIKE_SETPAYEE
-          example: POLKADOT_LIKE_SETPAYEE
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    LabelInfo:
-      properties:
-        color:
-          description: color of the tag
-          example: '#FE4523'
-          type: string
-        description:
-          description: description of this tag
-          example: This is a SPAM
-          type: string
-      required:
-      - color
-      - description
-      type: object
-    SolanaStakeActionFields:
-      properties:
-        stake_account:
-          description: The account from which to withdraw
-          type: string
-      required:
-      - stake_account
-      type: object
-    PolkadotSendTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotSendTransactionData'
-          description: Data specific to a Polkadot send transaction.
-        transaction_type:
-          description: Type indicator for Polkadot-like send transactions.
-          enum:
-          - POLKADOT_LIKE_SEND
-          example: POLKADOT_LIKE_SEND
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    TransactionRisk:
-      properties:
-        provider_details:
-          allOf:
-          - $ref: '#/components/schemas/ProviderTransactionRiskDetails'
-          default: null
-          description: Details from compliance providers
-        risk:
-          description: Transaction risk as defined by Ledger
-          enum:
-          - HIGH
-          - LOW
-          - MEDIUM
-          example: HIGH
-      required:
-      - risk
-      type: object
-    PolkadotRebondStakingTransactionData:
-      properties:
-        account_name:
-          description: Account name to execute transaction.
-          example: Polkadot Wallet 1
-          type: string
-        amount:
-          description: Amount for Polkadot rebond transaction, in the smallest currency unit.
-          example: '100000'
-          type: string
-        currency:
-          description: Account currency for Polkadot transactions.
-          enum:
-          - polkadot
-          - westend
-          example: polkadot
-      required:
-      - account_name
-      - amount
-      - currency
-      type: object
-    AccountWhitelistRuleEntry:
-      properties:
-        whitelist:
-          type: integer
-      required:
-      - whitelist
-      type: object
     EthereumExecuteContractTransactionCreationData:
       properties:
         account_id:
@@ -3400,284 +2263,6 @@ components:
           enum:
           - ETHEREUM_LIKE_EXECUTE_CONTRACT
           example: ETHEREUM_LIKE_EXECUTE_CONTRACT
-      required:
-      - account_id
-      - fees_strategy
-      - transaction_data
-      - transaction_type
-      type: object
-    GenericFeesStrategy:
-      properties:
-        data:
-          allOf:
-          - $ref: '#/components/schemas/GenericFeesStrategyData'
-          description: Details of the transaction speed strategy.
-        type:
-          description: The type of fee strategy based on transaction speed.
-          enum:
-          - SPEED
-          example: SPEED
-      required:
-      - data
-      - type
-      type: object
-    PeriodicRewards:
-      properties:
-        last30:
-          description: Rewards generated over the last 30 days by all active stakes
-          example: '20239'
-          type: string
-        last7:
-          description: Rewards generated over the last 7 days by all active stakes
-          example: '50239'
-          type: string
-        total:
-          description: Total rewards generated by all active stakes
-          example: '100239'
-          type: string
-      required:
-      - last30
-      - last7
-      - total
-      type: object
-    SolanaTransactionFeeEstimation:
-      properties:
-        coin_fields:
-          allOf:
-          - $ref: '#/components/schemas/BaseModel'
-          default: null
-        max_fees:
-          type: string
-      required:
-      - max_fees
-      type: object
-    TransactionSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Transaction'
-      required:
-      - cursor
-      - node
-      type: object
-    PolkadotSetControllerFields:
-      properties:
-        controller:
-          description: Address of controller account
-          type: string
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: SetController
-      required:
-      - controller
-      type: object
-    AccountMultiauthRuleInternalGroupEntry:
-      properties:
-        quorum:
-          type: integer
-        users:
-          items:
-            default: null
-            type:
-            - integer
-            - 'null'
-          type: array
-      required:
-      - quorum
-      - users
-      type: object
-    RippleSendTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        fees_strategy:
-          allOf:
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-          description: Strategy for calculating transaction fees.
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/RippleSendTransactionData'
-          description: Data specific to a Ripple send transaction.
-        transaction_type:
-          description: Type indicator for Ripple-like send transactions.
-          enum:
-          - RIPPLE_LIKE_SEND
-          example: RIPPLE_LIKE_SEND
-      required:
-      - account_id
-      - fees_strategy
-      - transaction_data
-      - transaction_type
-      type: object
-    PolkadotUnbondingInfo:
-      properties:
-        amount:
-          type: string
-        waiting_time:
-          type: integer
-        withdrawable_date:
-          type: string
-      required:
-      - amount
-      - waiting_time
-      - withdrawable_date
-      type: object
-    TransactionCreationRequestDataV2:
-      properties:
-        data:
-          description: Detailed transaction data, varying based on the specific transaction type.
-          oneOf:
-          - $ref: '#/components/schemas/BitcoinSendTransactionCreationData'
-          - $ref: '#/components/schemas/EthereumSendTransactionCreationData'
-          - $ref: '#/components/schemas/EthereumExecuteContractTransactionCreationData'
-          - $ref: '#/components/schemas/EthereumDeployContractTransactionCreationData'
-          - $ref: '#/components/schemas/RippleSendTransactionCreationData'
-          - $ref: '#/components/schemas/StellarSendTransactionCreationData'
-          - $ref: '#/components/schemas/TronSendTransactionCreationData'
-          - $ref: '#/components/schemas/TezosSendTransactionCreationData'
-          - $ref: '#/components/schemas/CardanoSendTransactionCreationData'
-          - $ref: '#/components/schemas/SolanaCreateAssociatedTokenAccountCreationData'
-          - $ref: '#/components/schemas/SolanaSendSplTokenTransactionCreationData'
-          - $ref: '#/components/schemas/SolanaSendTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotSendTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotBondExtraTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotUnbondTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotRebondTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotSetPayeeTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotWithdrawTransactionCreationData'
-          - $ref: '#/components/schemas/PolkadotChillTransactionCreationData'
-        note:
-          allOf:
-          - $ref: '#/components/schemas/TransactionOrMessageNote'
-          default: null
-          description: Optional note or annotation for the transaction.
-        type:
-          description: Specifies the type of transaction request being made.
-          enum:
-          - CREATE_TRANSACTION
-          example: CREATE_TRANSACTION
-      required:
-      - data
-      - type
-      type: object
-    SolanaFields:
-      properties:
-        tx_parameters:
-          default: null
-          description: Fields for specific transaction types
-          oneOf:
-          - $ref: '#/components/schemas/SolanaStakeActionFields'
-          - $ref: '#/components/schemas/SolanaStakeMergeFields'
-          - $ref: '#/components/schemas/SolanaCreateSPLTokenAccountFields'
-          - $ref: '#/components/schemas/SolanaSendSPLTokenFields'
-        type:
-          enum:
-          - Solana
-      required:
-      - type
-      type: object
-    BitcoinFeesFields:
-      properties:
-        UTXO_limit:
-          type: integer
-        fees_per_byte:
-          type: number
-      required:
-      - UTXO_limit
-      - fees_per_byte
-      type: object
-    PolkadotBondFields:
-      properties:
-        controller:
-          description: Address of controller account
-          type: string
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        payee:
-          description: Rewards destination
-          type: string
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: Bond
-      required:
-      - controller
-      - payee
-      type: object
-    CardanoTxMetadata:
-      properties:
-        amount:
-          default: null
-          type:
-          - integer
-          - 'null'
-        change_path:
-          default: null
-          type:
-          - string
-          - 'null'
-        stake_path:
-          default: null
-          type:
-          - string
-          - 'null'
-      type: object
-    EthereumFeesStrategyData:
-      properties:
-        gas_limit:
-          description: The gas limit for the Ethereum transaction, in the smallest currency unit.
-          example: '21000'
-          type: string
-        gas_price:
-          description: The gas price for the Ethereum transaction, in the smallest currency unit.
-          example: '2000'
-          type: string
-      required:
-      - gas_limit
-      - gas_price
-      type: object
-    TezosSendTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        fees_strategy:
-          allOf:
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-          description: Strategy for calculating transaction fees.
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/TezosSendTransactionData'
-          description: Data specific to a Tezos send transaction.
-        transaction_type:
-          description: Type indicator for Tezos-like send transactions.
-          enum:
-          - TEZOS_LIKE_SEND
-          example: TEZOS_LIKE_SEND
       required:
       - account_id
       - fees_strategy
@@ -3706,45 +2291,29 @@ components:
       required:
       - type
       type: object
-    BitcoinSendTransactionCreationData:
+    PolkadotSetControllerFields:
       properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        fees_strategy:
-          description: The fee strategy for a Bitcoin send transaction.
-          oneOf:
-          - $ref: '#/components/schemas/BitcoinFeesStrategy'
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/BitcoinSendTransactionData'
-          description: Data specific to a Bitcoin send transaction.
-        transaction_type:
-          description: Type indicator for Bitcoin-like send transactions.
-          enum:
-          - BITCOIN_LIKE_SEND
-          example: BITCOIN_LIKE_SEND
+        controller:
+          description: Address of controller account
+          type: string
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: SetController
       required:
-      - account_id
-      - fees_strategy
-      - transaction_data
-      - transaction_type
+      - controller
       type: object
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
-      type: object
-    StellarTransactionFeeEstimation:
+    SolanaTransactionFeeEstimation:
       properties:
         coin_fields:
           allOf:
@@ -3754,6 +2323,111 @@ components:
           type: string
       required:
       - max_fees
+      type: object
+    PolkadotSendTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotSendTransactionData'
+          description: Data specific to a Polkadot send transaction.
+        transaction_type:
+          description: Type indicator for Polkadot-like send transactions.
+          enum:
+          - POLKADOT_LIKE_SEND
+          example: POLKADOT_LIKE_SEND
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    PolkadotChillStakingTransactionData:
+      properties:
+        account_name:
+          description: Account name to execute transaction.
+          example: Polkadot Wallet 1
+          type: string
+        currency:
+          description: Account currency for Polkadot transactions.
+          enum:
+          - polkadot
+          - westend
+          example: polkadot
+      required:
+      - account_name
+      - currency
+      type: object
+    SolanaSendTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/SolanaSendTransactionData'
+          description: Data specific to a Solana send transaction.
+        transaction_type:
+          description: Type indicator for Solana-like send transactions.
+          enum:
+          - SOLANA_LIKE_SEND
+          example: SOLANA_LIKE_SEND
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    EthereumSendTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
+          description: The fee strategy for an Ethereum send transaction.
+          oneOf:
+          - $ref: '#/components/schemas/EthereumFeesStrategy'
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/EthereumSendTransactionData'
+          description: Data specific to an Ethereum send transaction.
+        transaction_type:
+          description: Type indicator for Ethereum-like send transactions.
+          enum:
+          - ETHEREUM_LIKE_SEND
+          example: ETHEREUM_LIKE_SEND
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    AccountMultiauthRuleInternalGroupEntry:
+      properties:
+        quorum:
+          type: integer
+        users:
+          items:
+            default: null
+            type:
+            - integer
+            - 'null'
+          type: array
+      required:
+      - quorum
+      - users
+      type: object
+    SolanaSendSPLTokenFields:
+      properties:
+        token_mint:
+          description: The token mint address of the token to interact with
+          type: string
+      required:
+      - token_mint
       type: object
     APIHistoryResults:
       properties:
@@ -3766,47 +2440,138 @@ components:
       required:
       - history
       type: object
-    StellarMemoText:
+    TezosStakeBlockchainState:
       properties:
-        MEMO_TEXT:
-          description: Text Memo (at most a 28 bytes string)
+        activated_at:
+          default: null
+          description: date on wich the stake was activated
+          example: '2023-02-06T02:48:59+00:00'
+          format: date-time
+          type:
+          - string
+          - 'null'
+        activated_cycle:
+          default: null
+          description: cycle in which the stake was activated
+          example: 575
+          type:
+          - integer
+          - 'null'
+        active_balance:
+          default: null
+          description: amount of assets generating rewards in base unit of the network
+          example: '322254'
+          type:
+          - string
+          - 'null'
+        baker_address:
+          description: baker address to which the stake was delegated
+          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
           type: string
-        type:
-          default: MEMO_TEXT
-      required:
-      - MEMO_TEXT
-      type: object
-    CardanoCoinFields:
-      properties:
-        type:
+        delegated_at:
+          description: date at wich the stake was delegated
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        delegated_block:
+          default: null
+          description: tezos block on which the stake was delegated
+          example: '3071075'
+          type:
+          - string
+          - 'null'
+        delegated_cycle:
+          default: null
+          description: cycle in which the stake was delegated
+          example: 568
+          type:
+          - integer
+          - 'null'
+        gross_apy:
+          default: null
+          description: total APY generated by the stake
+          example: '38.33349571462074'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        rewards:
+          default: null
+          description: the total rewards generated by the stake
+          example: '6958'
+          type:
+          - string
+          - 'null'
+        state:
+          description: status of the stake on chain
           enum:
-          - Cardano
+          - activating
+          - active
+          - inactive
+          - syncing
+          example: active
+          type: string
+        updated_at:
+          default: null
+          description: date on wich the stake was last updated
+          example: '2023-03-10T17:38:41+00:00'
+          format: date-time
+          type:
+          - string
+          - 'null'
       required:
-      - type
+      - baker_address
+      - delegated_at
+      - state
       type: object
-    EthereumAndEvmFieldsLegacy:
+    CardanoSendTransactionCreationData:
       properties:
-        contract_deployment:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
           allOf:
-          - $ref: '#/components/schemas/EthereumContractDeploymentFields'
-          default: null
-        contract_interaction:
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+          description: Strategy for calculating transaction fees.
+        transaction_data:
           allOf:
-          - $ref: '#/components/schemas/EthereumSmartContractFields'
-          default: null
+          - $ref: '#/components/schemas/CardanoSendTransactionData'
+          description: Data specific to a Cardano send transaction.
+        transaction_type:
+          description: Type indicator for Cardano-like send transactions.
+          enum:
+          - CARDANO_LIKE_SEND
+          example: CARDANO_LIKE_SEND
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    EthereumFeesFields:
+      properties:
         gas_limit:
-          description: gas limit in wei
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type: string
+          description: Estimated gas limit for the transaction.
+          example: '21000'
+          type: integer
         gas_price:
-          description: gas price in wei
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type: string
-        type:
-          default: EthereumAndEvm
+          description: Estimated gas price in wei.
+          example: '157000000'
+          type: integer
       required:
       - gas_limit
       - gas_price
+      type: object
+    TezosTransactionFeeEstimation:
+      properties:
+        coin_fields:
+          $ref: '#/components/schemas/TezosFeesFields'
+        max_fees:
+          type: string
+      required:
+      - coin_fields
+      - max_fees
       type: object
     PolkadotBalancesWithUnbondingInfo:
       properties:
@@ -3846,70 +2611,113 @@ components:
       - unbonded
       - unbonding
       type: object
-    RippleSendTransactionData:
+    LightTokenAccount:
       properties:
         account_name:
-          description: The name of the account initiating the transaction.
-          example: ETH Wallet 1
           type: string
-        amount:
-          description: The amount to be transferred, in the smallest currency unit.
-          example: '1267887898998'
+        associated_token_account:
           type: string
-        currency:
-          description: Specific currency for Ripple transactions.
-          enum:
-          - ripple
-          example: ripple
-        max_fees:
-          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
-          example: '123908790'
+        available:
+          type: integer
+        contract_address:
           type: string
-        recipient:
-          description: The recipient's address for the transaction.
-          example: 0x1234...abcd
+        creation_transaction_hash:
           type: string
-        tag:
-          default: null
-          description: Destination tag for identifying Ripple transactions.
-          example: 12345
-          type:
-          - integer
-          - 'null'
+        parent_id:
+          type: integer
+        pending:
+          type: integer
+        status:
+          type: string
+        ticker:
+          type: string
       required:
       - account_name
-      - amount
-      - currency
-      - max_fees
-      - recipient
+      - associated_token_account
+      - available
+      - contract_address
+      - creation_transaction_hash
+      - parent_id
+      - pending
+      - status
+      - ticker
       type: object
-    EthereumFeesStrategy:
+    SolanaAccountFields:
       properties:
-        data:
-          description: Data specific to the Ethereum fee strategy.
-          oneOf:
-          - $ref: '#/components/schemas/EthereumFeesStrategyData'
-          - $ref: '#/components/schemas/EthereumEIP1559FeesStrategyData'
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/SolanaStakingInfo'
+          description: Solana Staking balances and rewards
         type:
-          description: Indicates a custom fee strategy for Ethereum transactions.
-          enum:
-          - CUSTOM
-          example: CUSTOM
+          default: Solana
       required:
-      - data
-      - type
+      - staking
       type: object
-    TransactionNote:
+    SolanaCreateAssociatedTokenAccountTransactionData:
       properties:
-        content:
-          example: some information about this transaction
+        account_name:
+          description: Sender account name for Solana transaction.
+          example: Solana Wallet 1
           type: string
-        title:
-          example: a note title
+        currency:
+          description: Account currency for Solana transactions.
+          enum:
+          - solana
+          - solana_devnet
+          - solana_testnet
+          example: solana
+        max_priority_fee:
+          default: null
+          description: Max priority fee to use for the transaction. Please refer to the `recommended_max_priority_fees` field from fee estimation or choose your own value. Once the feature is enabled, this field will become mandatory.
+          example: '5000'
+          type:
+          - string
+          - 'null'
+        token_mint:
+          description: The token mint address of the token to create an account for
+          example: Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
           type: string
       required:
-      - content
-      - title
+      - account_name
+      - currency
+      - token_mint
+      type: object
+    SCIData:
+      properties:
+        abi:
+          default: null
+          description: The array of function, event, and error descriptions in JSON format, representing the contract’s interface according to the ABI Specification.
+          example: '[{ "inputs": [{"internalType": "address", "name": "to", "type": "address"}], "name": "approve", "outputs": [], "stateMutability": "nonpayable", "type": "function"}]'
+          items:
+            additionalProperties: {}
+            type: object
+          type:
+          - array
+          - 'null'
+        function_arguments:
+          additionalProperties: {}
+          default: null
+          description: The JSON object with the arguments for the smart contract function execution, according to the provided contract_abi.
+          example:
+            amount: 1000
+            to: 0x1234...abcd
+          type:
+          - object
+          - 'null'
+        function_name:
+          default: null
+          description: Name of the contract method to call
+          example: mint
+          type:
+          - string
+          - 'null'
+      type: object
+    AccountWhitelistRuleEntry:
+      properties:
+        whitelist:
+          type: integer
+      required:
+      - whitelist
       type: object
     CardanoSendTransactionData:
       properties:
@@ -3940,73 +2748,6 @@ components:
       - currency
       - max_fees
       - recipient
-      type: object
-    StellarMemoId:
-      properties:
-        MEMO_ID:
-          description: Id Memo (unsigned 64 bits integer)
-          type: integer
-        type:
-          default: MEMO_ID
-      required:
-      - MEMO_ID
-      type: object
-    PolkadotRebondTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotRebondStakingTransactionData'
-          description: Data specific to a Polkadot rebond transaction.
-        transaction_type:
-          description: Type indicator for Polkadot-like rebond staking transactions.
-          enum:
-          - POLKADOT_LIKE_REBOND
-          example: POLKADOT_LIKE_REBOND
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    AccountTransactionFilterRule:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/AccountTransactionFilterRuleEntry'
-          type: array
-        id:
-          type: integer
-        type:
-          enum:
-          - MULTI_AUTHORIZATIONS
-          - SMART_CONTRACT_INTERACTION
-          - THRESHOLD
-          - TRANSACTION_FILTER
-          - WHITELIST
-          type: string
-      required:
-      - data
-      - id
-      - type
-      type: object
-    PolkadotFields:
-      properties:
-        anonymous_proxy:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotAnonymousProxyInfo'
-          default: null
-        balances:
-          $ref: '#/components/schemas/PolkadotBalancesWithUnbondingInfo'
-        staking:
-          $ref: '#/components/schemas/PolkadotStakingInfo'
-        type:
-          default: Polkadot
-      required:
-      - balances
-      - staking
       type: object
     Account:
       properties:
@@ -4232,68 +2973,98 @@ components:
       - status
       - type
       type: object
-    StellarSendTransactionData:
+    TransactionNote:
       properties:
-        account_name:
-          description: The name of the account initiating the transaction.
-          example: ETH Wallet 1
+        content:
+          example: some information about this transaction
           type: string
-        amount:
-          description: The amount to be transferred, in the smallest currency unit.
-          example: '1267887898998'
-          type: string
-        currency:
-          description: Specific currency for Stellar transactions.
-          enum:
-          - stellar
-          example: stellar
-        max_fees:
-          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
-          example: '123908790'
-          type: string
-        memo:
-          default: null
-          description: A valid memo for the Stellar transaction. See https://developers.stellar.org/docs/glossary/transactions/#memo.
-          oneOf:
-          - $ref: '#/components/schemas/StellarMemoHash1'
-          - $ref: '#/components/schemas/StellarMemoId1'
-          - $ref: '#/components/schemas/StellarMemoReturn1'
-          - $ref: '#/components/schemas/StellarMemoText1'
-        recipient:
-          description: The recipient's address for the transaction.
-          example: 0x1234...abcd
+        title:
+          example: a note title
           type: string
       required:
-      - account_name
-      - amount
-      - currency
-      - max_fees
-      - recipient
+      - content
+      - title
       type: object
-    StellarMemoReturn:
+    AccountRuleSet:
       properties:
-        MEMO_RETURN:
-          description: A 64 bytes hexadecimal string intended to be interpreted as the hash of the transaction the sender is refunding.
-          type: string
-        type:
-          default: MEMO_RETURN
-      required:
-      - MEMO_RETURN
-      type: object
-    TradelinkState:
-      properties:
-        total_repledge:
-          description: Total pending repledge balance over all account pledges
+        id:
+          example: 1
+          type: integer
+        index:
           example: 0
+          type: integer
+        name:
+          example: Rule 1
+          type: string
+        rules:
+          example:
+            data:
+            - group: 2
+              quorum: 1
+            - quorum: 1
+              users:
+              - 1
+              - 2
+            id: 1
+            type: MULTI_AUTHORIZATIONS
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/AccountWhitelistRule'
+            - $ref: '#/components/schemas/AccountThresholdRule'
+            - $ref: '#/components/schemas/AccountMultiauthRule'
+            - $ref: '#/components/schemas/AccountTransactionFilterRule'
+            - $ref: '#/components/schemas/AccountSmartContractInteractionRule'
+          type: array
+      required:
+      - id
+      - index
+      - name
+      - rules
+      type: object
+    StellarMemoId:
+      properties:
+        MEMO_ID:
+          description: Id Memo (unsigned 64 bits integer)
+          type: integer
+        type:
+          default: MEMO_ID
+      required:
+      - MEMO_ID
+      type: object
+    ProviderRegistrationIds:
+      properties:
+        chainalysis:
+          description: Chainalysis's transaction registration id
+          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
           type: string
       required:
-      - total_repledge
+      - chainalysis
       type: object
-    AccountWhitelistRule:
+    PolkadotBondExtraTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotBondExtraStakingTransactionData'
+          description: Data specific to a Polkadot bond extra transaction.
+        transaction_type:
+          description: Type indicator for Polkadot-like bond extra staking transactions.
+          enum:
+          - POLKADOT_LIKE_BONDEXTRA
+          example: POLKADOT_LIKE_BONDEXTRA
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    AccountSmartContractInteractionRule:
       properties:
         data:
           items:
-            $ref: '#/components/schemas/AccountWhitelistRuleEntry'
+            $ref: '#/components/schemas/AccountSmartContractInteractionRuleEntry'
           type: array
         id:
           type: integer
@@ -4310,334 +3081,205 @@ components:
       - id
       - type
       type: object
-    DefaultFields:
+    ChainalysisTransactionAlert:
       properties:
-        type:
-          type: string
-      required:
-      - type
-      type: object
-    PolkadotStakingInfo:
-      properties:
-        controller_address:
+        category_id:
           default: null
-          description: Address of the anonymous proxy
-          type:
-          - string
-          - 'null'
-        is_nominator:
-          description: True if the account is an active nominator, false if it is "chilled"
-          type: boolean
-        legacy_staking:
-          description: If true, this account uses the legacy staking flow with a PureProxy account
-          type: boolean
-        proxies:
-          description: Addresses of proxies of the controller account
-          items:
-            type: string
-          type: array
-        rewards_destination:
-          default: null
-          description: Rewards destination
-          type:
-          - string
-          - 'null'
-      required:
-      - is_nominator
-      - legacy_staking
-      - proxies
-      type: object
-    Label:
-      additionalProperties: false
-      properties:
-        created_by:
-          description: id of the creator
-          example: 42
-          type: integer
-        created_on:
-          format: date-time
-          type: string
-        id:
-          type: integer
-        info:
-          $ref: '#/components/schemas/LabelInfo'
-        name:
-          description: name of the tag
-          example: SPAM
-          type: string
-        updated_by:
-          description: id of the last updater
-          example: 42
-          type: integer
-        updated_on:
-          description: date on which the tag has been last updated
-          example: '2023-02-06T02:48:59+00:00'
-          format: date-time
-          type: string
-      required:
-      - created_by
-      - created_on
-      - id
-      - info
-      - name
-      - updated_by
-      - updated_on
-      type: object
-    PolkadotAnonymousProxyInfo:
-      properties:
-        address:
-          type: string
-        balances:
-          $ref: '#/components/schemas/PolkadotBalances'
-        block_height:
-          type: integer
-        created_at:
-          type: string
-        ext_index:
-          type: integer
-        index:
-          type: integer
-        is_controller:
-          type: boolean
-        is_main:
-          type: boolean
-        kind:
-          type: string
-      required:
-      - address
-      - balances
-      - block_height
-      - created_at
-      - ext_index
-      - index
-      - is_controller
-      - is_main
-      - kind
-      type: object
-    TransactionOrMessageNote:
-      properties:
-        content:
-          example: some information about this transaction
-          type: string
-        title:
-          example: a note title
-          type: string
-      required:
-      - content
-      - title
-      type: object
-    MaticStakingInfo:
-      properties:
-        total_rewards:
-          description: Total rewards
-          type: string
-        total_staking:
-          description: Total staking
-          type: string
-        total_unbonded:
-          description: Total unbonded
-          type: string
-        total_unbonding:
-          description: Total unbonding
-          type: string
-      required:
-      - total_rewards
-      - total_staking
-      - total_unbonded
-      - total_unbonding
-      type: object
-    SolanaCreateAssociatedTokenAccountCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/SolanaCreateAssociatedTokenAccountTransactionData'
-          description: Data create SPL token account.
-        transaction_type:
-          description: Type indicator for Solana-like token account creation transactions.
-          enum:
-          - SOLANA_LIKE_CREATE_SPL_TOKEN_ACCOUNT
-          example: SOLANA_LIKE_CREATE_SPL_TOKEN_ACCOUNT
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    SolanaSendSPLTokenFields:
-      properties:
-        token_mint:
-          description: The token mint address of the token to interact with
-          type: string
-      required:
-      - token_mint
-      type: object
-    EthereumSendTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
-          type: integer
-        fees_strategy:
-          description: The fee strategy for an Ethereum send transaction.
-          oneOf:
-          - $ref: '#/components/schemas/EthereumFeesStrategy'
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/EthereumSendTransactionData'
-          description: Data specific to an Ethereum send transaction.
-        transaction_type:
-          description: Type indicator for Ethereum-like send transactions.
-          enum:
-          - ETHEREUM_LIKE_SEND
-          example: ETHEREUM_LIKE_SEND
-      required:
-      - account_id
-      - fees_strategy
-      - transaction_data
-      - transaction_type
-      type: object
-    TezosStakeBlockchainState:
-      properties:
-        activated_at:
-          default: null
-          description: date on wich the stake was activated
-          example: '2023-02-06T02:48:59+00:00'
-          format: date-time
-          type:
-          - string
-          - 'null'
-        activated_cycle:
-          default: null
-          description: cycle in which the stake was activated
-          example: 575
+          description: The identifier of the entity category the alert rule is tracking
+          example: 3
           type:
           - integer
           - 'null'
-        active_balance:
-          default: null
-          description: amount of assets generating rewards in base unit of the network
-          example: '322254'
-          type:
-          - string
-          - 'null'
-        baker_address:
-          description: baker address to which the stake was delegated
-          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
-          type: string
-        delegated_at:
-          description: date at wich the stake was delegated
-          example: '2023-01-19T15:18:29+00:00'
-          format: date-time
-          type: string
-        delegated_block:
-          default: null
-          description: tezos block on which the stake was delegated
-          example: '3071075'
-          type:
-          - string
-          - 'null'
-        delegated_cycle:
-          default: null
-          description: cycle in which the stake was delegated
-          example: 568
-          type:
-          - integer
-          - 'null'
-        gross_apy:
-          default: null
-          description: total APY generated by the stake
-          example: '38.33349571462074'
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type:
-          - string
-          - 'null'
-        rewards:
-          default: null
-          description: the total rewards generated by the stake
-          example: '6958'
-          type:
-          - string
-          - 'null'
-        state:
-          description: status of the stake on chain
+        exposure_type:
+          description: Defines the exposure direction as DIRECT or INDIRECT
           enum:
-          - activating
-          - active
-          - inactive
-          - syncing
-          example: active
+          - DIRECT
+          - INDIRECT
+          example: DIRECT
+        provider_id:
+          description: A unique identifier of the alert
+          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
           type: string
-        updated_at:
+        risk:
+          description: Address risk as defined by Chainalysis
+          enum:
+          - High
+          - Low
+          - Medium
+          - Severe
+          example: Severe
+        service:
           default: null
-          description: date on wich the stake was last updated
-          example: '2023-03-10T17:38:41+00:00'
-          format: date-time
+          description: The name of the service as defined by Chainalysis
+          example: OFAC SDN Blender.io 2022-05-06
           type:
           - string
           - 'null'
+        value:
+          description: The USD amount that caused the alert to trigger
+          example: 8868.24
+          type: number
       required:
-      - baker_address
-      - delegated_at
-      - state
+      - exposure_type
+      - provider_id
+      - risk
+      - value
       type: object
-    RippleFields:
-      properties:
-        destination_tag:
-          default: null
-          description: ripple destination tag
-          type:
-          - integer
-          - 'null'
-        type:
-          enum:
-          - Ripple
-      required:
-      - type
-      type: object
-    SolanaStakeMergeFields:
-      properties:
-        merge_dst_account:
-          description: The account to merge in
-          type: string
-        merge_src_account:
-          description: The account to merge
-          type: string
-      required:
-      - merge_dst_account
-      - merge_src_account
-      type: object
-    SolanaCreateAssociatedTokenAccountTransactionData:
+    EthereumSCDTransactionData:
       properties:
         account_name:
-          description: Sender account name for Solana transaction.
-          example: Solana Wallet 1
+          description: The name of the account initiating the transaction.
+          example: ETH Wallet 1
           type: string
-        currency:
-          description: Account currency for Solana transactions.
-          enum:
-          - solana
-          - solana_devnet
-          - solana_testnet
-          example: solana
-        max_priority_fee:
+        amount:
           default: null
-          description: Max priority fee to use for the transaction. Please refer to the `recommended_max_priority_fees` field from fee estimation or choose your own value. Once the feature is enabled, this field will become mandatory.
-          example: '5000'
+          description: The amount to be transferred, in the smallest currency unit.
+          example: '1267887898998'
           type:
           - string
           - 'null'
-        token_mint:
-          description: The token mint address of the token to create an account for
-          example: Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
+        currency:
+          description: Specific currency for Ethereum Smart Contract deployment.
+          enum:
+          - arbitrum
+          - arbitrum_goerli
+          - arbitrum_sepolia
+          - avalanche_c_chain
+          - avalanche_c_chain_fuji
+          - base
+          - base_goerli
+          - base_sepolia
+          - blast
+          - blast_sepolia
+          - bsc
+          - celo
+          - celo_alfajores
+          - cronos
+          - cronos_testnet
+          - ethereum
+          - ethereum_classic
+          - ethereum_goerli
+          - ethereum_holesky
+          - ethereum_hoodi
+          - ethereum_pow
+          - ethereum_ropsten
+          - ethereum_sepolia
+          - etherlink
+          - fantom
+          - fantom_testnet
+          - filecoin
+          - filecoin_calibration
+          - flare
+          - flare_coston
+          - kava_evm
+          - kava_evm_testnet
+          - klaytn
+          - klaytn_baobab
+          - komodo
+          - linea
+          - mantle
+          - mantle_sepolia
+          - neon_evm
+          - optimism
+          - optimism_goerli
+          - optimism_sepolia
+          - polygon
+          - polygon_amoy
+          - polygon_mumbai
+          - polygon_zk_evm
+          - polygon_zk_evm_testnet
+          - pulsechain
+          - pulsechain_testnet
+          - scroll
+          - scroll_sepolia
+          - sonic
+          - tomo
+          - tomo_testnet
+          - tron
+          - viction
+          - viction_testnet
+          example: ethereum
+          type: string
+        encoded_contract_bytecode:
+          description: Encoded bytecode for the smart contract deployment.
+          example: 0x123abc...
+          type: string
+        max_fees:
+          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
+          example: '123908790'
           type: string
       required:
       - account_name
       - currency
-      - token_mint
+      - encoded_contract_bytecode
+      - max_fees
+      type: object
+    AccountMultiauthRule:
+      properties:
+        data:
+          items:
+            default: null
+            oneOf:
+            - $ref: '#/components/schemas/AccountMultiauthRuleExternalGroupEntry'
+            - $ref: '#/components/schemas/AccountMultiauthRuleInternalGroupEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    PolkadotUnbondingInfo:
+      properties:
+        amount:
+          type: string
+        waiting_time:
+          type: integer
+        withdrawable_date:
+          type: string
+      required:
+      - amount
+      - waiting_time
+      - withdrawable_date
+      type: object
+    StellarMemoId1:
+      properties:
+        MEMO_ID:
+          description: Id Memo (unsigned 64 bits integer)
+          maximum: 18446744073709551615
+          minimum: 0
+          type: integer
+      required:
+      - MEMO_ID
+      type: object
+    EthereumEIP1559FeesFields:
+      properties:
+        gas_limit:
+          type: integer
+        priority_fees:
+          type: integer
+      required:
+      - gas_limit
+      - priority_fees
+      type: object
+    StellarMemoHash1:
+      properties:
+        MEMO_HASH:
+          description: Transaction Hash Memo (64 bytes hexadecimal string)
+          maxLength: 64
+          minLength: 64
+          type: string
+      required:
+      - MEMO_HASH
       type: object
     BitcoinSendTransactionData:
       properties:
@@ -4670,14 +3312,87 @@ components:
       - max_fees
       - recipient
       type: object
-    AccountMultiauthRule:
+    StellarMemoReturn:
+      properties:
+        MEMO_RETURN:
+          description: A 64 bytes hexadecimal string intended to be interpreted as the hash of the transaction the sender is refunding.
+          type: string
+        type:
+          default: MEMO_RETURN
+      required:
+      - MEMO_RETURN
+      type: object
+    BitcoinFeesStrategy:
+      properties:
+        data:
+          allOf:
+          - $ref: '#/components/schemas/BitcoinFeesStrategyData'
+          description: Data specific to the Bitcoin fee strategy.
+        type:
+          description: Indicates a custom fee strategy for Bitcoin transactions.
+          enum:
+          - CUSTOM
+          example: CUSTOM
+      required:
+      - data
+      - type
+      type: object
+    PolkadotSendTransactionData:
+      properties:
+        account_name:
+          description: Account name to execute transaction.
+          example: Polkadot Wallet 1
+          type: string
+        amount:
+          description: Transaction amount for Polkadot, in the smallest currency unit.
+          example: '100000'
+          type: string
+        currency:
+          description: Account currency for Polkadot transactions.
+          enum:
+          - polkadot
+          - westend
+          example: polkadot
+        recipient:
+          description: Transaction recipient address for Polkadot.
+          example: 1FR...4fg
+          type: string
+      required:
+      - account_name
+      - amount
+      - currency
+      - recipient
+      type: object
+    TezosSendTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
+          allOf:
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+          description: Strategy for calculating transaction fees.
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/TezosSendTransactionData'
+          description: Data specific to a Tezos send transaction.
+        transaction_type:
+          description: Type indicator for Tezos-like send transactions.
+          enum:
+          - TEZOS_LIKE_SEND
+          example: TEZOS_LIKE_SEND
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    AccountTransactionFilterRule:
       properties:
         data:
           items:
-            default: null
-            oneOf:
-            - $ref: '#/components/schemas/AccountMultiauthRuleExternalGroupEntry'
-            - $ref: '#/components/schemas/AccountMultiauthRuleInternalGroupEntry'
+            $ref: '#/components/schemas/AccountTransactionFilterRuleEntry'
           type: array
         id:
           type: integer
@@ -4694,63 +3409,7 @@ components:
       - id
       - type
       type: object
-    PolkadotUnbondStakingTransactionData:
-      properties:
-        account_name:
-          description: Account name to execute transaction.
-          example: Polkadot Wallet 1
-          type: string
-        amount:
-          description: Amount for Polkadot unbond transaction, in the smallest currency unit.
-          example: '100000'
-          type: string
-        currency:
-          description: Account currency for Polkadot transactions.
-          enum:
-          - polkadot
-          - westend
-          example: polkadot
-      required:
-      - account_name
-      - amount
-      - currency
-      type: object
-    AccountThresholdRuleEntry:
-      properties:
-        currency_type:
-          type: string
-        max:
-          default: null
-          type:
-          - integer
-          - 'null'
-        min:
-          type: integer
-      required:
-      - currency_type
-      - min
-      type: object
-    StellarMemoId1:
-      properties:
-        MEMO_ID:
-          description: Id Memo (unsigned 64 bits integer)
-          maximum: 18446744073709551615
-          minimum: 0
-          type: integer
-      required:
-      - MEMO_ID
-      type: object
-    StellarMemoHash:
-      properties:
-        MEMO_HASH:
-          description: Transaction Hash Memo (64 bytes hexadecimal string)
-          type: string
-        type:
-          default: MEMO_HASH
-      required:
-      - MEMO_HASH
-      type: object
-    PolkadotChillStakingTransactionData:
+    PolkadotWithdrawStakingTransactionData:
       properties:
         account_name:
           description: Account name to execute transaction.
@@ -4766,52 +3425,198 @@ components:
       - account_name
       - currency
       type: object
-    StellarFields:
-      properties:
-        memo:
-          default: null
-          description: A valid stellar memo
-          oneOf:
-          - $ref: '#/components/schemas/StellarMemoHash'
-          - $ref: '#/components/schemas/StellarMemoId'
-          - $ref: '#/components/schemas/StellarMemoReturn'
-          - $ref: '#/components/schemas/StellarMemoText'
-        type:
-          enum:
-          - Stellar
-      required:
-      - type
-      type: object
-    AccountSmartContractInteractionRuleEntry:
-      properties:
-        enabled:
-          type: boolean
-      required:
-      - enabled
-      type: object
-    EthereumFeesFields:
+    EthereumFeesStrategyData:
       properties:
         gas_limit:
-          description: Estimated gas limit for the transaction.
+          description: The gas limit for the Ethereum transaction, in the smallest currency unit.
           example: '21000'
-          type: integer
+          type: string
         gas_price:
-          description: Estimated gas price in wei.
-          example: '157000000'
-          type: integer
+          description: The gas price for the Ethereum transaction, in the smallest currency unit.
+          example: '2000'
+          type: string
       required:
       - gas_limit
       - gas_price
       type: object
-    CardanoTransactionFeeEstimation:
+    EthereumAndEvmFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/EthereumStakingInfo'
+          default: null
+          description: Ethereum Staking data
+        type:
+          default: EthereumAndEvm
+      type: object
+    EthereumDeployContractTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
+          description: The fee strategy for an Ethereum deploy contract transaction.
+          oneOf:
+          - $ref: '#/components/schemas/EthereumFeesStrategy'
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/EthereumSCDTransactionData'
+          description: Data specific to an Ethereum deploy smart contract.
+        transaction_type:
+          description: Type indicator for Ethereum-like deploy contract transactions.
+          enum:
+          - ETHEREUM_LIKE_DEPLOY_CONTRACT
+          example: ETHEREUM_LIKE_DEPLOY_CONTRACT
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    LabelInfo:
+      properties:
+        color:
+          description: color of the tag
+          example: '#FE4523'
+          type: string
+        description:
+          description: description of this tag
+          example: This is a SPAM
+          type: string
+      required:
+      - color
+      - description
+      type: object
+    SolanaFields:
+      properties:
+        tx_parameters:
+          default: null
+          description: Fields for specific transaction types
+          oneOf:
+          - $ref: '#/components/schemas/SolanaStakeActionFields'
+          - $ref: '#/components/schemas/SolanaStakeMergeFields'
+          - $ref: '#/components/schemas/SolanaCreateSPLTokenAccountFields'
+          - $ref: '#/components/schemas/SolanaSendSPLTokenFields'
+        type:
+          enum:
+          - Solana
+      required:
+      - type
+      type: object
+    EthereumContractDeploymentFields:
+      properties:
+        creation_bytecode:
+          default: null
+          description: The contract compiled bytecode
+          example: 60806040526b06765c793fa10079d00000006000553480156200002157600080fd5b506040516200341338038062003413833981016040819052620000449162000171565b42811015620000705760405162461bcd60e51b8152600401620000679062000273
+          type:
+          - string
+          - 'null'
+      type: object
+    BitcoinFields:
+      properties:
+        fees_per_byte:
+          default: null
+          description: fees per bytes
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        type:
+          enum:
+          - Bitcoin
+        utxo_picking_strategy:
+          default: null
+          description: UTXO strategy used for this transaction
+          enum:
+          - null
+          - DEEP_OUTPUTS_FIRST
+          - MERGE_OUTPUTS
+          - OPTIMIZE_SIZE
+          type:
+          - string
+          - 'null'
+      required:
+      - type
+      type: object
+    GenericFeesStrategy:
+      properties:
+        data:
+          allOf:
+          - $ref: '#/components/schemas/GenericFeesStrategyData'
+          description: Details of the transaction speed strategy.
+        type:
+          description: The type of fee strategy based on transaction speed.
+          enum:
+          - SPEED
+          example: SPEED
+      required:
+      - data
+      - type
+      type: object
+    RippleSendTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
+          allOf:
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+          description: Strategy for calculating transaction fees.
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/RippleSendTransactionData'
+          description: Data specific to a Ripple send transaction.
+        transaction_type:
+          description: Type indicator for Ripple-like send transactions.
+          enum:
+          - RIPPLE_LIKE_SEND
+          example: RIPPLE_LIKE_SEND
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    AccountTransactionFilterRuleEntry:
+      properties:
+        condition:
+          default: null
+          enum:
+          - null
+          - ALL
+          - ANY
+          type:
+          - string
+          - 'null'
+        filters:
+          additionalProperties:
+            oneOf:
+            - items:
+                type: string
+              type: array
+            - type: string
+          default: null
+          type:
+          - object
+          - 'null'
+        preset:
+          default: null
+          type:
+          - string
+          - 'null'
+      type: object
+    BitcoinTransactionFeeEstimation:
       properties:
         coin_fields:
-          allOf:
-          - $ref: '#/components/schemas/BaseModel'
-          default: null
+          $ref: '#/components/schemas/BitcoinFeesFields'
         max_fees:
           type: string
       required:
+      - coin_fields
       - max_fees
       type: object
     APIHistoryResult:
@@ -4896,23 +3701,144 @@ components:
       - status
       - type
       type: object
-    LiteLabel:
-      additionalProperties: false
+    EthereumSmartContractFields:
       properties:
-        id:
-          type: integer
-        info:
-          $ref: '#/components/schemas/LabelInfo'
-        name:
-          description: name of the tag
-          example: SPAM
+        contract_data:
+          description: The transaction data provided to the smart contract, encoded according to the ABI specification
+          example: '0x42842e0e000000000000000000000000b13bb982865b222c2e62b665512e2dbc9187453500000000000000000000000053d4a2e021ceec9d58127071499ac88c782d91ac0000000000000000000000000000000000000000000000000000000000000002'
           type: string
+        contract_name:
+          default: null
+          description: The Etherscan name of the smart contract executed
+          example: 'Lido: stETH Token'
+          type:
+          - string
+          - 'null'
+        dapp:
+          default: null
+          description: The name of the Ledger Enterprise DApp
+          example: lido
+          type:
+          - string
+          - 'null'
+        function_arguments:
+          additionalProperties: {}
+          default: null
+          description: The JSON object with the arguments for the smart contract function execution, as per the contract's ABI specification.
+          example: '{amount: 123, spender: 0x123456789abcedf}'
+          type:
+          - object
+          - 'null'
+        function_name:
+          default: null
+          description: The name of the smart contract function executed, as per the contract's ABI specification.
+          example: safeTransferFrom
+          type:
+          - string
+          - 'null'
+        smart_contract_interaction_type:
+          default: null
+          description: The internal Ledger Enterprise type for the contract interaction
+          example: swap
+          type:
+          - string
+          - 'null'
       required:
-      - id
-      - info
-      - name
+      - contract_data
       type: object
-    EthereumSCITransactionData:
+    PolkadotSetPayeeFields:
+      properties:
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        payee:
+          description: Rewards destination
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: SetPayee
+      required:
+      - payee
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    PolkadotSetPayeeTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotSetPayeeStakingTransactionData'
+          description: Data specific to a Polkadot set payee transaction.
+        transaction_type:
+          description: Type indicator for Polkadot-like set payee staking transactions.
+          enum:
+          - POLKADOT_LIKE_SETPAYEE
+          example: POLKADOT_LIKE_SETPAYEE
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    ProviderTransactionRiskDetails:
+      properties:
+        chainalysis:
+          default: null
+          description: Chainalysis's transaction risk scoring and details
+          items:
+            $ref: '#/components/schemas/ChainalysisTransactionAlert'
+          type:
+          - array
+          - 'null'
+      type: object
+    CardanoCoinFields:
+      properties:
+        type:
+          enum:
+          - Cardano
+      required:
+      - type
+      type: object
+    CardanoTxMetadata:
+      properties:
+        amount:
+          default: null
+          type:
+          - integer
+          - 'null'
+        change_path:
+          default: null
+          type:
+          - string
+          - 'null'
+        stake_path:
+          default: null
+          type:
+          - string
+          - 'null'
+      type: object
+    StellarSendTransactionData:
       properties:
         account_name:
           description: The name of the account initiating the transaction.
@@ -4922,13 +3848,616 @@ components:
           description: The amount to be transferred, in the smallest currency unit.
           example: '1267887898998'
           type: string
-        contract_data:
-          default: null
-          oneOf:
-          - $ref: '#/components/schemas/SCIData'
-          - type: string
         currency:
-          description: Specific currency for Ethereum Smart Contract transactions.
+          description: Specific currency for Stellar transactions.
+          enum:
+          - stellar
+          example: stellar
+        max_fees:
+          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
+          example: '123908790'
+          type: string
+        memo:
+          default: null
+          description: A valid memo for the Stellar transaction. See https://developers.stellar.org/docs/glossary/transactions/#memo.
+          oneOf:
+          - $ref: '#/components/schemas/StellarMemoHash1'
+          - $ref: '#/components/schemas/StellarMemoId1'
+          - $ref: '#/components/schemas/StellarMemoReturn1'
+          - $ref: '#/components/schemas/StellarMemoText1'
+        recipient:
+          description: The recipient's address for the transaction.
+          example: 0x1234...abcd
+          type: string
+      required:
+      - account_name
+      - amount
+      - currency
+      - max_fees
+      - recipient
+      type: object
+    AccountSmartContractInteractionRuleEntry:
+      properties:
+        enabled:
+          type: boolean
+      required:
+      - enabled
+      type: object
+    StellarMemoText:
+      properties:
+        MEMO_TEXT:
+          description: Text Memo (at most a 28 bytes string)
+          type: string
+        type:
+          default: MEMO_TEXT
+      required:
+      - MEMO_TEXT
+      type: object
+    TezosFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/TezosStakeBlockchainState'
+          default: null
+          description: A valid tezos delegate
+        type:
+          default: Tezos
+      type: object
+    TezosFeesFields:
+      properties:
+        gas_limit:
+          type: integer
+        storage_limit:
+          type: integer
+      required:
+      - gas_limit
+      - storage_limit
+      type: object
+    BitcoinFeesStrategyData:
+      properties:
+        fees_per_byte:
+          description: The fees per byte for the transaction, in the smallest currency unit..
+          example: '30'
+          type: string
+      required:
+      - fees_per_byte
+      type: object
+    MaticStakingInfo:
+      properties:
+        total_rewards:
+          description: Total rewards
+          type: string
+        total_staking:
+          description: Total staking
+          type: string
+        total_unbonded:
+          description: Total unbonded
+          type: string
+        total_unbonding:
+          description: Total unbonding
+          type: string
+      required:
+      - total_rewards
+      - total_staking
+      - total_unbonded
+      - total_unbonding
+      type: object
+    PolkadotAnonymousProxyFields:
+      properties:
+        anonymousproxy_address:
+          default: null
+          description: Address of the proxy created
+          type:
+          - string
+          - 'null'
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        kind:
+          description: Type of the proxy to create
+          example: Any
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: Anonymous
+      required:
+      - kind
+      type: object
+    TransactionSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Transaction'
+      required:
+      - cursor
+      - node
+      type: object
+    StellarTransactionFeeEstimation:
+      properties:
+        coin_fields:
+          allOf:
+          - $ref: '#/components/schemas/BaseModel'
+          default: null
+        max_fees:
+          type: string
+      required:
+      - max_fees
+      type: object
+    PolkadotSetPayeeStakingTransactionData:
+      properties:
+        account_name:
+          description: Account name to execute transaction.
+          example: Polkadot Wallet 1
+          type: string
+        currency:
+          description: Account currency for Polkadot transactions.
+          enum:
+          - polkadot
+          - westend
+          example: polkadot
+        payee:
+          description: The new payee for the staking rewards.
+          enum:
+          - Staked
+          - Stash
+          example: stash
+          type: string
+      required:
+      - account_name
+      - currency
+      - payee
+      type: object
+    PolkadotTransactionFeeEstimation:
+      properties:
+        coin_fields:
+          allOf:
+          - $ref: '#/components/schemas/BaseModel'
+          default: null
+        max_fees:
+          type: string
+      required:
+      - max_fees
+      type: object
+    SolanaSendSplTokenTransactionData:
+      properties:
+        account_name:
+          description: Sender account name for Solana transaction.
+          example: Solana Wallet 1
+          type: string
+        amount:
+          description: Transaction amount for Solana, in the smallest currency unit.
+          example: '100000'
+          type: string
+        currency:
+          description: Account currency for Solana transactions.
+          enum:
+          - solana
+          - solana_devnet
+          - solana_testnet
+          example: solana
+        max_priority_fee:
+          default: null
+          description: Max priority fee to use for the transaction. Please refer to the `recommended_max_priority_fees` field from fee estimation or choose your own value. Once the feature is enabled, this field will become mandatory.
+          example: '5000'
+          type:
+          - string
+          - 'null'
+        recipient:
+          description: Transaction recipient address for Solana.
+          example: 4Pf...Nmo
+          type: string
+        token_mint:
+          description: The token mint address of the token to interact with
+          example: Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
+          type: string
+      required:
+      - account_name
+      - amount
+      - currency
+      - recipient
+      - token_mint
+      type: object
+    SolanaSendSplTokenTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/SolanaSendSplTokenTransactionData'
+          description: Data to send SPL tokens.
+        transaction_type:
+          description: Type indicator for Solana-like light token send transactions.
+          enum:
+          - SOLANA_LIKE_SEND_SPL_TOKEN_CHECKED
+          example: SOLANA_LIKE_SEND_SPL_TOKEN_CHECKED
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    SolanaStakeMergeFields:
+      properties:
+        merge_dst_account:
+          description: The account to merge in
+          type: string
+        merge_src_account:
+          description: The account to merge
+          type: string
+      required:
+      - merge_dst_account
+      - merge_src_account
+      type: object
+    SolanaTxMetadata:
+      properties:
+        stake_pubkey:
+          default: null
+          type:
+          - string
+          - 'null'
+      type: object
+    PolkadotAnonymousProxyInfo:
+      properties:
+        address:
+          type: string
+        balances:
+          $ref: '#/components/schemas/PolkadotBalances'
+        block_height:
+          type: integer
+        created_at:
+          type: string
+        ext_index:
+          type: integer
+        index:
+          type: integer
+        is_controller:
+          type: boolean
+        is_main:
+          type: boolean
+        kind:
+          type: string
+      required:
+      - address
+      - balances
+      - block_height
+      - created_at
+      - ext_index
+      - index
+      - is_controller
+      - is_main
+      - kind
+      type: object
+    StellarMemoReturn1:
+      properties:
+        MEMO_RETURN:
+          description: A 64 bytes hexadecimal string intended to be interpreted as the hash of the transaction the sender is refunding.
+          maxLength: 64
+          minLength: 64
+          type: string
+      required:
+      - MEMO_RETURN
+      type: object
+    AccountThresholdRuleEntry:
+      properties:
+        currency_type:
+          type: string
+        max:
+          default: null
+          type:
+          - integer
+          - 'null'
+        min:
+          type: integer
+      required:
+      - currency_type
+      - min
+      type: object
+    PolkadotFields:
+      properties:
+        anonymous_proxy:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotAnonymousProxyInfo'
+          default: null
+        balances:
+          $ref: '#/components/schemas/PolkadotBalancesWithUnbondingInfo'
+        staking:
+          $ref: '#/components/schemas/PolkadotStakingInfo'
+        type:
+          default: Polkadot
+      required:
+      - balances
+      - staking
+      type: object
+    StellarFields:
+      properties:
+        memo:
+          default: null
+          description: A valid stellar memo
+          oneOf:
+          - $ref: '#/components/schemas/StellarMemoHash'
+          - $ref: '#/components/schemas/StellarMemoId'
+          - $ref: '#/components/schemas/StellarMemoReturn'
+          - $ref: '#/components/schemas/StellarMemoText'
+        type:
+          enum:
+          - Stellar
+      required:
+      - type
+      type: object
+    TradelinkState:
+      properties:
+        total_repledge:
+          description: Total pending repledge balance over all account pledges
+          example: 0
+          type: string
+      required:
+      - total_repledge
+      type: object
+    PolkadotCommonFields:
+      properties:
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+      type: object
+    EthereumAndEvmFieldsLegacy:
+      properties:
+        contract_deployment:
+          allOf:
+          - $ref: '#/components/schemas/EthereumContractDeploymentFields'
+          default: null
+        contract_interaction:
+          allOf:
+          - $ref: '#/components/schemas/EthereumSmartContractFields'
+          default: null
+        gas_limit:
+          description: gas limit in wei
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        gas_price:
+          description: gas price in wei
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        type:
+          default: EthereumAndEvm
+      required:
+      - gas_limit
+      - gas_price
+      type: object
+    Block:
+      properties:
+        details:
+          additionalProperties: {}
+          default: null
+          description: The block's details
+          type:
+          - object
+          - 'null'
+        hash:
+          example: '0x3bb33b6cc7c4aeea0e7383ddd8ef238c44abe8e3d73ffa27b78dd130a2a56687'
+          type: string
+        height:
+          example: 7463221
+          type: integer
+        time:
+          example: '2020-12-11T12:56:35.370946+00:00'
+          format: date-time
+          type: string
+      required:
+      - hash
+      - height
+      - time
+      type: object
+    RippleSendTransactionData:
+      properties:
+        account_name:
+          description: The name of the account initiating the transaction.
+          example: ETH Wallet 1
+          type: string
+        amount:
+          description: The amount to be transferred, in the smallest currency unit.
+          example: '1267887898998'
+          type: string
+        currency:
+          description: Specific currency for Ripple transactions.
+          enum:
+          - ripple
+          example: ripple
+        max_fees:
+          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
+          example: '123908790'
+          type: string
+        recipient:
+          description: The recipient's address for the transaction.
+          example: 0x1234...abcd
+          type: string
+        tag:
+          default: null
+          description: Destination tag for identifying Ripple transactions.
+          example: 12345
+          type:
+          - integer
+          - 'null'
+      required:
+      - account_name
+      - amount
+      - currency
+      - max_fees
+      - recipient
+      type: object
+    AccountMultiauthRuleExternalGroupEntry:
+      properties:
+        group:
+          type: integer
+        quorum:
+          type: integer
+      required:
+      - group
+      - quorum
+      type: object
+    StellarMemoText1:
+      properties:
+        MEMO_TEXT:
+          description: Text Memo (at most a 28 bytes string)
+          maxLength: 28
+          minLength: 0
+          type: string
+      required:
+      - MEMO_TEXT
+      type: object
+    PolkadotRebondStakingTransactionData:
+      properties:
+        account_name:
+          description: Account name to execute transaction.
+          example: Polkadot Wallet 1
+          type: string
+        amount:
+          description: Amount for Polkadot rebond transaction, in the smallest currency unit.
+          example: '100000'
+          type: string
+        currency:
+          description: Account currency for Polkadot transactions.
+          enum:
+          - polkadot
+          - westend
+          example: polkadot
+      required:
+      - account_name
+      - amount
+      - currency
+      type: object
+    RippleTransactionFeeEstimation:
+      properties:
+        coin_fields:
+          allOf:
+          - $ref: '#/components/schemas/BaseModel'
+          default: null
+        max_fees:
+          type: string
+      required:
+      - max_fees
+      type: object
+    PolkadotBondFields:
+      properties:
+        controller:
+          description: Address of controller account
+          type: string
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        payee:
+          description: Rewards destination
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: Bond
+      required:
+      - controller
+      - payee
+      type: object
+    PolkadotFields1:
+      properties:
+        tx_parameters:
+          description: Fields for specific transaction types
+          oneOf:
+          - $ref: '#/components/schemas/PolkadotBondFields'
+          - $ref: '#/components/schemas/PolkadotSetControllerFields'
+          - $ref: '#/components/schemas/PolkadotSetPayeeFields'
+          - $ref: '#/components/schemas/PolkadotAddProxyFields'
+          - $ref: '#/components/schemas/PolkadotKillAnonymousFields'
+          - $ref: '#/components/schemas/PolkadotAnonymousProxyFields'
+          - $ref: '#/components/schemas/PolkadotCommonFields'
+        type:
+          enum:
+          - Polkadot
+      required:
+      - tx_parameters
+      - type
+      type: object
+    PolkadotKillAnonymousFields:
+      properties:
+        ext_index:
+          description: Extrinsic index of the proxy creation extrinsic
+          example: 2
+          type: integer
+        height:
+          description: Block height of the proxy creation extrinsic
+          example: 123456
+          type: integer
+        index:
+          description: Disambiguation index of the proxy, usually 0
+          example: 0
+          type: integer
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        kind:
+          description: Type of the proxy to kill
+          example: Any
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: KillAnonymous
+      required:
+      - ext_index
+      - height
+      - index
+      - kind
+      type: object
+    EthereumSendTransactionData:
+      properties:
+        account_name:
+          description: The name of the account initiating the transaction.
+          example: ETH Wallet 1
+          type: string
+        amount:
+          description: The amount to be transferred, in the smallest currency unit.
+          example: '1267887898998'
+          type: string
+        contract_address:
+          default: null
+          description: The contract address of the ERC20 token, in case of a ERC20 send transaction.
+          example: 0x1234...abcd
+          type:
+          - string
+          - 'null'
+        currency:
+          description: Specific currency for Ethereum transactions.
           enum:
           - arbitrum
           - arbitrum_goerli
@@ -4989,13 +4518,6 @@ components:
           - viction_testnet
           example: ethereum
           type: string
-        encoded_contract_data:
-          default: null
-          description: (DEPRECATED) Encoded data for the smart contract interaction. This field is deprecated and will be removed in the future. Use contract_data instead.
-          example: 0x123abc...
-          type:
-          - string
-          - 'null'
         max_fees:
           description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
           example: '123908790'
@@ -5011,71 +4533,68 @@ components:
       - max_fees
       - recipient
       type: object
-    PolkadotCommonFields:
+    PolkadotStakingInfo:
       properties:
-        is_proxy:
+        controller_address:
           default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
+          description: Address of the anonymous proxy
           type:
           - string
           - 'null'
-      type: object
-    PolygonFields:
-      properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/MaticStakingInfo'
+        is_nominator:
+          description: True if the account is an active nominator, false if it is "chilled"
+          type: boolean
+        legacy_staking:
+          description: If true, this account uses the legacy staking flow with a PureProxy account
+          type: boolean
+        proxies:
+          description: Addresses of proxies of the controller account
+          items:
+            type: string
+          type: array
+        rewards_destination:
           default: null
-          description: Polygon Staking data
-        type:
-          default: Polygon
-      type: object
-    TezosFeesFields:
-      properties:
-        gas_limit:
-          type: integer
-        storage_limit:
-          type: integer
+          description: Rewards destination
+          type:
+          - string
+          - 'null'
       required:
-      - gas_limit
-      - storage_limit
+      - is_nominator
+      - legacy_staking
+      - proxies
       type: object
-    PolkadotBalances:
+    PolkadotBondExtraStakingTransactionData:
       properties:
-        available:
+        account_name:
+          description: Account name to execute transaction.
+          example: Polkadot Wallet 1
           type: string
-        bonded:
+        amount:
+          description: Amount for Polkadot bond extra transaction, in the smallest currency unit.
+          example: '100000'
           type: string
-        free:
-          type: string
-        frozen:
-          type: string
-        reserved:
-          type: string
-        total:
-          type: string
+        currency:
+          description: Account currency for Polkadot transactions.
+          enum:
+          - polkadot
+          - westend
+          example: polkadot
       required:
-      - available
-      - bonded
-      - free
-      - frozen
-      - reserved
-      - total
+      - account_name
+      - amount
+      - currency
       type: object
-    ProviderRegistrationIds:
+    TransactionOrMessageNote:
       properties:
-        chainalysis:
-          description: Chainalysis's transaction registration id
-          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
+        content:
+          example: some information about this transaction
+          type: string
+        title:
+          example: a note title
           type: string
       required:
-      - chainalysis
+      - content
+      - title
       type: object
     SolanaBalances:
       properties:
@@ -5114,28 +4633,57 @@ components:
       - total_staked
       - undelegated
       type: object
-    StellarSendTransactionCreationData:
+    TransactionCompliance:
+      properties:
+        registration_ids:
+          allOf:
+          - $ref: '#/components/schemas/ProviderRegistrationIds'
+          description: Transaction's registration id per compliance provider
+        risk:
+          allOf:
+          - $ref: '#/components/schemas/TransactionRisk'
+          default: null
+          description: Transaction's risk scoring and details per provider
+      required:
+      - registration_ids
+      type: object
+    PolkadotChillTransactionCreationData:
       properties:
         account_id:
           description: Unique identifier of the sender's account.
           example: '101'
           type: integer
-        fees_strategy:
-          allOf:
-          - $ref: '#/components/schemas/GenericFeesStrategy'
-          description: Strategy for calculating transaction fees.
         transaction_data:
           allOf:
-          - $ref: '#/components/schemas/StellarSendTransactionData'
-          description: Data specific to a Stellar send transaction.
+          - $ref: '#/components/schemas/PolkadotChillStakingTransactionData'
+          description: Data specific to a Polkadot chill transaction.
         transaction_type:
-          description: Type indicator for Stellar-like send transactions.
+          description: Type indicator for Polkadot-like chill staking transactions.
           enum:
-          - STELLAR_LIKE_SEND
-          example: STELLAR_LIKE_SEND
+          - POLKADOT_LIKE_CHILL
+          example: POLKADOT_LIKE_CHILL
       required:
       - account_id
-      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    PolkadotRebondTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotRebondStakingTransactionData'
+          description: Data specific to a Polkadot rebond transaction.
+        transaction_type:
+          description: Type indicator for Polkadot-like rebond staking transactions.
+          enum:
+          - POLKADOT_LIKE_REBOND
+          example: POLKADOT_LIKE_REBOND
+      required:
+      - account_id
       - transaction_data
       - transaction_type
       type: object
@@ -5159,112 +4707,62 @@ components:
       - transaction_data
       - transaction_type
       type: object
-    TransactionCompliance:
+    AccountThresholdRule:
       properties:
-        registration_ids:
-          allOf:
-          - $ref: '#/components/schemas/ProviderRegistrationIds'
-          description: Transaction's registration id per compliance provider
-        risk:
-          allOf:
-          - $ref: '#/components/schemas/TransactionRisk'
-          default: null
-          description: Transaction's risk scoring and details per provider
-      required:
-      - registration_ids
-      type: object
-    SCIData:
-      properties:
-        abi:
-          default: null
-          description: The array of function, event, and error descriptions in JSON format, representing the contract’s interface according to the ABI Specification.
-          example: '[{ "inputs": [{"internalType": "address", "name": "to", "type": "address"}], "name": "approve", "outputs": [], "stateMutability": "nonpayable", "type": "function"}]'
+        data:
           items:
-            additionalProperties: {}
-            type: object
-          type:
-          - array
-          - 'null'
-        function_arguments:
-          additionalProperties: {}
-          default: null
-          description: The JSON object with the arguments for the smart contract function execution, according to the provided contract_abi.
-          example:
-            amount: 1000
-            to: 0x1234...abcd
-          type:
-          - object
-          - 'null'
-        function_name:
-          default: null
-          description: Name of the contract method to call
-          example: mint
-          type:
-          - string
-          - 'null'
-      type: object
-    PolkadotTransactionFeeEstimation:
-      properties:
-        coin_fields:
-          allOf:
-          - $ref: '#/components/schemas/BaseModel'
-          default: null
-        max_fees:
-          type: string
-      required:
-      - max_fees
-      type: object
-    SolanaSendTransactionCreationData:
-      properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
+            $ref: '#/components/schemas/AccountThresholdRuleEntry'
+          type: array
+        id:
           type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/SolanaSendTransactionData'
-          description: Data specific to a Solana send transaction.
-        transaction_type:
-          description: Type indicator for Solana-like send transactions.
+        type:
           enum:
-          - SOLANA_LIKE_SEND
-          example: SOLANA_LIKE_SEND
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
       required:
-      - account_id
-      - transaction_data
-      - transaction_type
+      - data
+      - id
+      - type
       type: object
-    PolkadotBondExtraTransactionCreationData:
+    Label:
+      additionalProperties: false
       properties:
-        account_id:
-          description: Unique identifier of the sender's account.
-          example: '101'
+        created_by:
+          description: id of the creator
+          example: 42
           type: integer
-        transaction_data:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotBondExtraStakingTransactionData'
-          description: Data specific to a Polkadot bond extra transaction.
-        transaction_type:
-          description: Type indicator for Polkadot-like bond extra staking transactions.
-          enum:
-          - POLKADOT_LIKE_BONDEXTRA
-          example: POLKADOT_LIKE_BONDEXTRA
-      required:
-      - account_id
-      - transaction_data
-      - transaction_type
-      type: object
-    TransactionFailureReasons:
-      properties:
-        client_reason:
-          example: human readable message
+        created_on:
+          format: date-time
           type: string
-        reason:
-          example: detail
+        id:
+          type: integer
+        info:
+          $ref: '#/components/schemas/LabelInfo'
+        name:
+          description: name of the tag
+          example: SPAM
+          type: string
+        updated_by:
+          description: id of the last updater
+          example: 42
+          type: integer
+        updated_on:
+          description: date on which the tag has been last updated
+          example: '2023-02-06T02:48:59+00:00'
+          format: date-time
           type: string
       required:
-      - client_reason
-      - reason
+      - created_by
+      - created_on
+      - id
+      - info
+      - name
+      - updated_by
+      - updated_on
       type: object
     Transaction:
       additionalProperties: false
@@ -5587,59 +5085,174 @@ components:
       - status
       - type
       type: object
-    AccountRuleSet:
+    EthereumStakingInfo:
+      properties:
+        available_rewards:
+          default: null
+          description: Available rewards
+          type:
+          - string
+          - 'null'
+        network_apy:
+          default: null
+          description: APY
+          type:
+          - number
+          - 'null'
+        total_rewards:
+          default: null
+          description: Total rewards
+          type:
+          - string
+          - 'null'
+        total_staking:
+          default: null
+          description: Total staking
+          type:
+          - string
+          - 'null'
+      type: object
+    BaseModel:
+      properties: {}
+      type: object
+    LiteLabel:
+      additionalProperties: false
       properties:
         id:
-          example: 1
           type: integer
-        index:
-          example: 0
-          type: integer
+        info:
+          $ref: '#/components/schemas/LabelInfo'
         name:
-          example: Rule 1
+          description: name of the tag
+          example: SPAM
           type: string
-        rules:
-          example:
-            data:
-            - group: 2
-              quorum: 1
-            - quorum: 1
-              users:
-              - 1
-              - 2
-            id: 1
-            type: MULTI_AUTHORIZATIONS
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/AccountWhitelistRule'
-            - $ref: '#/components/schemas/AccountThresholdRule'
-            - $ref: '#/components/schemas/AccountMultiauthRule'
-            - $ref: '#/components/schemas/AccountTransactionFilterRule'
-            - $ref: '#/components/schemas/AccountSmartContractInteractionRule'
-          type: array
       required:
       - id
-      - index
+      - info
       - name
-      - rules
       type: object
-    EthereumTransactionFeeEstimation:
+    BitcoinSendTransactionCreationData:
       properties:
-        coin_fields:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
+          description: The fee strategy for a Bitcoin send transaction.
           oneOf:
-          - $ref: '#/components/schemas/EthereumFeesFields'
-          - $ref: '#/components/schemas/EthereumEIP1559FeesFields'
-        max_fees:
+          - $ref: '#/components/schemas/BitcoinFeesStrategy'
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/BitcoinSendTransactionData'
+          description: Data specific to a Bitcoin send transaction.
+        transaction_type:
+          description: Type indicator for Bitcoin-like send transactions.
+          enum:
+          - BITCOIN_LIKE_SEND
+          example: BITCOIN_LIKE_SEND
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
+      type: object
+    RippleFields:
+      properties:
+        destination_tag:
+          default: null
+          description: ripple destination tag
+          type:
+          - integer
+          - 'null'
+        type:
+          enum:
+          - Ripple
+      required:
+      - type
+      type: object
+    SolanaSendTransactionData:
+      properties:
+        account_name:
+          description: Sender account name for Solana transaction.
+          example: Solana Wallet 1
+          type: string
+        amount:
+          description: Transaction amount for Solana, in the smallest currency unit.
+          example: '100000'
+          type: string
+        currency:
+          description: Account currency for Solana transactions.
+          enum:
+          - solana
+          - solana_devnet
+          - solana_testnet
+          example: solana
+        max_priority_fee:
+          default: null
+          description: Max priority fee to use for the transaction. Please refer to the `recommended_max_priority_fees` field from fee estimation or choose your own value. Once the feature is enabled, this field will become mandatory.
+          example: '5000'
+          type:
+          - string
+          - 'null'
+        recipient:
+          description: Transaction recipient address for Solana.
+          example: 4Pf...Nmo
           type: string
       required:
-      - coin_fields
-      - max_fees
+      - account_name
+      - amount
+      - currency
+      - recipient
       type: object
-    AccountSmartContractInteractionRule:
+    TezosSendTransactionData:
+      properties:
+        account_name:
+          description: The name of the account initiating the transaction.
+          example: ETH Wallet 1
+          type: string
+        amount:
+          description: The amount to be transferred, in the smallest currency unit.
+          example: '1267887898998'
+          type: string
+        currency:
+          description: Specific currency for Tezos transactions.
+          enum:
+          - tezos
+          example: tezos
+        max_fees:
+          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
+          example: '123908790'
+          type: string
+        recipient:
+          description: The recipient's address for the transaction.
+          example: 0x1234...abcd
+          type: string
+      required:
+      - account_name
+      - amount
+      - currency
+      - max_fees
+      - recipient
+      type: object
+    GenericFeesStrategyData:
+      properties:
+        speed:
+          description: The desired speed of the transaction.
+          enum:
+          - FAST
+          - NORMAL
+          - SLOW
+          example: FAST
+          type: string
+      required:
+      - speed
+      type: object
+    AccountWhitelistRule:
       properties:
         data:
           items:
-            $ref: '#/components/schemas/AccountSmartContractInteractionRuleEntry'
+            $ref: '#/components/schemas/AccountWhitelistRuleEntry'
           type: array
         id:
           type: integer
@@ -5656,43 +5269,370 @@ components:
       - id
       - type
       type: object
-    PolkadotKillAnonymousFields:
+    PolkadotBalances:
       properties:
-        ext_index:
-          description: Extrinsic index of the proxy creation extrinsic
-          example: 2
-          type: integer
-        height:
-          description: Block height of the proxy creation extrinsic
-          example: 123456
-          type: integer
-        index:
-          description: Disambiguation index of the proxy, usually 0
-          example: 0
-          type: integer
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        kind:
-          description: Type of the proxy to kill
-          example: Any
+        available:
           type: string
-        real:
+        bonded:
+          type: string
+        free:
+          type: string
+        frozen:
+          type: string
+        reserved:
+          type: string
+        total:
+          type: string
+      required:
+      - available
+      - bonded
+      - free
+      - frozen
+      - reserved
+      - total
+      type: object
+    TransactionCreationRequestDataV2:
+      properties:
+        data:
+          description: Detailed transaction data, varying based on the specific transaction type.
+          oneOf:
+          - $ref: '#/components/schemas/BitcoinSendTransactionCreationData'
+          - $ref: '#/components/schemas/EthereumSendTransactionCreationData'
+          - $ref: '#/components/schemas/EthereumExecuteContractTransactionCreationData'
+          - $ref: '#/components/schemas/EthereumDeployContractTransactionCreationData'
+          - $ref: '#/components/schemas/RippleSendTransactionCreationData'
+          - $ref: '#/components/schemas/StellarSendTransactionCreationData'
+          - $ref: '#/components/schemas/TronSendTransactionCreationData'
+          - $ref: '#/components/schemas/TezosSendTransactionCreationData'
+          - $ref: '#/components/schemas/CardanoSendTransactionCreationData'
+          - $ref: '#/components/schemas/SolanaCreateAssociatedTokenAccountCreationData'
+          - $ref: '#/components/schemas/SolanaSendSplTokenTransactionCreationData'
+          - $ref: '#/components/schemas/SolanaSendTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotSendTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotBondExtraTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotUnbondTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotRebondTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotSetPayeeTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotWithdrawTransactionCreationData'
+          - $ref: '#/components/schemas/PolkadotChillTransactionCreationData'
+        note:
+          allOf:
+          - $ref: '#/components/schemas/TransactionOrMessageNote'
           default: null
-          description: In the case of a proxied transaction, address of the proxied account.
+          description: Optional note or annotation for the transaction.
+        type:
+          description: Specifies the type of transaction request being made.
+          enum:
+          - CREATE_TRANSACTION
+          example: CREATE_TRANSACTION
+      required:
+      - data
+      - type
+      type: object
+    BitcoinFeesFields:
+      properties:
+        UTXO_limit:
+          type: integer
+        fees_per_byte:
+          type: number
+      required:
+      - UTXO_limit
+      - fees_per_byte
+      type: object
+    SolanaCreateAssociatedTokenAccountCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/SolanaCreateAssociatedTokenAccountTransactionData'
+          description: Data create SPL token account.
+        transaction_type:
+          description: Type indicator for Solana-like token account creation transactions.
+          enum:
+          - SOLANA_LIKE_CREATE_SPL_TOKEN_ACCOUNT
+          example: SOLANA_LIKE_CREATE_SPL_TOKEN_ACCOUNT
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    EthereumSCITransactionData:
+      properties:
+        account_name:
+          description: The name of the account initiating the transaction.
+          example: ETH Wallet 1
+          type: string
+        amount:
+          description: The amount to be transferred, in the smallest currency unit.
+          example: '1267887898998'
+          type: string
+        contract_data:
+          default: null
+          oneOf:
+          - $ref: '#/components/schemas/SCIData'
+          - type: string
+        currency:
+          description: Specific currency for Ethereum Smart Contract transactions.
+          enum:
+          - arbitrum
+          - arbitrum_goerli
+          - arbitrum_sepolia
+          - avalanche_c_chain
+          - avalanche_c_chain_fuji
+          - base
+          - base_goerli
+          - base_sepolia
+          - blast
+          - blast_sepolia
+          - bsc
+          - celo
+          - celo_alfajores
+          - cronos
+          - cronos_testnet
+          - ethereum
+          - ethereum_classic
+          - ethereum_goerli
+          - ethereum_holesky
+          - ethereum_hoodi
+          - ethereum_pow
+          - ethereum_ropsten
+          - ethereum_sepolia
+          - etherlink
+          - fantom
+          - fantom_testnet
+          - filecoin
+          - filecoin_calibration
+          - flare
+          - flare_coston
+          - kava_evm
+          - kava_evm_testnet
+          - klaytn
+          - klaytn_baobab
+          - komodo
+          - linea
+          - mantle
+          - mantle_sepolia
+          - neon_evm
+          - optimism
+          - optimism_goerli
+          - optimism_sepolia
+          - polygon
+          - polygon_amoy
+          - polygon_mumbai
+          - polygon_zk_evm
+          - polygon_zk_evm_testnet
+          - pulsechain
+          - pulsechain_testnet
+          - scroll
+          - scroll_sepolia
+          - sonic
+          - tomo
+          - tomo_testnet
+          - tron
+          - viction
+          - viction_testnet
+          example: ethereum
+          type: string
+        encoded_contract_data:
+          default: null
+          description: (DEPRECATED) Encoded data for the smart contract interaction. This field is deprecated and will be removed in the future. Use contract_data instead.
+          example: 0x123abc...
           type:
           - string
           - 'null'
-        type:
-          default: KillAnonymous
+        max_fees:
+          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
+          example: '123908790'
+          type: string
+        recipient:
+          description: The recipient's address for the transaction.
+          example: 0x1234...abcd
+          type: string
       required:
-      - ext_index
-      - height
-      - index
-      - kind
+      - account_name
+      - amount
+      - currency
+      - max_fees
+      - recipient
+      type: object
+    PeriodicRewards:
+      properties:
+        last30:
+          description: Rewards generated over the last 30 days by all active stakes
+          example: '20239'
+          type: string
+        last7:
+          description: Rewards generated over the last 7 days by all active stakes
+          example: '50239'
+          type: string
+        total:
+          description: Total rewards generated by all active stakes
+          example: '100239'
+          type: string
+      required:
+      - last30
+      - last7
+      - total
+      type: object
+    EthereumAndEvmFieldsEip1559:
+      properties:
+        contract_deployment:
+          allOf:
+          - $ref: '#/components/schemas/EthereumContractDeploymentFields'
+          default: null
+        contract_interaction:
+          allOf:
+          - $ref: '#/components/schemas/EthereumSmartContractFields'
+          default: null
+        gas_limit:
+          description: gas limit in wei
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        priority_fees:
+          description: The maximum priority fee per gas for the Ethereum transaction, in the smallest currency unit.
+          example: '2000'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        type:
+          default: EthereumAndEvm
+      required:
+      - gas_limit
+      - priority_fees
+      type: object
+    EthereumFeesStrategy:
+      properties:
+        data:
+          description: Data specific to the Ethereum fee strategy.
+          oneOf:
+          - $ref: '#/components/schemas/EthereumFeesStrategyData'
+          - $ref: '#/components/schemas/EthereumEIP1559FeesStrategyData'
+        type:
+          description: Indicates a custom fee strategy for Ethereum transactions.
+          enum:
+          - CUSTOM
+          example: CUSTOM
+      required:
+      - data
+      - type
+      type: object
+    TronSendTransactionData:
+      properties:
+        account_name:
+          description: The name of the account initiating the transaction.
+          example: ETH Wallet 1
+          type: string
+        amount:
+          description: The amount to be transferred, in the smallest currency unit.
+          example: '1267887898998'
+          type: string
+        currency:
+          description: Specific currency for Tron transactions.
+          enum:
+          - tron
+          example: tron
+        max_fees:
+          description: The maximum fees the user is willing to pay for the transaction, in the smallest currency unit. Set to '0' when estimating transaction fees.
+          example: '123908790'
+          type: string
+        recipient:
+          description: The recipient's address for the transaction.
+          example: 0x1234...abcd
+          type: string
+      required:
+      - account_name
+      - amount
+      - currency
+      - max_fees
+      - recipient
+      type: object
+    EthereumTransactionFeeEstimation:
+      properties:
+        coin_fields:
+          oneOf:
+          - $ref: '#/components/schemas/EthereumFeesFields'
+          - $ref: '#/components/schemas/EthereumEIP1559FeesFields'
+        max_fees:
+          type: string
+      required:
+      - coin_fields
+      - max_fees
+      type: object
+    PolkadotUnbondStakingTransactionData:
+      properties:
+        account_name:
+          description: Account name to execute transaction.
+          example: Polkadot Wallet 1
+          type: string
+        amount:
+          description: Amount for Polkadot unbond transaction, in the smallest currency unit.
+          example: '100000'
+          type: string
+        currency:
+          description: Account currency for Polkadot transactions.
+          enum:
+          - polkadot
+          - westend
+          example: polkadot
+      required:
+      - account_name
+      - amount
+      - currency
+      type: object
+    SolanaStakingInfo:
+      properties:
+        balances:
+          allOf:
+          - $ref: '#/components/schemas/SolanaBalances'
+          description: Balances of open stakes
+        rewards:
+          allOf:
+          - $ref: '#/components/schemas/PeriodicRewards'
+          description: Rewards generated by active stakes
+      required:
+      - balances
+      - rewards
+      type: object
+    EthereumEIP1559FeesStrategyData:
+      properties:
+        gas_limit:
+          description: The gas limit for the Ethereum transaction, in the smallest currency unit.
+          example: '21000'
+          type: string
+        priority_fees:
+          description: The maximum priority fee per gas for the Ethereum transaction, in the smallest currency unit.
+          example: '2000'
+          type: string
+      required:
+      - gas_limit
+      - priority_fees
+      type: object
+    StellarSendTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        fees_strategy:
+          allOf:
+          - $ref: '#/components/schemas/GenericFeesStrategy'
+          description: Strategy for calculating transaction fees.
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/StellarSendTransactionData'
+          description: Data specific to a Stellar send transaction.
+        transaction_type:
+          description: Type indicator for Stellar-like send transactions.
+          enum:
+          - STELLAR_LIKE_SEND
+          example: STELLAR_LIKE_SEND
+      required:
+      - account_id
+      - fees_strategy
+      - transaction_data
+      - transaction_type
       type: object
     PolkadotAddProxyFields:
       properties:
@@ -5722,7 +5662,86 @@ components:
       - kind
       - proxy
       type: object
-    RippleTransactionFeeEstimation:
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    PolkadotWithdrawTransactionCreationData:
+      properties:
+        account_id:
+          description: Unique identifier of the sender's account.
+          example: '101'
+          type: integer
+        transaction_data:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotWithdrawStakingTransactionData'
+          description: Data specific to a Polkadot withdraw transaction.
+        transaction_type:
+          description: Type indicator for Polkadot-like withdraw staking transactions.
+          enum:
+          - POLKADOT_LIKE_WITHDRAWUNBONDED
+          example: POLKADOT_LIKE_WITHDRAWUNBONDED
+      required:
+      - account_id
+      - transaction_data
+      - transaction_type
+      type: object
+    DefaultFields:
+      properties:
+        type:
+          type: string
+      required:
+      - type
+      type: object
+    _APISearchTransactionResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/TransactionSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    PolygonFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/MaticStakingInfo'
+          default: null
+          description: Polygon Staking data
+        type:
+          default: Polygon
+      type: object
+    SolanaStakeActionFields:
+      properties:
+        stake_account:
+          description: The account from which to withdraw
+          type: string
+      required:
+      - stake_account
+      type: object
+    StellarMemoHash:
+      properties:
+        MEMO_HASH:
+          description: Transaction Hash Memo (64 bytes hexadecimal string)
+          type: string
+        type:
+          default: MEMO_HASH
+      required:
+      - MEMO_HASH
+      type: object
+    CardanoTransactionFeeEstimation:
       properties:
         coin_fields:
           allOf:
@@ -5732,25 +5751,6 @@ components:
           type: string
       required:
       - max_fees
-      type: object
-    AccountMultiauthRuleExternalGroupEntry:
-      properties:
-        group:
-          type: integer
-        quorum:
-          type: integer
-      required:
-      - group
-      - quorum
-      type: object
-    BitcoinFeesStrategyData:
-      properties:
-        fees_per_byte:
-          description: The fees per byte for the transaction, in the smallest currency unit..
-          example: '30'
-          type: string
-      required:
-      - fees_per_byte
       type: object
   securitySchemes:
     cookieAuth:

@@ -78,47 +78,19 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    AddressRisk:
+    Exposure:
       properties:
-        address:
-          description: The address that was checked
-          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+        category:
+          description: The entity category the address has exposure to
+          example: exchange
           type: string
-        provider_details:
-          allOf:
-          - $ref: '#/components/schemas/ChainalysisAddressRisk'
-          description: Details from the compliance provider
-        risk:
-          description: Address risk as defined by Ledger
-          enum:
-          - HIGH
-          - LOW
-          - MEDIUM
-          example: HIGH
+        value:
+          description: The address’s aggregate exposure to the corresponding category, denominated in USD
+          example: 424895.68594
+          type: number
       required:
-      - address
-      - provider_details
-      - risk
-      type: object
-    AddressSanctions:
-      properties:
-        address:
-          description: The address that was checked
-          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
-          type: string
-        has_sanctions:
-          description: Whether or not the address has OFAC sanctions
-          example: true
-          type: boolean
-        provider_details:
-          description: Details from the compliance provider
-          items:
-            $ref: '#/components/schemas/ChainalysisAddressSanction'
-          type: array
-      required:
-      - address
-      - has_sanctions
-      - provider_details
+      - category
+      - value
       type: object
     ChainalysisAddressRisk:
       properties:
@@ -146,19 +118,60 @@ components:
       - exposures
       - risk
       type: object
-    Exposure:
+    AddressSanctions:
       properties:
-        category:
-          description: The entity category the address has exposure to
-          example: exchange
+        address:
+          description: The address that was checked
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
           type: string
-        value:
-          description: The address’s aggregate exposure to the corresponding category, denominated in USD
-          example: 424895.68594
-          type: number
+        has_sanctions:
+          description: Whether or not the address has OFAC sanctions
+          example: true
+          type: boolean
+        provider_details:
+          description: Details from the compliance provider
+          items:
+            $ref: '#/components/schemas/ChainalysisAddressSanction'
+          type: array
       required:
-      - category
-      - value
+      - address
+      - has_sanctions
+      - provider_details
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    AddressRisk:
+      properties:
+        address:
+          description: The address that was checked
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+          type: string
+        provider_details:
+          allOf:
+          - $ref: '#/components/schemas/ChainalysisAddressRisk'
+          description: Details from the compliance provider
+        risk:
+          description: Address risk as defined by Ledger
+          enum:
+          - HIGH
+          - LOW
+          - MEDIUM
+          example: HIGH
+      required:
+      - address
+      - provider_details
+      - risk
       type: object
     ChainalysisAddressSanction:
       properties:
@@ -183,19 +196,6 @@ components:
       - description
       - name
       - url
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

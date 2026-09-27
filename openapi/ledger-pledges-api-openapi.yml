@@ -158,40 +158,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
-      type: object
-    TradelinkAssetManager:
-      properties:
-        approver_group_id:
-          type: integer
-        code:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        whitelist_id:
-          type: integer
-      required:
-      - approver_group_id
-      - code
-      - id
-      - name
-      - role
-      - whitelist_id
-      type: object
     _APISearchPledgeResults:
       properties:
         edges:
@@ -204,21 +170,16 @@ components:
       - edges
       - page_info
       type: object
-    TradelinkCustodian:
+    PledgeSearchResult:
       properties:
-        code:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Pledge'
       required:
-      - code
-      - id
-      - name
-      - role
+      - cursor
+      - node
       type: object
     Pledge:
       additionalProperties: false
@@ -269,6 +230,53 @@ components:
       - pledge_subaccount_id
       - state
       type: object
+    TradelinkAssetManager:
+      properties:
+        approver_group_id:
+          type: integer
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        whitelist_id:
+          type: integer
+      required:
+      - approver_group_id
+      - code
+      - id
+      - name
+      - role
+      - whitelist_id
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
     TradelinkExchange:
       properties:
         approver_group_id:
@@ -291,29 +299,21 @@ components:
       - role
       - whitelist_id
       type: object
-    PledgeSearchResult:
+    TradelinkCustodian:
       properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Pledge'
-      required:
-      - cursor
-      - node
-      type: object
-    Error:
-      properties:
-        message:
+        code:
+          type: string
+        id:
           type: string
         name:
           type: string
-        status_code:
-          type: integer
+        role:
+          type: string
       required:
-      - message
+      - code
+      - id
       - name
-      - status_code
+      - role
       type: object
   securitySchemes:
     Ledger_API_User:

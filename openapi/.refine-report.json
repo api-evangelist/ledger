@@ -15,7 +15,7 @@
     "ledger-quote-api-openapi.yml",
     "ledger-grow-api-openapi.yml",
     "ledger-stakes-api-openapi.yml",
-    "ledger-4337-api-openapi.yml",
+    "ledger-tx-service-api-openapi.yml",
     "ledger-delegates-api-openapi.yml",
     "ledger-modules-api-openapi.yml",
     "ledger-owners-api-openapi.yml",
@@ -50,7 +50,9 @@
     "ledger-swap-api-openapi.yml",
     "ledger-webhook-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
   "notes": [
@@ -71,7 +73,14 @@
     "ledger-earn-provider-openapi-original.yml: declared missing tag: Grow",
     "ledger-earn-provider-openapi-original.yml: declared missing tag: Stakes",
     "ledger-enterprise-multisig-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "ledger-enterprise-multisig-openapi-original.yml: declared missing tag: 4337",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths GET /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths GET /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/confirmations/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths POST /tx-service/eth/api/v1/safe-operations/{safe_operation_hash}/confirmations/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths GET /tx-service/eth/api/v1/safes/{address}/safe-operations/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths POST /tx-service/eth/api/v1/safes/{address}/safe-operations/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths GET /tx-service/eth/api/v1/safes/{address}/user-operations/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: tagged paths GET /tx-service/eth/api/v1/user-operations/{user_operation_hash}/ -> Tx Service",
+    "ledger-enterprise-multisig-openapi-original.yml: declared missing tag: Tx Service",
     "ledger-enterprise-multisig-openapi-original.yml: declared missing tag: delegates",
     "ledger-enterprise-multisig-openapi-original.yml: declared missing tag: modules",
     "ledger-enterprise-multisig-openapi-original.yml: declared missing tag: owners",
@@ -143,7 +152,8 @@
     "tag 'Quote' spans 3 source specs (ledger-buy-provider-openapi-original.yml, ledger-sell-provider-openapi-original.yml, ledger-swap-provider-openapi-original.yml): per-path servers applied",
     "tag 'transactions' spans 2 source specs (ledger-enterprise-multisig-openapi-original.yml, ledger-enterprise-vault-openapi-original.yml): per-path servers applied",
     "tag 'Currencies' spans 2 source specs (ledger-enterprise-vault-openapi-original.yml, ledger-swap-provider-openapi-original.yml): per-path servers applied",
-    "apis.yml register: already-registered"
+    "superseded outputs removed: ledger-4337-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 42 total)"
   ],
   "skipped": [
     "_original/ledger-swap-provider-openapi.yml: archived document superseded by a larger archived document",

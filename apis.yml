@@ -15,17 +15,21 @@ description: >-
   on the developer portal, and first-party Agent Skills for coding agents and the Ledger Wallet CLI.
 url: https://raw.githubusercontent.com/api-evangelist/ledger/refs/heads/main/apis.yml
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - ledgerhq/device-sdk-ts
+    - ledgerhq/wallet-api
   open_source: unknown
   commercial: true
   callable_host: false
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
   - openapi
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: unknown
@@ -60,7 +64,7 @@ tags:
   - Staking
   - Security
   - Agent Skills
-  - agent-native
+  - Agent-Native
 tags_raw:
   - Ledger
   - cryptocurrency
@@ -134,42 +138,6 @@ apis:
     url: skills/_index.yml
   - type: SourceCode
     url: https://github.com/LedgerHQ/device-sdk-ts
-- aid: ledger:ledger-4337-api
-  name: Ledger 4337 API
-  description: The 4337 API from Ledger — 5 operation(s) for 4337.
-  humanURL: https://developers.ledger.com/docs/ledger-live/exchange
-  baseURL: https://api.vault.ledger.com
-  tags:
-  - '4337'
-  properties:
-  - type: OpenAPI
-    url: openapi/ledger-4337-api-openapi.yml
-  - type: APIReference
-    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
-  - type: Documentation
-    url: https://developers.ledger.com/docs/ledger-live/exchange
-  - type: Webhooks
-    url: asyncapi/ledger-exchange-webhooks.yml
-  - type: APIReference
-    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
-  - type: Documentation
-    url: https://help.enterprise.ledger.com/api-documentation
-  - type: GettingStarted
-    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
-  - type: Authentication
-    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
-  - type: RateLimits
-    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
-  - type: LLMsTxt
-    url: https://help.enterprise.ledger.com/llms.txt
-  - type: APIReference
-    url: https://help.multisig.ledger.com/reference
-  - type: Documentation
-    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
-  - type: LLMsTxt
-    url: https://help.multisig.ledger.com/llms.txt
-  - type: CLI
-    url: cli/ledger-cli.yml
 - aid: ledger:ledger-accounts-api
   name: Ledger Accounts API
   description: The Accounts API from Ledger — 17 operation(s) for accounts.
@@ -1799,6 +1767,43 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/ledger-whitelists-api-openapi.yml
+  - type: APIReference
+    url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
+  - type: Documentation
+    url: https://developers.ledger.com/docs/ledger-live/exchange
+  - type: Webhooks
+    url: asyncapi/ledger-exchange-webhooks.yml
+  - type: APIReference
+    url: https://help.enterprise.ledger.com/api-documentation/reference/api-reference
+  - type: Documentation
+    url: https://help.enterprise.ledger.com/api-documentation
+  - type: GettingStarted
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/getting-started
+  - type: Authentication
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/authentication
+  - type: RateLimits
+    url: https://help.enterprise.ledger.com/api-documentation/getting-started/rate-limits
+  - type: LLMsTxt
+    url: https://help.enterprise.ledger.com/llms.txt
+  - type: APIReference
+    url: https://help.multisig.ledger.com/reference
+  - type: Documentation
+    url: https://help.multisig.ledger.com/ledger-enterprise-multisig-api-overview
+  - type: LLMsTxt
+    url: https://help.multisig.ledger.com/llms.txt
+  - type: CLI
+    url: cli/ledger-cli.yml
+- aid: ledger:ledger-tx-service-api
+  name: Ledger Tx Service API
+  description: The Tx Service API from Ledger — 5 operation(s) for tx service.
+  humanURL: >-
+    https://developers.ledger.com/docs/ledger-live/discover/integration/wallet-api/introduction
+  baseURL: https://api.vault.ledger.com
+  tags:
+  - Tx Service
+  properties:
+  - type: OpenAPI
+    url: openapi/ledger-tx-service-api-openapi.yml
   - type: APIReference
     url: https://developers.ledger.com/docs/ledger-live/exchange/swap/redoc-api
   - type: Documentation

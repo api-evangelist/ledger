@@ -109,6 +109,15 @@ components:
         transactionId:
           type: string
           description: The `swapId` from the request path. Present only on `404` responses.
+    WebhookStatusQueued:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+          description: Always `queued` - the update was accepted and will be applied asynchronously.
+          example: queued
     StatusWebhookRequest:
       required:
       - providerId
@@ -139,15 +148,6 @@ components:
         transactionHash:
           type: string
           description: On-chain payout transaction hash.
-    WebhookStatusQueued:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-          description: Always `queued` - the update was accepted and will be applied asynchronously.
-          example: queued
   securitySchemes:
     defaultApiKey:
       type: apiKey

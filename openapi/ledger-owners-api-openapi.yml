@@ -55,15 +55,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    OwnerResponse:
-      type: object
-      properties:
-        safes:
-          type: array
-          items:
-            type: string
-      required:
-      - safes
     CodeErrorResponse:
       type: object
       properties:
@@ -78,6 +69,15 @@ components:
       - arguments
       - code
       - message
+    OwnerResponse:
+      type: object
+      properties:
+        safes:
+          type: array
+          items:
+            type: string
+      required:
+      - safes
   securitySchemes:
     cookieAuth:
       type: apiKey
