@@ -153,30 +153,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ProviderSig:
-      required:
-      - payload
-      - signature
-      type: object
-      properties:
-        payload:
-          type: string
-          description: Protobuf payload (in binary format).
-        signature:
-          type: string
-          description: Payload signed in JWS format.
-    ErrorPayload:
-      type: object
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
     SwapRequestFixed:
       required:
       - quoteId
@@ -267,6 +243,18 @@ components:
         slippage:
           type: string
           description: Value between 0 to 1 (0.1 => 10%). Maximum difference between the quoted amount and the final amount received, as a ratio. If exceeded, user consent is required or a refund is made.
+    ErrorPayload:
+      type: object
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
     SwapResponse:
       required:
       - swapId
@@ -298,6 +286,18 @@ components:
           description: estimated gas fees that will be used for the payout transaction (as an output coin floating amount).
         providerSig:
           $ref: '#/components/schemas/ProviderSig'
+    ProviderSig:
+      required:
+      - payload
+      - signature
+      type: object
+      properties:
+        payload:
+          type: string
+          description: Protobuf payload (in binary format).
+        signature:
+          type: string
+          description: Payload signed in JWS format.
   securitySchemes:
     defaultApiKey:
       type: apiKey

@@ -193,6 +193,24 @@ components:
       - code
       - magnitude
       type: object
+    TokenList:
+      properties:
+        tokens:
+          items:
+            $ref: '#/components/schemas/Token'
+          type: array
+      required:
+      - tokens
+      type: object
+    CurrencyList:
+      properties:
+        currencies:
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
+      required:
+      - currencies
+      type: object
     Token:
       additionalProperties: false
       properties:
@@ -299,28 +317,6 @@ components:
       - name
       - parent_currency
       - units
-      type: object
-    CurrencyList:
-      properties:
-        currencies:
-          items:
-            $ref: '#/components/schemas/Currency'
-          type: array
-      required:
-      - currencies
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
     Currency:
       additionalProperties: false
@@ -454,23 +450,23 @@ components:
       required:
       - is_valid
       type: object
-    TokenList:
+    Error:
       properties:
-        tokens:
-          items:
-            $ref: '#/components/schemas/Token'
-          type: array
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
       required:
-      - tokens
+      - message
+      - name
+      - status_code
       type: object
     CryptoCurrencyType:
       oneOf:
       - $ref: '#/components/schemas/Coin'
       - $ref: '#/components/schemas/Token_2'
-    Token_2:
-      type: string
-    Coin:
-      type: string
     CryptoCurrencies:
       required:
       - id
@@ -489,6 +485,10 @@ components:
           format: int32
         contract:
           type: string
+    Token_2:
+      type: string
+    Coin:
+      type: string
   securitySchemes:
     Ledger_API_User:
       description: (**required**) Username of a registered API User

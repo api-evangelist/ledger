@@ -99,6 +99,19 @@ components:
       - api_key_id
       - api_key_secret
       type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
     AuthResponse:
       properties:
         access_token:
@@ -124,19 +137,6 @@ components:
       - refresh_token
       - session_state
       - token_type
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

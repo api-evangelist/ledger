@@ -67,6 +67,36 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Configuration:
+      properties:
+        all:
+          allOf:
+          - $ref: '#/components/schemas/ConfigurationProfile'
+          description: configuration for all kind of notifications
+      required:
+      - all
+      type: object
+    ConfigurationProfile:
+      properties:
+        webhook:
+          allOf:
+          - $ref: '#/components/schemas/Webhook'
+          default: null
+          description: webhook to be notified on
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
     Webhook:
       properties:
         secret:
@@ -81,36 +111,6 @@ components:
       required:
       - secret
       - url
-      type: object
-    ConfigurationProfile:
-      properties:
-        webhook:
-          allOf:
-          - $ref: '#/components/schemas/Webhook'
-          default: null
-          description: webhook to be notified on
-      type: object
-    Configuration:
-      properties:
-        all:
-          allOf:
-          - $ref: '#/components/schemas/ConfigurationProfile'
-          description: configuration for all kind of notifications
-      required:
-      - all
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
   securitySchemes:
     Ledger_API_User:

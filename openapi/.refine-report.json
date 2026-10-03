@@ -50,9 +50,7 @@
     "ledger-swap-api-openapi.yml",
     "ledger-webhook-api-openapi.yml"
   ],
-  "archived": [
-    "deleted 1 superseded output(s) from the previous generation"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
@@ -152,8 +150,7 @@
     "tag 'Quote' spans 3 source specs (ledger-buy-provider-openapi-original.yml, ledger-sell-provider-openapi-original.yml, ledger-swap-provider-openapi-original.yml): per-path servers applied",
     "tag 'transactions' spans 2 source specs (ledger-enterprise-multisig-openapi-original.yml, ledger-enterprise-vault-openapi-original.yml): per-path servers applied",
     "tag 'Currencies' spans 2 source specs (ledger-enterprise-vault-openapi-original.yml, ledger-swap-provider-openapi-original.yml): per-path servers applied",
-    "superseded outputs removed: ledger-4337-api-openapi.yml",
-    "apis.yml register: written (+1 apis, 42 total)"
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "_original/ledger-swap-provider-openapi.yml: archived document superseded by a larger archived document",
@@ -164,7 +161,6 @@
     "_original/ledger-card-provider-openapi.yml: archived document superseded by a larger archived document",
     "_original/ledger-card-provider-openapi-original.yml: archived document superseded by a larger archived document",
     "_original/ledger-buy-provider-openapi.yml: archived document superseded by a larger archived document",
-    "ledger-4337-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-accounts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-buy-redirect-api-openapi.yml: previously refined output, superseded by openapi/_original/",
@@ -201,6 +197,7 @@
     "ledger-tezos-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-transaction-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-transactions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ledger-tx-service-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-users-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-webhook-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "ledger-whitelists-api-openapi.yml: previously refined output, superseded by openapi/_original/"

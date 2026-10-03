@@ -58,22 +58,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ServerError:
-      title: ServerError
-      type: object
-      required:
-      - msg
-      properties:
-        msg:
-          type: string
-    NotFound:
-      title: NotFound
-      type: object
-      required:
-      - what
-      properties:
-        what:
-          type: string
     Success1:
       title: Success
       type: object
@@ -91,6 +75,14 @@ components:
         interest:
           $ref: '#/components/schemas/ProtocolInterestView'
           description: The interest information
+    ServerError:
+      title: ServerError
+      type: object
+      required:
+      - msg
+      properties:
+        msg:
+          type: string
     FailureView:
       title: FailureView
       type: object
@@ -109,6 +101,27 @@ components:
         details:
           $ref: '#/components/schemas/Map_String'
           description: The error details
+    GrowResponse:
+      title: GrowResponse
+      oneOf:
+      - $ref: '#/components/schemas/Success1'
+      - $ref: '#/components/schemas/Failure1'
+    Map_String:
+      title: Map_String
+      type: object
+      additionalProperties:
+        type: string
+    Failure1:
+      title: Failure
+      type: object
+      required:
+      - network
+      - error
+      properties:
+        network:
+          type: string
+        error:
+          $ref: '#/components/schemas/FailureView'
     ProtocolInterestView:
       title: InterestView
       type: object
@@ -126,22 +139,6 @@ components:
         currency:
           description: Ledger crypto currency ID
           type: string
-    GrowResponse:
-      title: GrowResponse
-      oneOf:
-      - $ref: '#/components/schemas/Success1'
-      - $ref: '#/components/schemas/Failure1'
-    Failure1:
-      title: Failure
-      type: object
-      required:
-      - network
-      - error
-      properties:
-        network:
-          type: string
-        error:
-          $ref: '#/components/schemas/FailureView'
     Unauthorized:
       title: Unauthorized
       type: object
@@ -150,8 +147,11 @@ components:
       properties:
         realm:
           type: string
-    Map_String:
-      title: Map_String
+    NotFound:
+      title: NotFound
       type: object
-      additionalProperties:
-        type: string
+      required:
+      - what
+      properties:
+        what:
+          type: string

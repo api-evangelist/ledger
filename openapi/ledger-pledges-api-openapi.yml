@@ -158,17 +158,39 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    _APISearchPledgeResults:
+    APISearchPageInfo:
       properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/PledgeSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
       required:
-      - edges
-      - page_info
+      - count
+      - has_next_page
+      type: object
+    TradelinkExchange:
+      properties:
+        approver_group_id:
+          type: integer
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        whitelist_id:
+          type: integer
+      required:
+      - approver_group_id
+      - code
+      - id
+      - name
+      - role
+      - whitelist_id
       type: object
     PledgeSearchResult:
       properties:
@@ -180,6 +202,22 @@ components:
       required:
       - cursor
       - node
+      type: object
+    TradelinkCustodian:
+      properties:
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+      required:
+      - code
+      - id
+      - name
+      - role
       type: object
     Pledge:
       additionalProperties: false
@@ -252,18 +290,6 @@ components:
       - role
       - whitelist_id
       type: object
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
-      type: object
     Error:
       properties:
         message:
@@ -277,43 +303,17 @@ components:
       - name
       - status_code
       type: object
-    TradelinkExchange:
+    _APISearchPledgeResults:
       properties:
-        approver_group_id:
-          type: integer
-        code:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        whitelist_id:
-          type: integer
+        edges:
+          items:
+            $ref: '#/components/schemas/PledgeSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
       required:
-      - approver_group_id
-      - code
-      - id
-      - name
-      - role
-      - whitelist_id
-      type: object
-    TradelinkCustodian:
-      properties:
-        code:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-      required:
-      - code
-      - id
-      - name
-      - role
+      - edges
+      - page_info
       type: object
   securitySchemes:
     Ledger_API_User:

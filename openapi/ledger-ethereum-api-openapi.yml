@@ -141,6 +141,81 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    EthereumStakeRewardInfo:
+      properties:
+        cl_apy:
+          description: Consensus annual percentage yield
+          example: 3.407
+          type: number
+        consensus_rewards:
+          description: Accumulated consensus rewards WEI during the day
+          example: '2988504000000000'
+          type: string
+        el_apy:
+          description: Execution annual percentage yield
+          example: 0
+          type: number
+        execution_rewards:
+          description: Accumulated execution rewards in WEI during the day
+          example: '0'
+          type: string
+        gross_apy:
+          description: Gross annual percentage yield
+          example: 3.407
+          type: number
+        stake_balance:
+          description: Staked balance in WEI that contributed to this rewards
+          example: '64000000000000000000'
+          type: string
+      required:
+      - cl_apy
+      - consensus_rewards
+      - el_apy
+      - execution_rewards
+      - gross_apy
+      - stake_balance
+      type: object
+    EthereumAccountReward:
+      properties:
+        amount:
+          description: Amount of rewards received
+          example: '21354'
+          type: string
+        created_on:
+          description: Indexation date by Ledger
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        info:
+          $ref: '#/components/schemas/EthereumStakeRewardInfo'
+      required:
+      - amount
+      - created_on
+      - info
+      type: object
+    EthereumStakeReward:
+      properties:
+        amount:
+          description: Amount of rewards received
+          example: '21354'
+          type: string
+        created_on:
+          description: Indexation date by Ledger
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        info:
+          $ref: '#/components/schemas/EthereumStakeRewardInfo'
+        stake_uid:
+          description: Uid of the stake
+          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
+          type: string
+      required:
+      - amount
+      - created_on
+      - info
+      - stake_uid
+      type: object
     EthereumStakeBlockchainState:
       properties:
         activated_at:
@@ -223,6 +298,19 @@ components:
       - state
       - validator_address
       type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
     _EthereumBlockchainStake:
       properties:
         account_id:
@@ -264,94 +352,6 @@ components:
       - status
       - total_reward
       - uid
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    EthereumStakeRewardInfo:
-      properties:
-        cl_apy:
-          description: Consensus annual percentage yield
-          example: 3.407
-          type: number
-        consensus_rewards:
-          description: Accumulated consensus rewards WEI during the day
-          example: '2988504000000000'
-          type: string
-        el_apy:
-          description: Execution annual percentage yield
-          example: 0
-          type: number
-        execution_rewards:
-          description: Accumulated execution rewards in WEI during the day
-          example: '0'
-          type: string
-        gross_apy:
-          description: Gross annual percentage yield
-          example: 3.407
-          type: number
-        stake_balance:
-          description: Staked balance in WEI that contributed to this rewards
-          example: '64000000000000000000'
-          type: string
-      required:
-      - cl_apy
-      - consensus_rewards
-      - el_apy
-      - execution_rewards
-      - gross_apy
-      - stake_balance
-      type: object
-    EthereumStakeReward:
-      properties:
-        amount:
-          description: Amount of rewards received
-          example: '21354'
-          type: string
-        created_on:
-          description: Indexation date by Ledger
-          example: '2023-01-19T15:18:29+00:00'
-          format: date-time
-          type: string
-        info:
-          $ref: '#/components/schemas/EthereumStakeRewardInfo'
-        stake_uid:
-          description: Uid of the stake
-          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
-          type: string
-      required:
-      - amount
-      - created_on
-      - info
-      - stake_uid
-      type: object
-    EthereumAccountReward:
-      properties:
-        amount:
-          description: Amount of rewards received
-          example: '21354'
-          type: string
-        created_on:
-          description: Indexation date by Ledger
-          example: '2023-01-19T15:18:29+00:00'
-          format: date-time
-          type: string
-        info:
-          $ref: '#/components/schemas/EthereumStakeRewardInfo'
-      required:
-      - amount
-      - created_on
-      - info
       type: object
   securitySchemes:
     Ledger_API_User:

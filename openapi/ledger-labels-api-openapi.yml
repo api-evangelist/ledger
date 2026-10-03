@@ -159,6 +159,32 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    LabelInfo:
+      properties:
+        color:
+          description: color of the tag
+          example: '#FE4523'
+          type: string
+        description:
+          description: description of this tag
+          example: This is a SPAM
+          type: string
+      required:
+      - color
+      - description
+      type: object
     Label:
       additionalProperties: false
       properties:
@@ -195,29 +221,16 @@ components:
       - updated_by
       - updated_on
       type: object
-    APISearchPageInfo:
+    LabelSearchResult:
       properties:
-        count:
-          example: 1
+        cursor:
+          example: 0
           type: integer
-        has_next_page:
-          example: false
-          type: boolean
+        node:
+          $ref: '#/components/schemas/Label'
       required:
-      - count
-      - has_next_page
-      type: object
-    _APISearchLabelsResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/LabelSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
+      - cursor
+      - node
       type: object
     Error:
       properties:
@@ -232,30 +245,17 @@ components:
       - name
       - status_code
       type: object
-    LabelSearchResult:
+    _APISearchLabelsResults:
       properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Label'
+        edges:
+          items:
+            $ref: '#/components/schemas/LabelSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
       required:
-      - cursor
-      - node
-      type: object
-    LabelInfo:
-      properties:
-        color:
-          description: color of the tag
-          example: '#FE4523'
-          type: string
-        description:
-          description: description of this tag
-          example: This is a SPAM
-          type: string
-      required:
-      - color
-      - description
+      - edges
+      - page_info
       type: object
   securitySchemes:
     Ledger_API_User:

@@ -235,29 +235,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    WhitelistSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Whitelist'
-      required:
-      - cursor
-      - node
-      type: object
-    _APISearchWhitelistResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/WhitelistSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
     APISearchPageInfo:
       properties:
         count:
@@ -270,62 +247,17 @@ components:
       - count
       - has_next_page
       type: object
-    Whitelist:
-      additionalProperties: false
+    _APISearchWhitelistResults:
       properties:
-        addresses:
-          example:
-          - address: tb1qrdw2mrllkm4lfjgnxeqz0yzjg6835sfyualdhy
-            currency: bitcoin_testnet
-            destination_tag: null
-            id: 3
-            name: main account
-          - address: mmWpcbXNXoKMjc6Q3WjPSxj4JbpLhAFotF
-            currency: bitcoin_testnet
-            destination_tag: null
-            id: 4
-            name: second account
+        edges:
           items:
-            $ref: '#/components/schemas/WhitelistAddress'
+            $ref: '#/components/schemas/WhitelistSearchResult'
           type: array
-        created_by:
-          example: 5
-          type: integer
-        created_on:
-          format: date-time
-          type: string
-        description:
-          default: null
-          example: our own accounts
-          type:
-          - string
-          - 'null'
-        id:
-          type: integer
-        last_request:
-          default: null
-          example: 3
-          type:
-          - integer
-          - 'null'
-        name:
-          example: internal accounts
-          type: string
-        status:
-          enum:
-          - ACTIVE
-          - PENDING
-          - REJECTED
-          - REVOKED
-          example: ACTIVE
-          type: string
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
       required:
-      - addresses
-      - created_by
-      - created_on
-      - id
-      - name
-      - status
+      - edges
+      - page_info
       type: object
     APIHistoryResult:
       properties:
@@ -409,18 +341,62 @@ components:
       - status
       - type
       type: object
-    Error:
+    Whitelist:
+      additionalProperties: false
       properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
+        addresses:
+          example:
+          - address: tb1qrdw2mrllkm4lfjgnxeqz0yzjg6835sfyualdhy
+            currency: bitcoin_testnet
+            destination_tag: null
+            id: 3
+            name: main account
+          - address: mmWpcbXNXoKMjc6Q3WjPSxj4JbpLhAFotF
+            currency: bitcoin_testnet
+            destination_tag: null
+            id: 4
+            name: second account
+          items:
+            $ref: '#/components/schemas/WhitelistAddress'
+          type: array
+        created_by:
+          example: 5
           type: integer
+        created_on:
+          format: date-time
+          type: string
+        description:
+          default: null
+          example: our own accounts
+          type:
+          - string
+          - 'null'
+        id:
+          type: integer
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        name:
+          example: internal accounts
+          type: string
+        status:
+          enum:
+          - ACTIVE
+          - PENDING
+          - REJECTED
+          - REVOKED
+          example: ACTIVE
+          type: string
       required:
-      - message
+      - addresses
+      - created_by
+      - created_on
+      - id
       - name
-      - status_code
+      - status
       type: object
     WhitelistAddress:
       properties:
@@ -524,6 +500,30 @@ components:
       - currency
       - id
       - name
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    WhitelistSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Whitelist'
+      required:
+      - cursor
+      - node
       type: object
     APIHistoryResults:
       properties:
