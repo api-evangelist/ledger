@@ -251,6 +251,30 @@ components:
       - count
       - has_next_page
       type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
     UserSearchResult:
       properties:
         cursor:
@@ -261,6 +285,18 @@ components:
       required:
       - cursor
       - node
+      type: object
+    _APISearchUserResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/UserSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
       type: object
     APIHistoryResult:
       properties:
@@ -427,42 +463,6 @@ components:
       - role
       - status
       - username
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    _APISearchUserResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/UserSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
       type: object
   securitySchemes:
     Ledger_API_User:

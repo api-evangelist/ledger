@@ -106,18 +106,33 @@ components:
         additionalFields:
           type: object
           description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
-    ProviderSig:
+    SellResponse:
       required:
-      - payload
-      - signature
+      - sellId
+      - payinAddress
+      - createdAt
+      - providerFees
+      - referralFees
+      - providerSig
       type: object
       properties:
-        payload:
+        sellId:
           type: string
-          description: Protobuf payload (in binary format).
-        signature:
+          description: 'provider''s id of the ongoing sell transaction. This will be used by Ledger''s backend to retrieve the status of user sell transaction. A unique id must be generated each time this endpoint is called, even if called with a same quoteId : quoteId != sellId. This is a sell attempt id and several retries sharing the same quote id might be performed by a user.'
+        payinAddress:
           type: string
-          description: Payload signed in JWS format.
+          description: Provider's payin address.
+        createdAt:
+          type: string
+          description: Creation date of the sell payload in ISO-8601 format.
+        providerFees:
+          type: string
+          description: Fees paid to the provider, converted to currencyTo.
+        referralFees:
+          type: string
+          description: Fees paid to Ledger, as a referral fee, converted to currencyTo.
+        providerSig:
+          $ref: '#/components/schemas/ProviderSig'
     SellRequest:
       required:
       - quoteId
@@ -153,33 +168,18 @@ components:
         slippage:
           type: string
           description: Value between 0 to 1 (0.1 => 10%). Maximum difference between the quoted amount and the final amount received, as a ratio. If exceeded, user consent is required or a refund is made.
-    SellResponse:
+    ProviderSig:
       required:
-      - sellId
-      - payinAddress
-      - createdAt
-      - providerFees
-      - referralFees
-      - providerSig
+      - payload
+      - signature
       type: object
       properties:
-        sellId:
+        payload:
           type: string
-          description: 'provider''s id of the ongoing sell transaction. This will be used by Ledger''s backend to retrieve the status of user sell transaction. A unique id must be generated each time this endpoint is called, even if called with a same quoteId : quoteId != sellId. This is a sell attempt id and several retries sharing the same quote id might be performed by a user.'
-        payinAddress:
+          description: Protobuf payload (in binary format).
+        signature:
           type: string
-          description: Provider's payin address.
-        createdAt:
-          type: string
-          description: Creation date of the sell payload in ISO-8601 format.
-        providerFees:
-          type: string
-          description: Fees paid to the provider, converted to currencyTo.
-        referralFees:
-          type: string
-          description: Fees paid to Ledger, as a referral fee, converted to currencyTo.
-        providerSig:
-          $ref: '#/components/schemas/ProviderSig'
+          description: Payload signed in JWS format.
   securitySchemes:
     defaultApiKey:
       type: apiKey

@@ -181,36 +181,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CurrencyUnit:
-      properties:
-        code:
-          example: tBTC
-          type: string
-        magnitude:
-          example: 8
-          type: integer
-      required:
-      - code
-      - magnitude
-      type: object
-    TokenList:
-      properties:
-        tokens:
-          items:
-            $ref: '#/components/schemas/Token'
-          type: array
-      required:
-      - tokens
-      type: object
-    CurrencyList:
-      properties:
-        currencies:
-          items:
-            $ref: '#/components/schemas/Currency'
-          type: array
-      required:
-      - currencies
-      type: object
     Token:
       additionalProperties: false
       properties:
@@ -317,6 +287,26 @@ components:
       - name
       - parent_currency
       - units
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    AddressValidation:
+      properties:
+        is_valid:
+          type: boolean
+      required:
+      - is_valid
       type: object
     Currency:
       additionalProperties: false
@@ -443,30 +433,36 @@ components:
       - type
       - units
       type: object
-    AddressValidation:
+    CurrencyList:
       properties:
-        is_valid:
-          type: boolean
+        currencies:
+          items:
+            $ref: '#/components/schemas/Currency'
+          type: array
       required:
-      - is_valid
+      - currencies
       type: object
-    Error:
+    CurrencyUnit:
       properties:
-        message:
+        code:
+          example: tBTC
           type: string
-        name:
-          type: string
-        status_code:
+        magnitude:
+          example: 8
           type: integer
       required:
-      - message
-      - name
-      - status_code
+      - code
+      - magnitude
       type: object
-    CryptoCurrencyType:
-      oneOf:
-      - $ref: '#/components/schemas/Coin'
-      - $ref: '#/components/schemas/Token_2'
+    TokenList:
+      properties:
+        tokens:
+          items:
+            $ref: '#/components/schemas/Token'
+          type: array
+      required:
+      - tokens
+      type: object
     CryptoCurrencies:
       required:
       - id
@@ -485,10 +481,14 @@ components:
           format: int32
         contract:
           type: string
-    Token_2:
-      type: string
     Coin:
       type: string
+    Token_2:
+      type: string
+    CryptoCurrencyType:
+      oneOf:
+      - $ref: '#/components/schemas/Coin'
+      - $ref: '#/components/schemas/Token_2'
   securitySchemes:
     Ledger_API_User:
       description: (**required**) Username of a registered API User

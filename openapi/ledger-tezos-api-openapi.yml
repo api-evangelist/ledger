@@ -237,17 +237,119 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    APISearchPageInfo:
+    StellarMemoId:
       properties:
-        count:
-          example: 1
+        MEMO_ID:
+          description: Id Memo (unsigned 64 bits integer)
           type: integer
-        has_next_page:
-          example: false
-          type: boolean
+        type:
+          default: MEMO_ID
       required:
-      - count
-      - has_next_page
+      - MEMO_ID
+      type: object
+    PolkadotAnonymousProxyFields:
+      properties:
+        anonymousproxy_address:
+          default: null
+          description: Address of the proxy created
+          type:
+          - string
+          - 'null'
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        kind:
+          description: Type of the proxy to create
+          example: Any
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: Anonymous
+      required:
+      - kind
+      type: object
+    ProviderRegistrationIds:
+      properties:
+        chainalysis:
+          description: Chainalysis's transaction registration id
+          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
+          type: string
+      required:
+      - chainalysis
+      type: object
+    ProviderTransactionRiskDetails:
+      properties:
+        chainalysis:
+          default: null
+          description: Chainalysis's transaction risk scoring and details
+          items:
+            $ref: '#/components/schemas/ChainalysisTransactionAlert'
+          type:
+          - array
+          - 'null'
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    PolkadotAddProxyFields:
+      properties:
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        kind:
+          description: Kind of proxy to add
+          enum:
+          - Staking
+          example: Staking
+        proxy:
+          description: Address of the proxy to add
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: AddProxy/RemoveProxy
+      required:
+      - kind
+      - proxy
+      type: object
+    RippleFields:
+      properties:
+        destination_tag:
+          default: null
+          description: ripple destination tag
+          type:
+          - integer
+          - 'null'
+        type:
+          enum:
+          - Ripple
+      required:
+      - type
       type: object
     LabelInfo:
       properties:
@@ -263,69 +365,68 @@ components:
       - color
       - description
       type: object
-    CardanoTxMetadata:
+    DefaultFields:
       properties:
-        amount:
-          default: null
-          type:
-          - integer
-          - 'null'
-        change_path:
-          default: null
-          type:
-          - string
-          - 'null'
-        stake_path:
-          default: null
-          type:
-          - string
-          - 'null'
-      type: object
-    PolkadotFields1:
-      properties:
-        tx_parameters:
-          description: Fields for specific transaction types
-          oneOf:
-          - $ref: '#/components/schemas/PolkadotBondFields'
-          - $ref: '#/components/schemas/PolkadotSetControllerFields'
-          - $ref: '#/components/schemas/PolkadotSetPayeeFields'
-          - $ref: '#/components/schemas/PolkadotAddProxyFields'
-          - $ref: '#/components/schemas/PolkadotKillAnonymousFields'
-          - $ref: '#/components/schemas/PolkadotAnonymousProxyFields'
-          - $ref: '#/components/schemas/PolkadotCommonFields'
         type:
-          enum:
-          - Polkadot
+          type: string
       required:
-      - tx_parameters
       - type
       type: object
-    PolkadotCommonFields:
+    _TezosStakeSearchResult:
       properties:
-        is_proxy:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/_TezosStake'
+      required:
+      - cursor
+      - node
+      type: object
+    EthereumSmartContractFields:
+      properties:
+        contract_data:
+          description: The transaction data provided to the smart contract, encoded according to the ABI specification
+          example: '0x42842e0e000000000000000000000000b13bb982865b222c2e62b665512e2dbc9187453500000000000000000000000053d4a2e021ceec9d58127071499ac88c782d91ac0000000000000000000000000000000000000000000000000000000000000002'
+          type: string
+        contract_name:
           default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
+          description: The Etherscan name of the smart contract executed
+          example: 'Lido: stETH Token'
           type:
           - string
           - 'null'
-      type: object
-    TransactionFailureReasons:
-      properties:
-        client_reason:
-          example: human readable message
-          type: string
-        reason:
-          example: detail
-          type: string
+        dapp:
+          default: null
+          description: The name of the Ledger Enterprise DApp
+          example: lido
+          type:
+          - string
+          - 'null'
+        function_arguments:
+          additionalProperties: {}
+          default: null
+          description: The JSON object with the arguments for the smart contract function execution, as per the contract's ABI specification.
+          example: '{amount: 123, spender: 0x123456789abcedf}'
+          type:
+          - object
+          - 'null'
+        function_name:
+          default: null
+          description: The name of the smart contract function executed, as per the contract's ABI specification.
+          example: safeTransferFrom
+          type:
+          - string
+          - 'null'
+        smart_contract_interaction_type:
+          default: null
+          description: The internal Ledger Enterprise type for the contract interaction
+          example: swap
+          type:
+          - string
+          - 'null'
       required:
-      - client_reason
-      - reason
+      - contract_data
       type: object
     PolkadotKillAnonymousFields:
       properties:
@@ -365,33 +466,7 @@ components:
       - index
       - kind
       type: object
-    TransactionCompliance:
-      properties:
-        registration_ids:
-          allOf:
-          - $ref: '#/components/schemas/ProviderRegistrationIds'
-          description: Transaction's registration id per compliance provider
-        risk:
-          allOf:
-          - $ref: '#/components/schemas/TransactionRisk'
-          default: null
-          description: Transaction's risk scoring and details per provider
-      required:
-      - registration_ids
-      type: object
-    SolanaStakeMergeFields:
-      properties:
-        merge_dst_account:
-          description: The account to merge in
-          type: string
-        merge_src_account:
-          description: The account to merge
-          type: string
-      required:
-      - merge_dst_account
-      - merge_src_account
-      type: object
-    EthereumAndEvmFieldsEip1559:
+    EthereumAndEvmFieldsLegacy:
       properties:
         contract_deployment:
           allOf:
@@ -405,204 +480,54 @@ components:
           description: gas limit in wei
           pattern: ^[0-9]*(\.[0-9]+)?$
           type: string
-        priority_fees:
-          description: The maximum priority fee per gas for the Ethereum transaction, in the smallest currency unit.
-          example: '2000'
+        gas_price:
+          description: gas price in wei
           pattern: ^[0-9]*(\.[0-9]+)?$
           type: string
         type:
           default: EthereumAndEvm
       required:
       - gas_limit
-      - priority_fees
+      - gas_price
       type: object
-    PolkadotBondFields:
+    APISearchPageInfo:
       properties:
-        controller:
-          description: Address of controller account
-          type: string
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        payee:
-          description: Rewards destination
-          type: string
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: Bond
-      required:
-      - controller
-      - payee
-      type: object
-    PolkadotAddProxyFields:
-      properties:
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        kind:
-          description: Kind of proxy to add
-          enum:
-          - Staking
-          example: Staking
-        proxy:
-          description: Address of the proxy to add
-          type: string
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: AddProxy/RemoveProxy
-      required:
-      - kind
-      - proxy
-      type: object
-    StellarMemoId:
-      properties:
-        MEMO_ID:
-          description: Id Memo (unsigned 64 bits integer)
+        count:
+          example: 1
           type: integer
-        type:
-          default: MEMO_ID
-      required:
-      - MEMO_ID
-      type: object
-    StellarMemoHash:
-      properties:
-        MEMO_HASH:
-          description: Transaction Hash Memo (64 bytes hexadecimal string)
-          type: string
-        type:
-          default: MEMO_HASH
-      required:
-      - MEMO_HASH
-      type: object
-    PolkadotSetPayeeFields:
-      properties:
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        payee:
-          description: Rewards destination
-          type: string
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: SetPayee
-      required:
-      - payee
-      type: object
-    SolanaCreateSPLTokenAccountFields:
-      properties:
-        token_mint:
-          description: The token mint address of the token to create an account for
-          type: string
-      required:
-      - token_mint
-      type: object
-    User:
-      additionalProperties: false
-      properties:
-        created_by:
-          example: 5
-          type: integer
-        created_on:
-          format: date-time
-          type: string
-        id:
-          type: integer
-        is_api:
+        has_next_page:
           example: false
           type: boolean
-        key_handle:
+      required:
+      - count
+      - has_next_page
+      type: object
+    PolkadotCommonFields:
+      properties:
+        is_proxy:
           default: null
-          example: 7920380c812ab0b752b5f04a2561a736f136d9937af542bce149bad075ee25f60f21dad3fa9a8a88bc3fa80a360b3680bb7e1ef6179701e41f9d90fd5f6b475d
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
           type:
           - string
           - 'null'
-        last_request:
-          default: null
-          example: 2
-          type:
-          - integer
-          - 'null'
-        pub_key:
-          default: null
-          example: 040BAE7B34D9AB3056D575128F24B42D09705FF9CFCD860790DF8147D45888E4C8C9C19AE837298C45CBC595152EA5F43788431F6B4C0017030351C05F6C505FCA
-          type:
-          - string
-          - 'null'
-        role:
-          example: OPERATOR
-          oneOf:
-          - enum:
-            - ADMIN
-            - ADMIN_SYSTEM
-            - OPERATOR
-            - SHARED_OWNER
-            - WRAPPING_KEYS
-            type: string
-          - enum:
-            - READ_ONLY_API_KEY
-            type: string
-        status:
-          example: ACTIVE
-          oneOf:
-          - enum:
-            - ACCESS_SUSPENDED
-            - ACTIVE
-            - APPROVED
-            - PENDING_APPROVAL
-            - PENDING_REGISTRATION
-            - PENDING_REVOCATION
-            - REJECTED
-            - REVOKED
-            type: string
-          - enum:
-            - ABORTED
-            - ACTIVE
-            - PENDING_APPROVAL
-            - PENDING_SECRET
-            - REVOKED
-            - SUSPENDED
-            type: string
-        user_id:
-          default: null
-          example: 5CA88C5165CF3640
-          type:
-          - string
-          - 'null'
-        username:
-          example: operator1
+      type: object
+    TransactionFailureReasons:
+      properties:
+        client_reason:
+          example: human readable message
+          type: string
+        reason:
+          example: detail
           type: string
       required:
-      - created_by
-      - created_on
-      - id
-      - is_api
-      - role
-      - status
-      - username
+      - client_reason
+      - reason
       type: object
     TransactionRisk:
       properties:
@@ -629,117 +554,284 @@ components:
           - string
           - 'null'
       type: object
-    _TezosStake:
-      additionalProperties: false
+    TezosRewardInfo:
       properties:
-        amount:
-          default: null
-          description: The amount staked assets in base unit of the network
-          example: '1267766544284682'
-          type:
-          - string
-          - 'null'
-        blockchain_state:
-          $ref: '#/components/schemas/TezosStakeBlockchainState'
-        created_by:
-          description: The user who created the staking position
-          example: 1
-          oneOf:
-          - $ref: '#/components/schemas/User'
-          - type: integer
-        created_on:
-          default: null
-          description: The creation date of the stake
-          example: '2022-11-15T21:03:42+00:00'
-          type:
-          - string
-          - 'null'
-        creation_tx:
-          description: The transaction which created the staking position
-          example: 123
-          oneOf:
-          - $ref: '#/components/schemas/Transaction'
-          - type: integer
-        id:
-          type: integer
-        last_request:
-          default: null
-          description: The last request pointing to the staking position
-          example: 3
-          oneOf:
-          - $ref: '#/components/schemas/Request'
-          - type: integer
-        stake_uid:
-          default: null
-          description: The uid of the stake
-          example: ca8b0b2d-b80f-4bf9-a754-f760a24ab359
-          type:
-          - string
-          - 'null'
-        status:
-          description: The Vault status of the stake
-          enum:
-          - ABORTED
-          - ACTIVATING
-          - ACTIVE
-          - DEACTIVATED
-          - DEACTIVATING
-          - DELETED
-          - PENDING
-          - UNKNOWN
-          example: ACTIVE
+        active_balance:
+          description: balance that generated the rewards
+          example: '44284682'
           type: string
-        total_reward:
+        cycle:
+          description: cycle in which the reward has been granted
+          example: 450
+          type: integer
+        cycle_begins_at:
+          description: starting date of the cycle
+          example: '2022-02-07T10:45:24+00:00'
+          type: string
+        gross_apy:
+          description: APY for the cycle
+          example: '6.009173441783252'
+          type: string
+        rewards:
+          description: reward's amount
+          example: '21545'
+          type: string
+      required:
+      - active_balance
+      - cycle
+      - cycle_begins_at
+      - gross_apy
+      - rewards
+      type: object
+    TezosStakeBlockchainState:
+      properties:
+        activated_at:
           default: null
-          description: The total rewards generated by the stake
-          example: '15235656561'
+          description: date on wich the stake was activated
+          example: '2023-02-06T02:48:59+00:00'
+          format: date-time
           type:
           - string
           - 'null'
-        validator:
+        activated_cycle:
           default: null
-          description: The validator address to which the stake was delegated
+          description: cycle in which the stake was activated
+          example: 575
+          type:
+          - integer
+          - 'null'
+        active_balance:
+          default: null
+          description: amount of assets generating rewards in base unit of the network
+          example: '322254'
+          type:
+          - string
+          - 'null'
+        baker_address:
+          description: baker address to which the stake was delegated
           example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
+          type: string
+        delegated_at:
+          description: date at wich the stake was delegated
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        delegated_block:
+          default: null
+          description: tezos block on which the stake was delegated
+          example: '3071075'
+          type:
+          - string
+          - 'null'
+        delegated_cycle:
+          default: null
+          description: cycle in which the stake was delegated
+          example: 568
+          type:
+          - integer
+          - 'null'
+        gross_apy:
+          default: null
+          description: total APY generated by the stake
+          example: '38.33349571462074'
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        rewards:
+          default: null
+          description: the total rewards generated by the stake
+          example: '6958'
+          type:
+          - string
+          - 'null'
+        state:
+          description: status of the stake on chain
+          enum:
+          - activating
+          - active
+          - inactive
+          - syncing
+          example: active
+          type: string
+        updated_at:
+          default: null
+          description: date on wich the stake was last updated
+          example: '2023-03-10T17:38:41+00:00'
+          format: date-time
           type:
           - string
           - 'null'
       required:
-      - blockchain_state
-      - created_by
-      - creation_tx
-      - id
-      - status
+      - baker_address
+      - delegated_at
+      - state
       type: object
-    ProviderTransactionRiskDetails:
+    ChainalysisTransactionAlert:
       properties:
-        chainalysis:
+        category_id:
           default: null
-          description: Chainalysis's transaction risk scoring and details
-          items:
-            $ref: '#/components/schemas/ChainalysisTransactionAlert'
+          description: The identifier of the entity category the alert rule is tracking
+          example: 3
           type:
-          - array
+          - integer
           - 'null'
-      type: object
-    TezosFields1:
-      properties:
-        gas_limit:
+        exposure_type:
+          description: Defines the exposure direction as DIRECT or INDIRECT
+          enum:
+          - DIRECT
+          - INDIRECT
+          example: DIRECT
+        provider_id:
+          description: A unique identifier of the alert
+          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
+          type: string
+        risk:
+          description: Address risk as defined by Chainalysis
+          enum:
+          - High
+          - Low
+          - Medium
+          - Severe
+          example: Severe
+        service:
           default: null
-          description: gas limit
-          pattern: ^[0-9]*(\.[0-9]+)?$
+          description: The name of the service as defined by Chainalysis
+          example: OFAC SDN Blender.io 2022-05-06
           type:
           - string
           - 'null'
-        storage_limit:
+        value:
+          description: The USD amount that caused the alert to trigger
+          example: 8868.24
+          type: number
+      required:
+      - exposure_type
+      - provider_id
+      - risk
+      - value
+      type: object
+    StellarFields:
+      properties:
+        memo:
           default: null
-          description: storage limit
-          pattern: ^[0-9]*(\.[0-9]+)?$
+          description: A valid stellar memo
+          oneOf:
+          - $ref: '#/components/schemas/StellarMemoHash'
+          - $ref: '#/components/schemas/StellarMemoId'
+          - $ref: '#/components/schemas/StellarMemoReturn'
+          - $ref: '#/components/schemas/StellarMemoText'
+        type:
+          enum:
+          - Stellar
+      required:
+      - type
+      type: object
+    Block:
+      properties:
+        details:
+          additionalProperties: {}
+          default: null
+          description: The block's details
+          type:
+          - object
+          - 'null'
+        hash:
+          example: '0x3bb33b6cc7c4aeea0e7383ddd8ef238c44abe8e3d73ffa27b78dd130a2a56687'
+          type: string
+        height:
+          example: 7463221
+          type: integer
+        time:
+          example: '2020-12-11T12:56:35.370946+00:00'
+          format: date-time
+          type: string
+      required:
+      - hash
+      - height
+      - time
+      type: object
+    SolanaStakeActionFields:
+      properties:
+        stake_account:
+          description: The account from which to withdraw
+          type: string
+      required:
+      - stake_account
+      type: object
+    PolkadotSetControllerFields:
+      properties:
+        controller:
+          description: Address of controller account
+          type: string
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
           type:
           - string
           - 'null'
         type:
+          default: SetController
+      required:
+      - controller
+      type: object
+    StellarMemoHash:
+      properties:
+        MEMO_HASH:
+          description: Transaction Hash Memo (64 bytes hexadecimal string)
+          type: string
+        type:
+          default: MEMO_HASH
+      required:
+      - MEMO_HASH
+      type: object
+    CardanoTxMetadata:
+      properties:
+        amount:
+          default: null
+          type:
+          - integer
+          - 'null'
+        change_path:
+          default: null
+          type:
+          - string
+          - 'null'
+        stake_path:
+          default: null
+          type:
+          - string
+          - 'null'
+      type: object
+    StellarMemoReturn:
+      properties:
+        MEMO_RETURN:
+          description: A 64 bytes hexadecimal string intended to be interpreted as the hash of the transaction the sender is refunding.
+          type: string
+        type:
+          default: MEMO_RETURN
+      required:
+      - MEMO_RETURN
+      type: object
+    SolanaFields:
+      properties:
+        tx_parameters:
+          default: null
+          description: Fields for specific transaction types
+          oneOf:
+          - $ref: '#/components/schemas/SolanaStakeActionFields'
+          - $ref: '#/components/schemas/SolanaStakeMergeFields'
+          - $ref: '#/components/schemas/SolanaCreateSPLTokenAccountFields'
+          - $ref: '#/components/schemas/SolanaSendSPLTokenFields'
+        type:
           enum:
-          - Tezos
+          - Solana
       required:
       - type
       type: object
@@ -854,162 +946,59 @@ components:
       - target_type
       - type
       type: object
-    EthereumContractDeploymentFields:
+    SolanaStakeMergeFields:
       properties:
-        creation_bytecode:
-          default: null
-          description: The contract compiled bytecode
-          example: 60806040526b06765c793fa10079d00000006000553480156200002157600080fd5b506040516200341338038062003413833981016040819052620000449162000171565b42811015620000705760405162461bcd60e51b8152600401620000679062000273
-          type:
-          - string
-          - 'null'
-      type: object
-    RippleFields:
-      properties:
-        destination_tag:
-          default: null
-          description: ripple destination tag
-          type:
-          - integer
-          - 'null'
-        type:
-          enum:
-          - Ripple
+        merge_dst_account:
+          description: The account to merge in
+          type: string
+        merge_src_account:
+          description: The account to merge
+          type: string
       required:
-      - type
+      - merge_dst_account
+      - merge_src_account
       type: object
-    TezosRewards:
+    TransactionCompliance:
       properties:
-        amount:
-          description: reward's amount
-          example: '27098488'
-          type: string
-        created_on:
-          description: reward's creation date
-          example: '2020-12-11T12:56:35.370946+00:00'
-          type: string
-        info:
+        registration_ids:
           allOf:
-          - $ref: '#/components/schemas/TezosRewardInfo'
-          description: On chain stake reward info
-        stake_uid:
-          description: The UID of the stake
-          example: 0e5135ce7f91
-          type: string
-      required:
-      - amount
-      - created_on
-      - info
-      - stake_uid
-      type: object
-    Block:
-      properties:
-        details:
-          additionalProperties: {}
+          - $ref: '#/components/schemas/ProviderRegistrationIds'
+          description: Transaction's registration id per compliance provider
+        risk:
+          allOf:
+          - $ref: '#/components/schemas/TransactionRisk'
           default: null
-          description: The block's details
-          type:
-          - object
-          - 'null'
-        hash:
-          example: '0x3bb33b6cc7c4aeea0e7383ddd8ef238c44abe8e3d73ffa27b78dd130a2a56687'
-          type: string
-        height:
-          example: 7463221
-          type: integer
-        time:
-          example: '2020-12-11T12:56:35.370946+00:00'
-          format: date-time
-          type: string
+          description: Transaction's risk scoring and details per provider
       required:
-      - hash
-      - height
-      - time
+      - registration_ids
       type: object
-    _TezosStakeSearchResult:
+    _APISearchTezosStakeResults:
       properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/_TezosStake'
+        edges:
+          items:
+            $ref: '#/components/schemas/_TezosStakeSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
       required:
-      - cursor
-      - node
+      - edges
+      - page_info
       type: object
-    PolkadotSetControllerFields:
+    SolanaCreateSPLTokenAccountFields:
       properties:
-        controller:
-          description: Address of controller account
+        token_mint:
+          description: The token mint address of the token to create an account for
           type: string
-        is_proxy:
-          default: null
-          description: Is the transaction realized via proxy ?
-          type:
-          - boolean
-          - 'null'
-        real:
-          default: null
-          description: In the case of a proxied transaction, address of the proxied account.
-          type:
-          - string
-          - 'null'
-        type:
-          default: SetController
       required:
-      - controller
+      - token_mint
       type: object
-    StellarMemoText:
+    SolanaSendSPLTokenFields:
       properties:
-        MEMO_TEXT:
-          description: Text Memo (at most a 28 bytes string)
-          type: string
-        type:
-          default: MEMO_TEXT
-      required:
-      - MEMO_TEXT
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    TezosRewardInfo:
-      properties:
-        active_balance:
-          description: balance that generated the rewards
-          example: '44284682'
-          type: string
-        cycle:
-          description: cycle in which the reward has been granted
-          example: 450
-          type: integer
-        cycle_begins_at:
-          description: starting date of the cycle
-          example: '2022-02-07T10:45:24+00:00'
-          type: string
-        gross_apy:
-          description: APY for the cycle
-          example: '6.009173441783252'
-          type: string
-        rewards:
-          description: reward's amount
-          example: '21545'
+        token_mint:
+          description: The token mint address of the token to interact with
           type: string
       required:
-      - active_balance
-      - cycle
-      - cycle_begins_at
-      - gross_apy
-      - rewards
+      - token_mint
       type: object
     LiteLabel:
       additionalProperties: false
@@ -1027,300 +1016,15 @@ components:
       - info
       - name
       type: object
-    EthereumAndEvmFieldsLegacy:
+    EthereumContractDeploymentFields:
       properties:
-        contract_deployment:
-          allOf:
-          - $ref: '#/components/schemas/EthereumContractDeploymentFields'
+        creation_bytecode:
           default: null
-        contract_interaction:
-          allOf:
-          - $ref: '#/components/schemas/EthereumSmartContractFields'
-          default: null
-        gas_limit:
-          description: gas limit in wei
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type: string
-        gas_price:
-          description: gas price in wei
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type: string
-        type:
-          default: EthereumAndEvm
-      required:
-      - gas_limit
-      - gas_price
-      type: object
-    TezosStakeBlockchainState:
-      properties:
-        activated_at:
-          default: null
-          description: date on wich the stake was activated
-          example: '2023-02-06T02:48:59+00:00'
-          format: date-time
+          description: The contract compiled bytecode
+          example: 60806040526b06765c793fa10079d00000006000553480156200002157600080fd5b506040516200341338038062003413833981016040819052620000449162000171565b42811015620000705760405162461bcd60e51b8152600401620000679062000273
           type:
           - string
           - 'null'
-        activated_cycle:
-          default: null
-          description: cycle in which the stake was activated
-          example: 575
-          type:
-          - integer
-          - 'null'
-        active_balance:
-          default: null
-          description: amount of assets generating rewards in base unit of the network
-          example: '322254'
-          type:
-          - string
-          - 'null'
-        baker_address:
-          description: baker address to which the stake was delegated
-          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
-          type: string
-        delegated_at:
-          description: date at wich the stake was delegated
-          example: '2023-01-19T15:18:29+00:00'
-          format: date-time
-          type: string
-        delegated_block:
-          default: null
-          description: tezos block on which the stake was delegated
-          example: '3071075'
-          type:
-          - string
-          - 'null'
-        delegated_cycle:
-          default: null
-          description: cycle in which the stake was delegated
-          example: 568
-          type:
-          - integer
-          - 'null'
-        gross_apy:
-          default: null
-          description: total APY generated by the stake
-          example: '38.33349571462074'
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type:
-          - string
-          - 'null'
-        rewards:
-          default: null
-          description: the total rewards generated by the stake
-          example: '6958'
-          type:
-          - string
-          - 'null'
-        state:
-          description: status of the stake on chain
-          enum:
-          - activating
-          - active
-          - inactive
-          - syncing
-          example: active
-          type: string
-        updated_at:
-          default: null
-          description: date on wich the stake was last updated
-          example: '2023-03-10T17:38:41+00:00'
-          format: date-time
-          type:
-          - string
-          - 'null'
-      required:
-      - baker_address
-      - delegated_at
-      - state
-      type: object
-    SolanaStakeActionFields:
-      properties:
-        stake_account:
-          description: The account from which to withdraw
-          type: string
-      required:
-      - stake_account
-      type: object
-    EthereumSmartContractFields:
-      properties:
-        contract_data:
-          description: The transaction data provided to the smart contract, encoded according to the ABI specification
-          example: '0x42842e0e000000000000000000000000b13bb982865b222c2e62b665512e2dbc9187453500000000000000000000000053d4a2e021ceec9d58127071499ac88c782d91ac0000000000000000000000000000000000000000000000000000000000000002'
-          type: string
-        contract_name:
-          default: null
-          description: The Etherscan name of the smart contract executed
-          example: 'Lido: stETH Token'
-          type:
-          - string
-          - 'null'
-        dapp:
-          default: null
-          description: The name of the Ledger Enterprise DApp
-          example: lido
-          type:
-          - string
-          - 'null'
-        function_arguments:
-          additionalProperties: {}
-          default: null
-          description: The JSON object with the arguments for the smart contract function execution, as per the contract's ABI specification.
-          example: '{amount: 123, spender: 0x123456789abcedf}'
-          type:
-          - object
-          - 'null'
-        function_name:
-          default: null
-          description: The name of the smart contract function executed, as per the contract's ABI specification.
-          example: safeTransferFrom
-          type:
-          - string
-          - 'null'
-        smart_contract_interaction_type:
-          default: null
-          description: The internal Ledger Enterprise type for the contract interaction
-          example: swap
-          type:
-          - string
-          - 'null'
-      required:
-      - contract_data
-      type: object
-    BitcoinFields:
-      properties:
-        fees_per_byte:
-          default: null
-          description: fees per bytes
-          pattern: ^[0-9]*(\.[0-9]+)?$
-          type:
-          - string
-          - 'null'
-        type:
-          enum:
-          - Bitcoin
-        utxo_picking_strategy:
-          default: null
-          description: UTXO strategy used for this transaction
-          enum:
-          - null
-          - DEEP_OUTPUTS_FIRST
-          - MERGE_OUTPUTS
-          - OPTIMIZE_SIZE
-          type:
-          - string
-          - 'null'
-      required:
-      - type
-      type: object
-    SolanaFields:
-      properties:
-        tx_parameters:
-          default: null
-          description: Fields for specific transaction types
-          oneOf:
-          - $ref: '#/components/schemas/SolanaStakeActionFields'
-          - $ref: '#/components/schemas/SolanaStakeMergeFields'
-          - $ref: '#/components/schemas/SolanaCreateSPLTokenAccountFields'
-          - $ref: '#/components/schemas/SolanaSendSPLTokenFields'
-        type:
-          enum:
-          - Solana
-      required:
-      - type
-      type: object
-    CardanoCoinFields:
-      properties:
-        type:
-          enum:
-          - Cardano
-      required:
-      - type
-      type: object
-    ProviderRegistrationIds:
-      properties:
-        chainalysis:
-          description: Chainalysis's transaction registration id
-          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
-          type: string
-      required:
-      - chainalysis
-      type: object
-    DefaultFields:
-      properties:
-        type:
-          type: string
-      required:
-      - type
-      type: object
-    StellarFields:
-      properties:
-        memo:
-          default: null
-          description: A valid stellar memo
-          oneOf:
-          - $ref: '#/components/schemas/StellarMemoHash'
-          - $ref: '#/components/schemas/StellarMemoId'
-          - $ref: '#/components/schemas/StellarMemoReturn'
-          - $ref: '#/components/schemas/StellarMemoText'
-        type:
-          enum:
-          - Stellar
-      required:
-      - type
-      type: object
-    ChainalysisTransactionAlert:
-      properties:
-        category_id:
-          default: null
-          description: The identifier of the entity category the alert rule is tracking
-          example: 3
-          type:
-          - integer
-          - 'null'
-        exposure_type:
-          description: Defines the exposure direction as DIRECT or INDIRECT
-          enum:
-          - DIRECT
-          - INDIRECT
-          example: DIRECT
-        provider_id:
-          description: A unique identifier of the alert
-          example: 906ff226-8b64-11eb-8e52-7b35a3dc1742
-          type: string
-        risk:
-          description: Address risk as defined by Chainalysis
-          enum:
-          - High
-          - Low
-          - Medium
-          - Severe
-          example: Severe
-        service:
-          default: null
-          description: The name of the service as defined by Chainalysis
-          example: OFAC SDN Blender.io 2022-05-06
-          type:
-          - string
-          - 'null'
-        value:
-          description: The USD amount that caused the alert to trigger
-          example: 8868.24
-          type: number
-      required:
-      - exposure_type
-      - provider_id
-      - risk
-      - value
-      type: object
-    SolanaSendSPLTokenFields:
-      properties:
-        token_mint:
-          description: The token mint address of the token to interact with
-          type: string
-      required:
-      - token_mint
       type: object
     Transaction:
       additionalProperties: false
@@ -1643,15 +1347,84 @@ components:
       - status
       - type
       type: object
-    StellarMemoReturn:
+    EthereumAndEvmFieldsEip1559:
       properties:
-        MEMO_RETURN:
-          description: A 64 bytes hexadecimal string intended to be interpreted as the hash of the transaction the sender is refunding.
+        contract_deployment:
+          allOf:
+          - $ref: '#/components/schemas/EthereumContractDeploymentFields'
+          default: null
+        contract_interaction:
+          allOf:
+          - $ref: '#/components/schemas/EthereumSmartContractFields'
+          default: null
+        gas_limit:
+          description: gas limit in wei
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type: string
+        priority_fees:
+          description: The maximum priority fee per gas for the Ethereum transaction, in the smallest currency unit.
+          example: '2000'
+          pattern: ^[0-9]*(\.[0-9]+)?$
           type: string
         type:
-          default: MEMO_RETURN
+          default: EthereumAndEvm
       required:
-      - MEMO_RETURN
+      - gas_limit
+      - priority_fees
+      type: object
+    TezosRewards:
+      properties:
+        amount:
+          description: reward's amount
+          example: '27098488'
+          type: string
+        created_on:
+          description: reward's creation date
+          example: '2020-12-11T12:56:35.370946+00:00'
+          type: string
+        info:
+          allOf:
+          - $ref: '#/components/schemas/TezosRewardInfo'
+          description: On chain stake reward info
+        stake_uid:
+          description: The UID of the stake
+          example: 0e5135ce7f91
+          type: string
+      required:
+      - amount
+      - created_on
+      - info
+      - stake_uid
+      type: object
+    PolkadotSetPayeeFields:
+      properties:
+        is_proxy:
+          default: null
+          description: Is the transaction realized via proxy ?
+          type:
+          - boolean
+          - 'null'
+        payee:
+          description: Rewards destination
+          type: string
+        real:
+          default: null
+          description: In the case of a proxied transaction, address of the proxied account.
+          type:
+          - string
+          - 'null'
+        type:
+          default: SetPayee
+      required:
+      - payee
+      type: object
+    CardanoCoinFields:
+      properties:
+        type:
+          enum:
+          - Cardano
+      required:
+      - type
       type: object
     TransactionNote:
       properties:
@@ -1665,23 +1438,19 @@ components:
       - content
       - title
       type: object
-    PolkadotAnonymousProxyFields:
+    PolkadotBondFields:
       properties:
-        anonymousproxy_address:
-          default: null
-          description: Address of the proxy created
-          type:
-          - string
-          - 'null'
+        controller:
+          description: Address of controller account
+          type: string
         is_proxy:
           default: null
           description: Is the transaction realized via proxy ?
           type:
           - boolean
           - 'null'
-        kind:
-          description: Type of the proxy to create
-          example: Any
+        payee:
+          description: Rewards destination
           type: string
         real:
           default: null
@@ -1690,21 +1459,252 @@ components:
           - string
           - 'null'
         type:
-          default: Anonymous
+          default: Bond
       required:
-      - kind
+      - controller
+      - payee
       type: object
-    _APISearchTezosStakeResults:
+    BitcoinFields:
       properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/_TezosStakeSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
+        fees_per_byte:
+          default: null
+          description: fees per bytes
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        type:
+          enum:
+          - Bitcoin
+        utxo_picking_strategy:
+          default: null
+          description: UTXO strategy used for this transaction
+          enum:
+          - null
+          - DEEP_OUTPUTS_FIRST
+          - MERGE_OUTPUTS
+          - OPTIMIZE_SIZE
+          type:
+          - string
+          - 'null'
       required:
-      - edges
-      - page_info
+      - type
+      type: object
+    TezosFields1:
+      properties:
+        gas_limit:
+          default: null
+          description: gas limit
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        storage_limit:
+          default: null
+          description: storage limit
+          pattern: ^[0-9]*(\.[0-9]+)?$
+          type:
+          - string
+          - 'null'
+        type:
+          enum:
+          - Tezos
+      required:
+      - type
+      type: object
+    _TezosStake:
+      additionalProperties: false
+      properties:
+        amount:
+          default: null
+          description: The amount staked assets in base unit of the network
+          example: '1267766544284682'
+          type:
+          - string
+          - 'null'
+        blockchain_state:
+          $ref: '#/components/schemas/TezosStakeBlockchainState'
+        created_by:
+          description: The user who created the staking position
+          example: 1
+          oneOf:
+          - $ref: '#/components/schemas/User'
+          - type: integer
+        created_on:
+          default: null
+          description: The creation date of the stake
+          example: '2022-11-15T21:03:42+00:00'
+          type:
+          - string
+          - 'null'
+        creation_tx:
+          description: The transaction which created the staking position
+          example: 123
+          oneOf:
+          - $ref: '#/components/schemas/Transaction'
+          - type: integer
+        id:
+          type: integer
+        last_request:
+          default: null
+          description: The last request pointing to the staking position
+          example: 3
+          oneOf:
+          - $ref: '#/components/schemas/Request'
+          - type: integer
+        stake_uid:
+          default: null
+          description: The uid of the stake
+          example: ca8b0b2d-b80f-4bf9-a754-f760a24ab359
+          type:
+          - string
+          - 'null'
+        status:
+          description: The Vault status of the stake
+          enum:
+          - ABORTED
+          - ACTIVATING
+          - ACTIVE
+          - DEACTIVATED
+          - DEACTIVATING
+          - DELETED
+          - PENDING
+          - UNKNOWN
+          example: ACTIVE
+          type: string
+        total_reward:
+          default: null
+          description: The total rewards generated by the stake
+          example: '15235656561'
+          type:
+          - string
+          - 'null'
+        validator:
+          default: null
+          description: The validator address to which the stake was delegated
+          example: 2S4wKimi4PHKjdTYdzqN5HcEcNBM4Hv9db9QWKaZCxEr
+          type:
+          - string
+          - 'null'
+      required:
+      - blockchain_state
+      - created_by
+      - creation_tx
+      - id
+      - status
+      type: object
+    StellarMemoText:
+      properties:
+        MEMO_TEXT:
+          description: Text Memo (at most a 28 bytes string)
+          type: string
+        type:
+          default: MEMO_TEXT
+      required:
+      - MEMO_TEXT
+      type: object
+    PolkadotFields1:
+      properties:
+        tx_parameters:
+          description: Fields for specific transaction types
+          oneOf:
+          - $ref: '#/components/schemas/PolkadotBondFields'
+          - $ref: '#/components/schemas/PolkadotSetControllerFields'
+          - $ref: '#/components/schemas/PolkadotSetPayeeFields'
+          - $ref: '#/components/schemas/PolkadotAddProxyFields'
+          - $ref: '#/components/schemas/PolkadotKillAnonymousFields'
+          - $ref: '#/components/schemas/PolkadotAnonymousProxyFields'
+          - $ref: '#/components/schemas/PolkadotCommonFields'
+        type:
+          enum:
+          - Polkadot
+      required:
+      - tx_parameters
+      - type
+      type: object
+    User:
+      additionalProperties: false
+      properties:
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        is_api:
+          example: false
+          type: boolean
+        key_handle:
+          default: null
+          example: 7920380c812ab0b752b5f04a2561a736f136d9937af542bce149bad075ee25f60f21dad3fa9a8a88bc3fa80a360b3680bb7e1ef6179701e41f9d90fd5f6b475d
+          type:
+          - string
+          - 'null'
+        last_request:
+          default: null
+          example: 2
+          type:
+          - integer
+          - 'null'
+        pub_key:
+          default: null
+          example: 040BAE7B34D9AB3056D575128F24B42D09705FF9CFCD860790DF8147D45888E4C8C9C19AE837298C45CBC595152EA5F43788431F6B4C0017030351C05F6C505FCA
+          type:
+          - string
+          - 'null'
+        role:
+          example: OPERATOR
+          oneOf:
+          - enum:
+            - ADMIN
+            - ADMIN_SYSTEM
+            - OPERATOR
+            - SHARED_OWNER
+            - WRAPPING_KEYS
+            type: string
+          - enum:
+            - READ_ONLY_API_KEY
+            type: string
+        status:
+          example: ACTIVE
+          oneOf:
+          - enum:
+            - ACCESS_SUSPENDED
+            - ACTIVE
+            - APPROVED
+            - PENDING_APPROVAL
+            - PENDING_REGISTRATION
+            - PENDING_REVOCATION
+            - REJECTED
+            - REVOKED
+            type: string
+          - enum:
+            - ABORTED
+            - ACTIVE
+            - PENDING_APPROVAL
+            - PENDING_SECRET
+            - REVOKED
+            - SUSPENDED
+            type: string
+        user_id:
+          default: null
+          example: 5CA88C5165CF3640
+          type:
+          - string
+          - 'null'
+        username:
+          example: operator1
+          type: string
+      required:
+      - created_by
+      - created_on
+      - id
+      - is_api
+      - role
+      - status
+      - username
       type: object
   securitySchemes:
     Ledger_API_User:

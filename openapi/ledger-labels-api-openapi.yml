@@ -159,6 +159,18 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    _APISearchLabelsResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/LabelSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
     APISearchPageInfo:
       properties:
         count:
@@ -170,20 +182,6 @@ components:
       required:
       - count
       - has_next_page
-      type: object
-    LabelInfo:
-      properties:
-        color:
-          description: color of the tag
-          example: '#FE4523'
-          type: string
-        description:
-          description: description of this tag
-          example: This is a SPAM
-          type: string
-      required:
-      - color
-      - description
       type: object
     Label:
       additionalProperties: false
@@ -221,17 +219,6 @@ components:
       - updated_by
       - updated_on
       type: object
-    LabelSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Label'
-      required:
-      - cursor
-      - node
-      type: object
     Error:
       properties:
         message:
@@ -245,17 +232,30 @@ components:
       - name
       - status_code
       type: object
-    _APISearchLabelsResults:
+    LabelInfo:
       properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/LabelSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
+        color:
+          description: color of the tag
+          example: '#FE4523'
+          type: string
+        description:
+          description: description of this tag
+          example: This is a SPAM
+          type: string
       required:
-      - edges
-      - page_info
+      - color
+      - description
+      type: object
+    LabelSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Label'
+      required:
+      - cursor
+      - node
       type: object
   securitySchemes:
     Ledger_API_User:

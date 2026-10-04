@@ -226,6 +226,17 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    GroupSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Group'
+      required:
+      - cursor
+      - node
+      type: object
     APISearchPageInfo:
       properties:
         count:
@@ -287,6 +298,42 @@ components:
       - members
       - name
       - status
+      type: object
+    _APISearchGroupResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/GroupSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
       type: object
     APIHistoryResult:
       properties:
@@ -369,53 +416,6 @@ components:
       - is_complete
       - status
       - type
-      type: object
-    _APISearchGroupResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/GroupSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    GroupSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Group'
-      required:
-      - cursor
-      - node
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
       type: object
   securitySchemes:
     Ledger_API_User:

@@ -175,24 +175,6 @@ components:
       - gross_apy
       - stake_balance
       type: object
-    EthereumAccountReward:
-      properties:
-        amount:
-          description: Amount of rewards received
-          example: '21354'
-          type: string
-        created_on:
-          description: Indexation date by Ledger
-          example: '2023-01-19T15:18:29+00:00'
-          format: date-time
-          type: string
-        info:
-          $ref: '#/components/schemas/EthereumStakeRewardInfo'
-      required:
-      - amount
-      - created_on
-      - info
-      type: object
     EthereumStakeReward:
       properties:
         amount:
@@ -215,6 +197,37 @@ components:
       - created_on
       - info
       - stake_uid
+      type: object
+    EthereumAccountReward:
+      properties:
+        amount:
+          description: Amount of rewards received
+          example: '21354'
+          type: string
+        created_on:
+          description: Indexation date by Ledger
+          example: '2023-01-19T15:18:29+00:00'
+          format: date-time
+          type: string
+        info:
+          $ref: '#/components/schemas/EthereumStakeRewardInfo'
+      required:
+      - amount
+      - created_on
+      - info
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
       type: object
     EthereumStakeBlockchainState:
       properties:
@@ -297,19 +310,6 @@ components:
       - delegated_at
       - state
       - validator_address
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
     _EthereumBlockchainStake:
       properties:
