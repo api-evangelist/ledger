@@ -52,6 +52,9 @@ x-source: harvest:secondary-market
 specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
+x-docs-platform: nextra
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-10-03
 tags:
   - Ledger
   - Cryptocurrency
