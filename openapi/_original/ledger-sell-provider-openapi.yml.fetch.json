@@ -1,0 +1,12 @@
+{
+ "url": "https://developers.ledger.com/exchange/openapi/sell-provider-openapi.yml",
+ "requested_url": "https://developers.ledger.com/exchange/openapi/sell-provider-openapi.yml",
+ "status": 200,
+ "content_type": "text/yaml; charset=utf-8",
+ "bytes": 29278,
+ "sha256": "d633fa06c6aff5f061d885ad8943078efa88cd24617bb3fb036793ee97cbd225",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}

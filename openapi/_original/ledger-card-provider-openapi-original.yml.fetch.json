@@ -1,0 +1,12 @@
+{
+ "url": "https://developers.ledger.com/exchange/openapi/card-provider-openapi.yml",
+ "requested_url": "https://developers.ledger.com/exchange/openapi/card-provider-openapi.yml",
+ "status": 200,
+ "content_type": "text/yaml; charset=utf-8",
+ "bytes": 10857,
+ "sha256": "7e05cb3b58c36a18a853a7e77e546896bef3f3f8e96f6c334970d91e7693e9e6",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}
