@@ -126,43 +126,345 @@ paths:
                 $ref: '#/components/schemas/ServerError'
       tags:
       - Stakes
-      summary: Get V0 network stakes
+      summary: Get V0Network stakes
       x-summary-source: derived
 components:
   schemas:
-    SolanaDetailsView:
-      title: SolanaDetailsView
+    CommissionView:
+      title: CommissionView
+      description: The commission type
+      type: string
+      enum:
+      - Net
+    AdaDetailsView:
+      title: AdaDetailsView
       type: object
       required:
-      - stake_account
-      - withdraw_pubkey
+      - poolId
+      - activationEpoch
+      - activationDate
+      properties:
+        poolId:
+          type: string
+        activationEpoch:
+          type: integer
+          format: int32
+        activationDate:
+          type: string
+          format: date-time
+    WalletView:
+      title: WalletView
+      type: object
+      required:
+      - network
+      - address
+      properties:
+        network:
+          description: Network name
+          type: string
+        address:
+          description: User wallet address
+          type: string
+    StakeView:
+      title: StakeView
+      oneOf:
+      - $ref: '#/components/schemas/StakeViewSuccess'
+      - $ref: '#/components/schemas/Failure'
+    RewardsPointsView:
+      title: RewardsPointsView
+      type: object
+      required:
+      - total
+      - last_day
+      - last_week
+      - last_month
+      - reward_name
+      - interest_rate
+      - points_value_in_currency
+      - type
+      properties:
+        total:
+          description: Total rewards earned, denominated in the smallest unit of the currency (e.g., wei for ETH).
+          type: string
+        last_day:
+          description: Rewards earned in the last 24 hours, denominated in the smallest unit of the currency (e.g., wei for ETH).
+          type: string
+        last_week:
+          description: Rewards earned in the last 7 days, denominated in the smallest unit of the currency (e.g., wei for ETH).
+          type: string
+        last_month:
+          description: Rewards earned in the last 30 days, denominated in the smallest unit of the currency (e.g., wei for ETH).
+          type: string
+        reward_name:
+          description: The name of the reward
+          type: string
+        interest_rate:
+          description: The interest rate if it exists else 0.
+          type: string
+        points_value_in_currency:
+          description: The value of the reward in the currency if it exists else 0.
+          type: string
+        type:
+          description: The type of the reward view
+          type: string
+          enum:
+          - RewardsPointsView
+    RewardsViewError:
+      title: RewardsViewError
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          description: Error code
+          type: integer
+          format: int32
+        reason:
+          description: Error message
+          type: string
+    OsmosisDetailsView:
+      title: OsmosisDetailsView
+      type: object
+      required:
+      - delegator_address
+      - rewards
+      - available_rewards
       - balance
-      - activated_epoch
-      - activated_at
       - net_apy
-      - validator_address
       - updated_at
       properties:
-        stake_account:
+        delegator_address:
           type: string
-        withdraw_pubkey:
+        rewards:
+          type: integer
+        available_rewards:
+          type: integer
+        balance:
+          type: integer
+        net_apy:
+          type: number
+          format: double
+        updated_at:
+          type: string
+          format: date-time
+    Failure:
+      title: Failure
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          $ref: '#/components/schemas/FailureView'
+    Uri:
+      title: Uri
+      type: string
+    InvalidRequest:
+      title: InvalidRequest
+      type: object
+      required:
+      - msg
+      properties:
+        msg:
+          type: string
+    CoinbaseEthereumPoolingDetailsView:
+      title: CoinbaseEthereumPoolingDetailsView
+      type: object
+      required:
+      - owner
+      - delegated_block
+      - delegated_at
+      properties:
+        owner:
+          type: string
+        delegated_block:
+          type: integer
+        delegated_at:
+          type: string
+          format: date-time
+    CosmosDetailsView:
+      title: CosmosDetailsView
+      type: object
+      required:
+      - validator_address
+      - delegator_address
+      - rewards
+      - available_rewards
+      - balance
+      - net_apy
+      - updated_at
+      properties:
+        validator_address:
+          type: string
+        delegator_address:
+          type: string
+        delegated_at:
+          type: string
+          format: date-time
+        undelegated_at:
+          type: string
+          format: date-time
+        rewards:
+          type: integer
+        available_rewards:
+          type: integer
+        balance:
+          type: integer
+        net_apy:
+          type: number
+          format: double
+        updated_at:
+          type: string
+          format: date-time
+    StatusView:
+      title: StatusView
+      type: string
+      description: The status of the stake
+      enum:
+      - activated
+      - activating
+      - archived
+      - deactivated
+      - deactivating
+    DetailsView:
+      oneOf:
+      - $ref: '#/components/schemas/EthDeFiDetailsView'
+      - $ref: '#/components/schemas/AdaDetailsView'
+      - $ref: '#/components/schemas/CosmosDetailsView'
+      - $ref: '#/components/schemas/EthNativeDetailsView'
+      - $ref: '#/components/schemas/InjectiveDetailsView'
+      - $ref: '#/components/schemas/CoinbaseEthereumPoolingDetailsView'
+      - $ref: '#/components/schemas/NearDetailsView'
+      - $ref: '#/components/schemas/OsmosisDetailsView'
+      - $ref: '#/components/schemas/SolanaDetailsView'
+      - $ref: '#/components/schemas/StakeKitStakeDetailsView'
+      - $ref: '#/components/schemas/StakeKitVaultDetailsView'
+      - $ref: '#/components/schemas/TezosDetailsView'
+    TezosDetailsView:
+      title: TezosDetailsView
+      type: object
+      required:
+      - stake_address
+      - backer_address
+      - balance
+      - rewards
+      - gross_apy
+      - delegated_cycle
+      - updated_at
+      properties:
+        stake_address:
+          type: string
+        backer_address:
           type: string
         balance:
           type: integer
-        activated_epoch:
+        rewards:
+          type: integer
+        gross_apy:
+          type: number
+          format: double
+        delegated_at:
+          type: string
+          format: date-time
+        delegated_block:
+          type: integer
+        delegated_cycle:
+          type: integer
+          format: int32
+        activated_cycle:
           type: integer
           format: int32
         activated_at:
           type: string
           format: date-time
-        net_apy:
-          type: number
-          format: double
-        validator_address:
-          type: string
         updated_at:
           type: string
           format: date-time
+    FailureView:
+      title: FailureView
+      type: object
+      required:
+      - code
+      - reason
+      - details
+      properties:
+        code:
+          description: The error code
+          type: integer
+          format: int32
+        reason:
+          description: The error reason
+          type: string
+        details:
+          $ref: '#/components/schemas/Map_String'
+          description: The error details
+    NearDetailsView:
+      title: NearDetailsView
+      type: object
+      required:
+      - stakeAccount
+      - canWithdraw
+      - validator
+      - netApy
+      - activatedEpoch
+      - activatedAt
+      - updatedAt
+      properties:
+        stakeAccount:
+          type: string
+        canWithdraw:
+          type: boolean
+        validator:
+          type: string
+        netApy:
+          type: number
+          format: double
+        activatedEpoch:
+          type: integer
+          format: int32
+        activatedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ServerError:
+      title: ServerError
+      type: object
+      required:
+      - msg
+      properties:
+        msg:
+          type: string
+    RewardsView:
+      title: RewardsView
+      type: array
+      items:
+        oneOf:
+        - $ref: '#/components/schemas/RewardsTokensView'
+        - $ref: '#/components/schemas/RewardsPointsView'
+        - $ref: '#/components/schemas/RewardsViewError'
+    NotFound:
+      title: NotFound
+      type: object
+      required:
+      - what
+      properties:
+        what:
+          type: string
+    EthDeFiDetailsView:
+      title: EthDeFiDetailsView
+      type: object
+      required:
+      - contract_address
+      properties:
+        contract_address:
+          type: string
+        type:
+          type: string
+      example:
+        contract_address: '0x4dac23030b3ce359681fb7c00426f989a84e5298'
+        type: EthDefiDetailsView
     Map_String:
       title: Map_String
       type: object
@@ -210,88 +512,118 @@ components:
           $ref: '#/components/schemas/RewardsView'
         details:
           $ref: '#/components/schemas/DetailsView'
-    CoinbaseEthereumPoolingDetailsView:
-      title: CoinbaseEthereumPoolingDetailsView
+    InjectiveDetailsView:
+      title: InjectiveDetailsView
       type: object
       required:
-      - owner
-      - delegated_block
-      - delegated_at
+      - validator_address
+      - delegator_address
+      - rewards
+      - available_rewards
+      - balance
+      - net_apy
+      - updated_at
       properties:
-        owner:
+        validator_address:
           type: string
-        delegated_block:
-          type: integer
+        delegator_address:
+          type: string
         delegated_at:
           type: string
           format: date-time
-    RewardsViewError:
-      title: RewardsViewError
+        undelegated_at:
+          type: string
+          format: date-time
+        rewards:
+          type: integer
+        available_rewards:
+          type: integer
+        balance:
+          type: integer
+        net_apy:
+          type: number
+          format: double
+        updated_at:
+          type: string
+          format: date-time
+    SolanaDetailsView:
+      title: SolanaDetailsView
       type: object
       required:
-      - code
-      - reason
+      - stake_account
+      - withdraw_pubkey
+      - balance
+      - activated_epoch
+      - activated_at
+      - net_apy
+      - validator_address
+      - updated_at
       properties:
-        code:
-          description: Error code
+        stake_account:
+          type: string
+        withdraw_pubkey:
+          type: string
+        balance:
+          type: integer
+        activated_epoch:
           type: integer
           format: int32
-        reason:
-          description: Error message
+        activated_at:
           type: string
-    StakeKitVaultDetailsView:
-      title: StakeKitVaultDetailsView
+          format: date-time
+        net_apy:
+          type: number
+          format: double
+        validator_address:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+    Unauthorized:
+      title: Unauthorized
       type: object
       required:
-      - contract_address
-      - protocol
-      - protocol_display_name
-      - protocol_icon
-      - asset_icon
-      - shared_symbol
+      - realm
       properties:
-        contract_address:
+        realm:
           type: string
-          description: Address of the token held in the user’s wallet.
-        protocol:
+    StakeKitStakeDetailsView:
+      title: StakeKitStakeDetailsView
+      type: object
+      required:
+      - symbol
+      - validator
+      - rewards
+      - balance
+      - net_apy
+      - yield_id
+      properties:
+        symbol:
           type: string
-          description: The name of the protocol.
-        protocol_display_name:
+          description: The symbol of the token held by the user.
+        validator:
           type: string
-          description: The name of the protocol to display.
-        protocol_icon:
+          description: The address of the validator the user delegated assets to.
+        net_apy:
+          type: number
+          format: double
+          description: Net annual percentage yield.
+        yield_id:
           type: string
-          description: The URL pointing to the protocol's icon in PNG format.
-        asset_icon:
+          description: Stakekit Integration ID.
+    InterestView:
+      title: InterestView
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        type:
+          description: The type of interest - APY
           type: string
-          description: The URL pointing to the asset’s icon in PNG format.
-        shared_symbol:
+        value:
+          description: The Net APY interest rate. Interest user is getting from their staking position. Not the protocol's APY.
           type: string
-          description: The symbol of the asset held in the user’s wallet.
-    DetailsView:
-      oneOf:
-      - $ref: '#/components/schemas/EthDeFiDetailsView'
-      - $ref: '#/components/schemas/AdaDetailsView'
-      - $ref: '#/components/schemas/CosmosDetailsView'
-      - $ref: '#/components/schemas/EthNativeDetailsView'
-      - $ref: '#/components/schemas/InjectiveDetailsView'
-      - $ref: '#/components/schemas/CoinbaseEthereumPoolingDetailsView'
-      - $ref: '#/components/schemas/NearDetailsView'
-      - $ref: '#/components/schemas/OsmosisDetailsView'
-      - $ref: '#/components/schemas/SolanaDetailsView'
-      - $ref: '#/components/schemas/StakeKitStakeDetailsView'
-      - $ref: '#/components/schemas/StakeKitVaultDetailsView'
-      - $ref: '#/components/schemas/TezosDetailsView'
-    StatusView:
-      title: StatusView
-      type: string
-      description: The status of the stake
-      enum:
-      - activated
-      - activating
-      - archived
-      - deactivated
-      - deactivating
     EthNativeDetailsView:
       title: EthNativeDetailsView
       type: object
@@ -357,364 +689,32 @@ components:
           type: string
           enum:
           - RewardsTokenView
-    InjectiveDetailsView:
-      title: InjectiveDetailsView
-      type: object
-      required:
-      - validator_address
-      - delegator_address
-      - rewards
-      - available_rewards
-      - balance
-      - net_apy
-      - updated_at
-      properties:
-        validator_address:
-          type: string
-        delegator_address:
-          type: string
-        delegated_at:
-          type: string
-          format: date-time
-        undelegated_at:
-          type: string
-          format: date-time
-        rewards:
-          type: integer
-        available_rewards:
-          type: integer
-        balance:
-          type: integer
-        net_apy:
-          type: number
-          format: double
-        updated_at:
-          type: string
-          format: date-time
-    CosmosDetailsView:
-      title: CosmosDetailsView
-      type: object
-      required:
-      - validator_address
-      - delegator_address
-      - rewards
-      - available_rewards
-      - balance
-      - net_apy
-      - updated_at
-      properties:
-        validator_address:
-          type: string
-        delegator_address:
-          type: string
-        delegated_at:
-          type: string
-          format: date-time
-        undelegated_at:
-          type: string
-          format: date-time
-        rewards:
-          type: integer
-        available_rewards:
-          type: integer
-        balance:
-          type: integer
-        net_apy:
-          type: number
-          format: double
-        updated_at:
-          type: string
-          format: date-time
-    EthDeFiDetailsView:
-      title: EthDeFiDetailsView
+    StakeKitVaultDetailsView:
+      title: StakeKitVaultDetailsView
       type: object
       required:
       - contract_address
+      - protocol
+      - protocol_display_name
+      - protocol_icon
+      - asset_icon
+      - shared_symbol
       properties:
         contract_address:
           type: string
-        type:
+          description: Address of the token held in the user’s wallet.
+        protocol:
           type: string
-      example:
-        contract_address: '0x4dac23030b3ce359681fb7c00426f989a84e5298'
-        type: EthDefiDetailsView
-    StakeKitStakeDetailsView:
-      title: StakeKitStakeDetailsView
-      type: object
-      required:
-      - symbol
-      - validator
-      - rewards
-      - balance
-      - net_apy
-      - yield_id
-      properties:
-        symbol:
+          description: The name of the protocol.
+        protocol_display_name:
           type: string
-          description: The symbol of the token held by the user.
-        validator:
+          description: The name of the protocol to display.
+        protocol_icon:
           type: string
-          description: The address of the validator the user delegated assets to.
-        net_apy:
-          type: number
-          format: double
-          description: Net annual percentage yield.
-        yield_id:
+          description: The URL pointing to the protocol's icon in PNG format.
+        asset_icon:
           type: string
-          description: Stakekit Integration ID.
-    CommissionView:
-      title: CommissionView
-      description: The commission type
-      type: string
-      enum:
-      - Net
-    Failure:
-      title: Failure
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          $ref: '#/components/schemas/FailureView'
-    OsmosisDetailsView:
-      title: OsmosisDetailsView
-      type: object
-      required:
-      - delegator_address
-      - rewards
-      - available_rewards
-      - balance
-      - net_apy
-      - updated_at
-      properties:
-        delegator_address:
+          description: The URL pointing to the asset’s icon in PNG format.
+        shared_symbol:
           type: string
-        rewards:
-          type: integer
-        available_rewards:
-          type: integer
-        balance:
-          type: integer
-        net_apy:
-          type: number
-          format: double
-        updated_at:
-          type: string
-          format: date-time
-    RewardsView:
-      title: RewardsView
-      type: array
-      items:
-        oneOf:
-        - $ref: '#/components/schemas/RewardsTokensView'
-        - $ref: '#/components/schemas/RewardsPointsView'
-        - $ref: '#/components/schemas/RewardsViewError'
-    NotFound:
-      title: NotFound
-      type: object
-      required:
-      - what
-      properties:
-        what:
-          type: string
-    TezosDetailsView:
-      title: TezosDetailsView
-      type: object
-      required:
-      - stake_address
-      - backer_address
-      - balance
-      - rewards
-      - gross_apy
-      - delegated_cycle
-      - updated_at
-      properties:
-        stake_address:
-          type: string
-        backer_address:
-          type: string
-        balance:
-          type: integer
-        rewards:
-          type: integer
-        gross_apy:
-          type: number
-          format: double
-        delegated_at:
-          type: string
-          format: date-time
-        delegated_block:
-          type: integer
-        delegated_cycle:
-          type: integer
-          format: int32
-        activated_cycle:
-          type: integer
-          format: int32
-        activated_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-    WalletView:
-      title: WalletView
-      type: object
-      required:
-      - network
-      - address
-      properties:
-        network:
-          description: Network name
-          type: string
-        address:
-          description: User wallet address
-          type: string
-    Uri:
-      title: Uri
-      type: string
-    NearDetailsView:
-      title: NearDetailsView
-      type: object
-      required:
-      - stakeAccount
-      - canWithdraw
-      - validator
-      - netApy
-      - activatedEpoch
-      - activatedAt
-      - updatedAt
-      properties:
-        stakeAccount:
-          type: string
-        canWithdraw:
-          type: boolean
-        validator:
-          type: string
-        netApy:
-          type: number
-          format: double
-        activatedEpoch:
-          type: integer
-          format: int32
-        activatedAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    InterestView:
-      title: InterestView
-      type: object
-      required:
-      - type
-      - value
-      properties:
-        type:
-          description: The type of interest - APY
-          type: string
-        value:
-          description: The Net APY interest rate. Interest user is getting from their staking position. Not the protocol's APY.
-          type: string
-    RewardsPointsView:
-      title: RewardsPointsView
-      type: object
-      required:
-      - total
-      - last_day
-      - last_week
-      - last_month
-      - reward_name
-      - interest_rate
-      - points_value_in_currency
-      - type
-      properties:
-        total:
-          description: Total rewards earned, denominated in the smallest unit of the currency (e.g., wei for ETH).
-          type: string
-        last_day:
-          description: Rewards earned in the last 24 hours, denominated in the smallest unit of the currency (e.g., wei for ETH).
-          type: string
-        last_week:
-          description: Rewards earned in the last 7 days, denominated in the smallest unit of the currency (e.g., wei for ETH).
-          type: string
-        last_month:
-          description: Rewards earned in the last 30 days, denominated in the smallest unit of the currency (e.g., wei for ETH).
-          type: string
-        reward_name:
-          description: The name of the reward
-          type: string
-        interest_rate:
-          description: The interest rate if it exists else 0.
-          type: string
-        points_value_in_currency:
-          description: The value of the reward in the currency if it exists else 0.
-          type: string
-        type:
-          description: The type of the reward view
-          type: string
-          enum:
-          - RewardsPointsView
-    AdaDetailsView:
-      title: AdaDetailsView
-      type: object
-      required:
-      - poolId
-      - activationEpoch
-      - activationDate
-      properties:
-        poolId:
-          type: string
-        activationEpoch:
-          type: integer
-          format: int32
-        activationDate:
-          type: string
-          format: date-time
-    ServerError:
-      title: ServerError
-      type: object
-      required:
-      - msg
-      properties:
-        msg:
-          type: string
-    InvalidRequest:
-      title: InvalidRequest
-      type: object
-      required:
-      - msg
-      properties:
-        msg:
-          type: string
-    Unauthorized:
-      title: Unauthorized
-      type: object
-      required:
-      - realm
-      properties:
-        realm:
-          type: string
-    FailureView:
-      title: FailureView
-      type: object
-      required:
-      - code
-      - reason
-      - details
-      properties:
-        code:
-          description: The error code
-          type: integer
-          format: int32
-        reason:
-          description: The error reason
-          type: string
-        details:
-          $ref: '#/components/schemas/Map_String'
-          description: The error details
-    StakeView:
-      title: StakeView
-      oneOf:
-      - $ref: '#/components/schemas/StakeViewSuccess'
-      - $ref: '#/components/schemas/Failure'
+          description: The symbol of the asset held in the user’s wallet.

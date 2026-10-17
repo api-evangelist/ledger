@@ -226,17 +226,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    GroupSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Group'
-      required:
-      - cursor
-      - node
-      type: object
     APISearchPageInfo:
       properties:
         count:
@@ -248,92 +237,6 @@ components:
       required:
       - count
       - has_next_page
-      type: object
-    Group:
-      additionalProperties: false
-      properties:
-        created_by:
-          example: 5
-          type: integer
-        created_on:
-          format: date-time
-          type: string
-        description:
-          example: group of trusted validators
-          type: string
-        id:
-          type: integer
-        last_request:
-          default: null
-          example: 3
-          type:
-          - integer
-          - 'null'
-        members:
-          example:
-          - 11
-          - 12
-          items:
-            default: null
-            type:
-            - integer
-            - 'null'
-          type: array
-        name:
-          example: validators
-          type: string
-        status:
-          enum:
-          - ACTIVE
-          - PENDING
-          - REJECTED
-          - REVOKED
-          example: ACTIVE
-          type: string
-      required:
-      - created_by
-      - created_on
-      - description
-      - id
-      - members
-      - name
-      - status
-      type: object
-    _APISearchGroupResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/GroupSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
     APIHistoryResult:
       properties:
@@ -416,6 +319,103 @@ components:
       - is_complete
       - status
       - type
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    Group:
+      additionalProperties: false
+      properties:
+        created_by:
+          example: 5
+          type: integer
+        created_on:
+          format: date-time
+          type: string
+        description:
+          example: group of trusted validators
+          type: string
+        id:
+          type: integer
+        last_request:
+          default: null
+          example: 3
+          type:
+          - integer
+          - 'null'
+        members:
+          example:
+          - 11
+          - 12
+          items:
+            default: null
+            type:
+            - integer
+            - 'null'
+          type: array
+        name:
+          example: validators
+          type: string
+        status:
+          enum:
+          - ACTIVE
+          - PENDING
+          - REJECTED
+          - REVOKED
+          example: ACTIVE
+          type: string
+      required:
+      - created_by
+      - created_on
+      - description
+      - id
+      - members
+      - name
+      - status
+      type: object
+    _APISearchGroupResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/GroupSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    GroupSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Group'
+      required:
+      - cursor
+      - node
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
       type: object
   securitySchemes:
     Ledger_API_User:

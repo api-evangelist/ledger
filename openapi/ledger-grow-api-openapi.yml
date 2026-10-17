@@ -54,10 +54,35 @@ paths:
                 $ref: '#/components/schemas/ServerError'
       tags:
       - Grow
-      summary: Get V0 grow
+      summary: Get V0Grow
       x-summary-source: derived
 components:
   schemas:
+    Unauthorized:
+      title: Unauthorized
+      type: object
+      required:
+      - realm
+      properties:
+        realm:
+          type: string
+    ProtocolInterestView:
+      title: InterestView
+      type: object
+      required:
+      - type
+      - value
+      - currency
+      properties:
+        type:
+          description: The type of interest - APY
+          type: string
+        value:
+          description: The protocol's Net APY interest rate.
+          type: string
+        currency:
+          description: Ledger crypto currency ID
+          type: string
     Success1:
       title: Success
       type: object
@@ -75,51 +100,11 @@ components:
         interest:
           $ref: '#/components/schemas/ProtocolInterestView'
           description: The interest information
-    Map_String:
-      title: Map_String
-      type: object
-      additionalProperties:
-        type: string
-    NotFound:
-      title: NotFound
-      type: object
-      required:
-      - what
-      properties:
-        what:
-          type: string
-    ServerError:
-      title: ServerError
-      type: object
-      required:
-      - msg
-      properties:
-        msg:
-          type: string
-    Unauthorized:
-      title: Unauthorized
-      type: object
-      required:
-      - realm
-      properties:
-        realm:
-          type: string
     GrowResponse:
       title: GrowResponse
       oneOf:
       - $ref: '#/components/schemas/Success1'
       - $ref: '#/components/schemas/Failure1'
-    Failure1:
-      title: Failure
-      type: object
-      required:
-      - network
-      - error
-      properties:
-        network:
-          type: string
-        error:
-          $ref: '#/components/schemas/FailureView'
     FailureView:
       title: FailureView
       type: object
@@ -138,20 +123,35 @@ components:
         details:
           $ref: '#/components/schemas/Map_String'
           description: The error details
-    ProtocolInterestView:
-      title: InterestView
+    ServerError:
+      title: ServerError
       type: object
       required:
-      - type
-      - value
-      - currency
+      - msg
       properties:
-        type:
-          description: The type of interest - APY
+        msg:
           type: string
-        value:
-          description: The protocol's Net APY interest rate.
+    NotFound:
+      title: NotFound
+      type: object
+      required:
+      - what
+      properties:
+        what:
           type: string
-        currency:
-          description: Ledger crypto currency ID
+    Failure1:
+      title: Failure
+      type: object
+      required:
+      - network
+      - error
+      properties:
+        network:
           type: string
+        error:
+          $ref: '#/components/schemas/FailureView'
+    Map_String:
+      title: Map_String
+      type: object
+      additionalProperties:
+        type: string

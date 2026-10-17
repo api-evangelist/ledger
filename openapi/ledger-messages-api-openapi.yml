@@ -234,17 +234,6 @@ components:
       - count
       - has_next_page
       type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
-      type: object
     MessageSearchResult:
       properties:
         cursor:
@@ -255,43 +244,6 @@ components:
       required:
       - cursor
       - node
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    _APISearchMessageResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/MessageSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    TransactionOrMessageNote:
-      properties:
-        content:
-          example: some information about this transaction
-          type: string
-        title:
-          example: a note title
-          type: string
-      required:
-      - content
-      - title
       type: object
     APIHistoryResult:
       properties:
@@ -374,6 +326,54 @@ components:
       - is_complete
       - status
       - type
+      type: object
+    _APISearchMessageResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/MessageSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    TransactionOrMessageNote:
+      properties:
+        content:
+          example: some information about this transaction
+          type: string
+        title:
+          example: a note title
+          type: string
+      required:
+      - content
+      - title
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
       type: object
     Message:
       additionalProperties: false

@@ -91,48 +91,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    ErrorPayload:
-      type: object
-      required:
-      - message
-      - messageKey
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
-    SellResponse:
-      required:
-      - sellId
-      - payinAddress
-      - createdAt
-      - providerFees
-      - referralFees
-      - providerSig
-      type: object
-      properties:
-        sellId:
-          type: string
-          description: 'provider''s id of the ongoing sell transaction. This will be used by Ledger''s backend to retrieve the status of user sell transaction. A unique id must be generated each time this endpoint is called, even if called with a same quoteId : quoteId != sellId. This is a sell attempt id and several retries sharing the same quote id might be performed by a user.'
-        payinAddress:
-          type: string
-          description: Provider's payin address.
-        createdAt:
-          type: string
-          description: Creation date of the sell payload in ISO-8601 format.
-        providerFees:
-          type: string
-          description: Fees paid to the provider, converted to currencyTo.
-        referralFees:
-          type: string
-          description: Fees paid to Ledger, as a referral fee, converted to currencyTo.
-        providerSig:
-          $ref: '#/components/schemas/ProviderSig'
     SellRequest:
       required:
       - quoteId
@@ -180,6 +138,48 @@ components:
         signature:
           type: string
           description: Payload signed in JWS format.
+    SellResponse:
+      required:
+      - sellId
+      - payinAddress
+      - createdAt
+      - providerFees
+      - referralFees
+      - providerSig
+      type: object
+      properties:
+        sellId:
+          type: string
+          description: 'provider''s id of the ongoing sell transaction. This will be used by Ledger''s backend to retrieve the status of user sell transaction. A unique id must be generated each time this endpoint is called, even if called with a same quoteId : quoteId != sellId. This is a sell attempt id and several retries sharing the same quote id might be performed by a user.'
+        payinAddress:
+          type: string
+          description: Provider's payin address.
+        createdAt:
+          type: string
+          description: Creation date of the sell payload in ISO-8601 format.
+        providerFees:
+          type: string
+          description: Fees paid to the provider, converted to currencyTo.
+        referralFees:
+          type: string
+          description: Fees paid to Ledger, as a referral fee, converted to currencyTo.
+        providerSig:
+          $ref: '#/components/schemas/ProviderSig'
+    ErrorPayload:
+      type: object
+      required:
+      - message
+      - messageKey
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
   securitySchemes:
     defaultApiKey:
       type: apiKey

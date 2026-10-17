@@ -158,18 +158,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    _APISearchPledgeResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/PledgeSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
     TradelinkExchange:
       properties:
         approver_group_id:
@@ -192,6 +180,22 @@ components:
       - role
       - whitelist_id
       type: object
+    TradelinkCustodian:
+      properties:
+        code:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+      required:
+      - code
+      - id
+      - name
+      - role
+      type: object
     APISearchPageInfo:
       properties:
         count:
@@ -203,6 +207,18 @@ components:
       required:
       - count
       - has_next_page
+      type: object
+    _APISearchPledgeResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/PledgeSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
       type: object
     TradelinkAssetManager:
       properties:
@@ -225,6 +241,17 @@ components:
       - name
       - role
       - whitelist_id
+      type: object
+    PledgeSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Pledge'
+      required:
+      - cursor
+      - node
       type: object
     Error:
       properties:
@@ -287,33 +314,6 @@ components:
       - pending
       - pledge_subaccount_id
       - state
-      type: object
-    PledgeSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Pledge'
-      required:
-      - cursor
-      - node
-      type: object
-    TradelinkCustodian:
-      properties:
-        code:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-      required:
-      - code
-      - id
-      - name
-      - role
       type: object
   securitySchemes:
     Ledger_API_User:

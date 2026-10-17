@@ -181,133 +181,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Token:
-      additionalProperties: false
-      properties:
-        contract_address:
-          description: The token contract address.
-          example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-          type: string
-        name:
-          description: The token name.
-          example: USD Tether (erc20)
-          type: string
-        parent_currency:
-          enum:
-          - Dollar
-          - Euro
-          - arbitrum
-          - arbitrum_goerli
-          - arbitrum_sepolia
-          - avalanche_c_chain
-          - avalanche_c_chain_fuji
-          - base
-          - base_goerli
-          - base_sepolia
-          - bitcoin
-          - bitcoin_cash
-          - bitcoin_gold
-          - bitcoin_testnet
-          - blast
-          - blast_sepolia
-          - bsc
-          - cardano
-          - celo
-          - celo_alfajores
-          - cosmos
-          - cronos
-          - cronos_testnet
-          - dash
-          - digibyte
-          - dogecoin
-          - ethereum
-          - ethereum_classic
-          - ethereum_goerli
-          - ethereum_holesky
-          - ethereum_hoodi
-          - ethereum_pow
-          - ethereum_ropsten
-          - ethereum_sepolia
-          - etherlink
-          - fantom
-          - fantom_testnet
-          - filecoin
-          - filecoin_calibration
-          - flare
-          - flare_coston
-          - kava_evm
-          - kava_evm_testnet
-          - klaytn
-          - klaytn_baobab
-          - komodo
-          - linea
-          - litecoin
-          - mantle
-          - mantle_sepolia
-          - near
-          - neon_evm
-          - optimism
-          - optimism_goerli
-          - optimism_sepolia
-          - pivx
-          - polkadot
-          - polygon
-          - polygon_amoy
-          - polygon_mumbai
-          - polygon_zk_evm
-          - polygon_zk_evm_testnet
-          - pulsechain
-          - pulsechain_testnet
-          - ripple
-          - scroll
-          - scroll_sepolia
-          - solana
-          - solana_devnet
-          - solana_testnet
-          - sonic
-          - stellar
-          - tezos
-          - tomo
-          - tomo_testnet
-          - tron
-          - vertcoin
-          - viacoin
-          - westend
-          example: ethereum
-          type: string
-        units:
-          example:
-            code: USDT
-            magnitude: 6
-          items:
-            $ref: '#/components/schemas/CurrencyUnit'
-          type: array
-      required:
-      - contract_address
-      - name
-      - parent_currency
-      - units
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
-    AddressValidation:
-      properties:
-        is_valid:
-          type: boolean
-      required:
-      - is_valid
-      type: object
     Currency:
       additionalProperties: false
       properties:
@@ -433,6 +306,142 @@ components:
       - type
       - units
       type: object
+    AddressValidation:
+      properties:
+        is_valid:
+          type: boolean
+      required:
+      - is_valid
+      type: object
+    Token:
+      additionalProperties: false
+      properties:
+        contract_address:
+          description: The token contract address.
+          example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+          type: string
+        name:
+          description: The token name.
+          example: USD Tether (erc20)
+          type: string
+        parent_currency:
+          enum:
+          - Dollar
+          - Euro
+          - arbitrum
+          - arbitrum_goerli
+          - arbitrum_sepolia
+          - avalanche_c_chain
+          - avalanche_c_chain_fuji
+          - base
+          - base_goerli
+          - base_sepolia
+          - bitcoin
+          - bitcoin_cash
+          - bitcoin_gold
+          - bitcoin_testnet
+          - blast
+          - blast_sepolia
+          - bsc
+          - cardano
+          - celo
+          - celo_alfajores
+          - cosmos
+          - cronos
+          - cronos_testnet
+          - dash
+          - digibyte
+          - dogecoin
+          - ethereum
+          - ethereum_classic
+          - ethereum_goerli
+          - ethereum_holesky
+          - ethereum_hoodi
+          - ethereum_pow
+          - ethereum_ropsten
+          - ethereum_sepolia
+          - etherlink
+          - fantom
+          - fantom_testnet
+          - filecoin
+          - filecoin_calibration
+          - flare
+          - flare_coston
+          - kava_evm
+          - kava_evm_testnet
+          - klaytn
+          - klaytn_baobab
+          - komodo
+          - linea
+          - litecoin
+          - mantle
+          - mantle_sepolia
+          - near
+          - neon_evm
+          - optimism
+          - optimism_goerli
+          - optimism_sepolia
+          - pivx
+          - polkadot
+          - polygon
+          - polygon_amoy
+          - polygon_mumbai
+          - polygon_zk_evm
+          - polygon_zk_evm_testnet
+          - pulsechain
+          - pulsechain_testnet
+          - ripple
+          - scroll
+          - scroll_sepolia
+          - solana
+          - solana_devnet
+          - solana_testnet
+          - sonic
+          - stellar
+          - tezos
+          - tomo
+          - tomo_testnet
+          - tron
+          - vertcoin
+          - viacoin
+          - westend
+          example: ethereum
+          type: string
+        units:
+          example:
+            code: USDT
+            magnitude: 6
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+      required:
+      - contract_address
+      - name
+      - parent_currency
+      - units
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    TokenList:
+      properties:
+        tokens:
+          items:
+            $ref: '#/components/schemas/Token'
+          type: array
+      required:
+      - tokens
+      type: object
     CurrencyList:
       properties:
         currencies:
@@ -454,15 +463,6 @@ components:
       - code
       - magnitude
       type: object
-    TokenList:
-      properties:
-        tokens:
-          items:
-            $ref: '#/components/schemas/Token'
-          type: array
-      required:
-      - tokens
-      type: object
     CryptoCurrencies:
       required:
       - id
@@ -481,14 +481,14 @@ components:
           format: int32
         contract:
           type: string
-    Coin:
-      type: string
-    Token_2:
-      type: string
     CryptoCurrencyType:
       oneOf:
       - $ref: '#/components/schemas/Coin'
       - $ref: '#/components/schemas/Token_2'
+    Token_2:
+      type: string
+    Coin:
+      type: string
   securitySchemes:
     Ledger_API_User:
       description: (**required**) Username of a registered API User

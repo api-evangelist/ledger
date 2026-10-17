@@ -203,21 +203,6 @@ components:
           type: number
         dca:
           type: boolean
-    ErrorPayload:
-      type: object
-      required:
-      - message
-      - messageKey
-      properties:
-        messageKey:
-          type: string
-          description: Error code.
-        message:
-          type: string
-          description: Error message description.
-        additionalFields:
-          type: object
-          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
     QuoteResponse:
       required:
       - quoteId
@@ -245,8 +230,11 @@ components:
         expiry:
           type: string
           description: Quote expiration timestamp
-    ErrorPayload_2:
+    ErrorPayload:
       type: object
+      required:
+      - message
+      - messageKey
       properties:
         messageKey:
           type: string
@@ -322,6 +310,18 @@ components:
           type: string
           description: Or the amountTo, it's the amount that user will spend for the swap. (required only for float quotes)
           example: '1'
+    ErrorPayload_2:
+      type: object
+      properties:
+        messageKey:
+          type: string
+          description: Error code.
+        message:
+          type: string
+          description: Error message description.
+        additionalFields:
+          type: object
+          description: Provides further details on the error, including specific amounts involved in the request. All amounts are presented in their respective currency units.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -247,30 +247,6 @@ components:
       - count
       - has_next_page
       type: object
-    APIHistoryResults:
-      properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
-      required:
-      - history
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
-      type: object
     Whitelist:
       additionalProperties: false
       properties:
@@ -327,6 +303,135 @@ components:
       - id
       - name
       - status
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
+          type: string
+      required:
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    _APISearchWhitelistResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/WhitelistSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    APIHistoryResults:
+      properties:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    WhitelistSearchResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/Whitelist'
+      required:
+      - cursor
+      - node
       type: object
     WhitelistAddress:
       properties:
@@ -430,111 +535,6 @@ components:
       - currency
       - id
       - name
-      type: object
-    APIHistoryResult:
-      properties:
-        created_by:
-          default: null
-          example: 5
-          type:
-          - integer
-          - 'null'
-        created_on:
-          format: date-time
-          type: string
-        expired_at:
-          format: date-time
-          type: string
-        id:
-          example: 1
-          type: integer
-        is_complete:
-          type: boolean
-        status:
-          enum:
-          - ACTIVE
-          - APPROVED
-          - BLOCKED
-          - EXPIRED
-          - PENDING_APPROVAL
-          - PENDING_FIRST_APPROVAL
-          - PENDING_REGISTRATION
-          - REJECTED
-          - SIGNED
-          - SUBMITTED
-          example: ACTIVE
-          type: string
-        type:
-          enum:
-          - ACTIVATE
-          - CREATE_ACCOUNT
-          - CREATE_ADMIN
-          - CREATE_ADMIN_GROUP
-          - CREATE_API_USER
-          - CREATE_API_USER_ACCESS
-          - CREATE_DAPPS_CONFIG
-          - CREATE_ENTITY
-          - CREATE_FORCED_UNPLEDGE
-          - CREATE_GROUP
-          - CREATE_OPERATOR
-          - CREATE_PLEDGE_INCREMENT
-          - CREATE_POLICY
-          - CREATE_REPLEDGE
-          - CREATE_TRADELINK
-          - CREATE_TRADELINK_ASSET_MANAGER
-          - CREATE_TRADELINK_EXCHANGE
-          - CREATE_TRANSACTION
-          - CREATE_WHITELIST
-          - EDIT_ACCOUNT
-          - EDIT_ADMIN_GROUP
-          - EDIT_DAPPS_CONFIG
-          - EDIT_ENTITY
-          - EDIT_GROUP
-          - EDIT_POLICY
-          - EDIT_WHITELIST
-          - MESSAGE_SIGNING
-          - MIGRATE_ACCOUNT
-          - MIGRATE_ADMIN
-          - MIGRATE_GROUP
-          - MIGRATE_OPERATOR
-          - MIGRATE_WHITELIST
-          - REVOKE_ENTITY
-          - REVOKE_GROUP
-          - REVOKE_USER
-          - SIGN_DIGESTS
-          - UPDATE_QUORUM
-          example: CREATE_ACCOUNT
-          type: string
-      required:
-      - created_on
-      - expired_at
-      - id
-      - is_complete
-      - status
-      - type
-      type: object
-    _APISearchWhitelistResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/WhitelistSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    WhitelistSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Whitelist'
-      required:
-      - cursor
-      - node
       type: object
   securitySchemes:
     Ledger_API_User:

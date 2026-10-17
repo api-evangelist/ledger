@@ -78,32 +78,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ChainalysisAddressRisk:
-      properties:
-        exposures:
-          description: An array that contains the address's current direct exposures
-          items:
-            $ref: '#/components/schemas/Exposure'
-          type: array
-        reason:
-          default: null
-          description: A human-readable string that provides the rationale for the returned risk assessment
-          example: '> 49% Exposure To High Risk Jurisdiction'
-          type:
-          - string
-          - 'null'
-        risk:
-          description: Address risk as defined by Chainalysis
-          enum:
-          - High
-          - Low
-          - Medium
-          - Severe
-          example: Severe
-      required:
-      - exposures
-      - risk
-      type: object
     Exposure:
       properties:
         category:
@@ -117,41 +91,6 @@ components:
       required:
       - category
       - value
-      type: object
-    AddressRisk:
-      properties:
-        address:
-          description: The address that was checked
-          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
-          type: string
-        provider_details:
-          allOf:
-          - $ref: '#/components/schemas/ChainalysisAddressRisk'
-          description: Details from the compliance provider
-        risk:
-          description: Address risk as defined by Ledger
-          enum:
-          - HIGH
-          - LOW
-          - MEDIUM
-          example: HIGH
-      required:
-      - address
-      - provider_details
-      - risk
-      type: object
-    Error:
-      properties:
-        message:
-          type: string
-        name:
-          type: string
-        status_code:
-          type: integer
-      required:
-      - message
-      - name
-      - status_code
       type: object
     ChainalysisAddressSanction:
       properties:
@@ -196,6 +135,67 @@ components:
       - address
       - has_sanctions
       - provider_details
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    ChainalysisAddressRisk:
+      properties:
+        exposures:
+          description: An array that contains the address's current direct exposures
+          items:
+            $ref: '#/components/schemas/Exposure'
+          type: array
+        reason:
+          default: null
+          description: A human-readable string that provides the rationale for the returned risk assessment
+          example: '> 49% Exposure To High Risk Jurisdiction'
+          type:
+          - string
+          - 'null'
+        risk:
+          description: Address risk as defined by Chainalysis
+          enum:
+          - High
+          - Low
+          - Medium
+          - Severe
+          example: Severe
+      required:
+      - exposures
+      - risk
+      type: object
+    AddressRisk:
+      properties:
+        address:
+          description: The address that was checked
+          example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+          type: string
+        provider_details:
+          allOf:
+          - $ref: '#/components/schemas/ChainalysisAddressRisk'
+          description: Details from the compliance provider
+        risk:
+          description: Address risk as defined by Ledger
+          enum:
+          - HIGH
+          - LOW
+          - MEDIUM
+          example: HIGH
+      required:
+      - address
+      - provider_details
+      - risk
       type: object
   securitySchemes:
     Ledger_API_User:

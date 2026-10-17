@@ -555,6 +555,29 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    PaginatedSafeDelegateResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeDelegateResponse'
     DelegateSerializerV2:
       type: object
       description: Mixin to validate delegate operations data
@@ -583,29 +606,6 @@ components:
       - label
       - signature
       x-gitbook-description-html: <p>Mixin to validate delegate operations data</p>
-    PaginatedSafeDelegateResponseList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/SafeDelegateResponse'
     SafeDelegateResponse:
       type: object
       properties:

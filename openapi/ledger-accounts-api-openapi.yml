@@ -1018,7 +1018,226 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    LightTokenAccount:
+    SolanaAccountFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/SolanaStakingInfo'
+          description: Solana Staking balances and rewards
+        type:
+          default: Solana
+      required:
+      - staking
+      type: object
+    APISearchPageInfo:
+      properties:
+        count:
+          example: 1
+          type: integer
+        has_next_page:
+          example: false
+          type: boolean
+      required:
+      - count
+      - has_next_page
+      type: object
+    _APISearchAccountResults:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/AccountSearchResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    NFT:
+      properties:
+        contract_address:
+          type: string
+        metadata:
+          allOf:
+          - $ref: '#/components/schemas/NFTMetadata'
+          default: null
+        price:
+          allOf:
+          - $ref: '#/components/schemas/NFTPrice'
+          default: null
+        token_id:
+          type: string
+        token_type:
+          description: ERC-721 or ERC-1155
+          type: string
+        tx_balance:
+          allOf:
+          - $ref: '#/components/schemas/NFTTransactionBalance'
+          default: null
+        value:
+          type: integer
+      required:
+      - contract_address
+      - token_id
+      - token_type
+      - value
+      type: object
+    AccountSmartContractInteractionRuleEntry:
+      properties:
+        enabled:
+          type: boolean
+      required:
+      - enabled
+      type: object
+    EthereumStakingInfo:
+      properties:
+        available_rewards:
+          default: null
+          description: Available rewards
+          type:
+          - string
+          - 'null'
+        network_apy:
+          default: null
+          description: APY
+          type:
+          - number
+          - 'null'
+        total_rewards:
+          default: null
+          description: Total rewards
+          type:
+          - string
+          - 'null'
+        total_staking:
+          default: null
+          description: Total staking
+          type:
+          - string
+          - 'null'
+      type: object
+    Media:
+      properties:
+        mediaType:
+          default: null
+          type:
+          - string
+          - 'null'
+        uri:
+          type: string
+      required:
+      - uri
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status_code:
+          type: integer
+      required:
+      - message
+      - name
+      - status_code
+      type: object
+    PolkadotBalancesWithUnbondingInfo:
+      properties:
+        available:
+          type: string
+        bonded:
+          type: string
+        free:
+          type: string
+        frozen:
+          type: string
+        reserved:
+          type: string
+        total:
+          type: string
+        total_unbonded:
+          type: string
+        total_unbonding:
+          type: string
+        unbonded:
+          items:
+            $ref: '#/components/schemas/PolkadotUnbondingInfo'
+          type: array
+        unbonding:
+          items:
+            $ref: '#/components/schemas/PolkadotUnbondingInfo'
+          type: array
+      required:
+      - available
+      - bonded
+      - free
+      - frozen
+      - reserved
+      - total
+      - total_unbonded
+      - total_unbonding
+      - unbonded
+      - unbonding
+      type: object
+    AccountMultiauthRuleInternalGroupEntry:
+      properties:
+        quorum:
+          type: integer
+        users:
+          items:
+            default: null
+            type:
+            - integer
+            - 'null'
+          type: array
+      required:
+      - quorum
+      - users
+      type: object
+    AccountSmartContractInteractionRule:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/AccountSmartContractInteractionRuleEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    CurrencyUnit:
+      properties:
+        code:
+          example: tBTC
+          type: string
+        magnitude:
+          example: 8
+          type: integer
+      required:
+      - code
+      - magnitude
+      type: object
+    TezosFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/TezosStakeBlockchainState'
+          default: null
+          description: A valid tezos delegate
+        type:
+          default: Tezos
+      type: object
+    VaultLightTokenAccount:
       properties:
         account_name:
           type: string
@@ -1049,108 +1268,139 @@ components:
       - status
       - ticker
       type: object
-    NFTPrice:
+    APIHistoryResults:
       properties:
-        contract_address:
+        history:
+          items:
+            items:
+              $ref: '#/components/schemas/APIHistoryResult'
+            type: array
+          type: array
+      required:
+      - history
+      type: object
+    PolygonFields:
+      properties:
+        staking:
+          allOf:
+          - $ref: '#/components/schemas/MaticStakingInfo'
           default: null
+          description: Polygon Staking data
+        type:
+          default: Polygon
+      type: object
+    SolanaBalances:
+      properties:
+        activating:
+          description: Sum of balances of open stakes in status activating
+          example: '341338'
+          type: string
+        deactivating:
+          description: Sum of balances of open stakes in status deactivating
+          example: '0'
+          type: string
+        delegated:
+          description: Sum of balances of open stakes in status delegated
+          example: '0'
+          type: string
+        token_accounts:
+          default: null
+          description: The light token accounts associated to this account
+          items:
+            $ref: '#/components/schemas/LightTokenAccount'
           type:
-          - string
+          - array
           - 'null'
-        ticker:
-          enum:
-          - ETH
+        total_staked:
+          description: Total SOL locked into staking on this solana account
+          example: '342338'
           type: string
-        token_id:
+        undelegated:
+          description: Sum of balances of open stakes in status undelegated
+          example: '0'
+          type: string
+      required:
+      - activating
+      - deactivating
+      - delegated
+      - total_staked
+      - undelegated
+      type: object
+    SolanaStakingInfo:
+      properties:
+        balances:
+          allOf:
+          - $ref: '#/components/schemas/SolanaBalances'
+          description: Balances of open stakes
+        rewards:
+          allOf:
+          - $ref: '#/components/schemas/PeriodicRewards'
+          description: Rewards generated by active stakes
+      required:
+      - balances
+      - rewards
+      type: object
+    PolkadotAnonymousProxyInfo:
+      properties:
+        address:
+          type: string
+        balances:
+          $ref: '#/components/schemas/PolkadotBalances'
+        block_height:
+          type: integer
+        created_at:
+          type: string
+        ext_index:
+          type: integer
+        index:
+          type: integer
+        is_controller:
+          type: boolean
+        is_main:
+          type: boolean
+        kind:
+          type: string
+      required:
+      - address
+      - balances
+      - block_height
+      - created_at
+      - ext_index
+      - index
+      - is_controller
+      - is_main
+      - kind
+      type: object
+    NFTPortfolioValuation:
+      properties:
+        portfolio_value:
+          allOf:
+          - $ref: '#/components/schemas/NFTValuation'
+          description: Estimated portfolio value based on collections' floor prices and quantity of tokens owned
+        token_quantity:
           default: null
+          description: Total quantity of tokens owned
+          example: 777
           type:
-          - string
+          - integer
           - 'null'
-        value:
-          type: number
       required:
-      - ticker
-      - value
+      - portfolio_value
       type: object
-    TezosFields:
+    AccountBalancesHistory:
       properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/TezosStakeBlockchainState'
-          default: null
-          description: A valid tezos delegate
-        type:
-          default: Tezos
-      type: object
-    SolanaAccountFields:
-      properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/SolanaStakingInfo'
-          description: Solana Staking balances and rewards
-        type:
-          default: Solana
+        account_index:
+          type: integer
+        balances:
+          items:
+            $ref: '#/components/schemas/AccountBalancesHistoryEntry'
+          type: array
+        currency:
+          $ref: '#/components/schemas/CurrencyInfo'
       required:
-      - staking
-      type: object
-    EthereumAndEvmFields:
-      properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/EthereumStakingInfo'
-          default: null
-          description: Ethereum Staking data
-        type:
-          default: EthereumAndEvm
-      type: object
-    PeriodicRewards:
-      properties:
-        last30:
-          description: Rewards generated over the last 30 days by all active stakes
-          example: '20239'
-          type: string
-        last7:
-          description: Rewards generated over the last 7 days by all active stakes
-          example: '50239'
-          type: string
-        total:
-          description: Total rewards generated by all active stakes
-          example: '100239'
-          type: string
-      required:
-      - last30
-      - last7
-      - total
-      type: object
-    PolkadotBalances:
-      properties:
-        available:
-          type: string
-        bonded:
-          type: string
-        free:
-          type: string
-        frozen:
-          type: string
-        reserved:
-          type: string
-        total:
-          type: string
-      required:
-      - available
-      - bonded
-      - free
-      - frozen
-      - reserved
-      - total
-      type: object
-    TradelinkState:
-      properties:
-        total_repledge:
-          description: Total pending repledge balance over all account pledges
-          example: 0
-          type: string
-      required:
-      - total_repledge
+      - account_index
+      - balances
+      - currency
       type: object
     PolkadotStakingInfo:
       properties:
@@ -1182,29 +1432,110 @@ components:
       - legacy_staking
       - proxies
       type: object
-    Error:
+    CurrencyInfo:
       properties:
-        message:
-          type: string
+        magnitude:
+          type: integer
         name:
           type: string
-        status_code:
+        network:
+          type: string
+        token_address:
+          default: null
+          type:
+          - string
+          - 'null'
+      required:
+      - magnitude
+      - name
+      - network
+      type: object
+    PolkadotUnbondingInfo:
+      properties:
+        amount:
+          type: string
+        waiting_time:
+          type: integer
+        withdrawable_date:
+          type: string
+      required:
+      - amount
+      - waiting_time
+      - withdrawable_date
+      type: object
+    AccountThresholdRuleEntry:
+      properties:
+        currency_type:
+          type: string
+        max:
+          default: null
+          type:
+          - integer
+          - 'null'
+        min:
           type: integer
       required:
-      - message
-      - name
-      - status_code
+      - currency_type
+      - min
       type: object
-    APIHistoryResults:
+    BitcoinBalances:
       properties:
-        history:
-          items:
-            items:
-              $ref: '#/components/schemas/APIHistoryResult'
-            type: array
-          type: array
+        available:
+          description: Sum of balances in status available
+          example: '750'
+          type: string
+        confirmed:
+          description: Balance of confirmed UTXOs
+          example: '100'
+          type: string
+        mempool_change:
+          description: Balance of change UTXOs from transactions in mempool
+          example: '100'
+          type: string
+        mempool_in:
+          description: Balance of incoming UTXOs from transactions in mempool
+          example: '200'
+          type: string
+        mempool_out:
+          description: Balance of outgoing UTXOs from transactions in mempool
+          example: '400'
+          type: string
+        pending:
+          description: Sum of balances in status pending
+          example: '250'
+          type: string
+        total:
+          description: Total balance of the account
+          example: '1000'
+          type: string
+        under_confirmation_change:
+          description: Balance of change UTXOs from transactions with less than 6 confirmations
+          example: '500'
+          type: string
+        under_confirmation_in:
+          description: Balance of incoming UTXOs from transactions with less than 6 confirmations
+          example: '700'
+          type: string
+        under_confirmation_out:
+          description: Balance of outgoing UTXOs from transactions with less than 6 confirmations
+          example: '500'
+          type: string
+        worthless:
+          description: Balance of worthless (aka dust) UTXOs
+          example: '50'
+          type: string
       required:
-      - history
+      - available
+      - confirmed
+      - mempool_change
+      - mempool_in
+      - mempool_out
+      - pending
+      - total
+      - under_confirmation_change
+      - under_confirmation_in
+      - under_confirmation_out
+      - worthless
       type: object
     NFTCollectionMedia:
       properties:
@@ -1216,47 +1547,15 @@ components:
       - mediaType
       - uri
       type: object
-    NFTValuation:
+    Property:
       properties:
-        eth_value:
-          description: Estimated portfolio value in ETH (in base unit WEI)
-          type: integer
-        usd_value:
-          default: null
-          description: Estimated portfolio value in USD, if available
-          type:
-          - string
-          - 'null'
+        key:
+          type: string
+        value:
+          type: string
       required:
-      - eth_value
-      type: object
-    NFTPortfolioValuation:
-      properties:
-        portfolio_value:
-          allOf:
-          - $ref: '#/components/schemas/NFTValuation'
-          description: Estimated portfolio value based on collections' floor prices and quantity of tokens owned
-        token_quantity:
-          default: null
-          description: Total quantity of tokens owned
-          example: 777
-          type:
-          - integer
-          - 'null'
-      required:
-      - portfolio_value
-      type: object
-    _APISearchAccountResults:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/AccountSearchResult'
-          type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
+      - key
+      - value
       type: object
     Account:
       properties:
@@ -1482,33 +1781,15 @@ components:
       - status
       - type
       type: object
-    LabelInfo:
+    EthereumAndEvmFields:
       properties:
-        color:
-          description: color of the tag
-          example: '#FE4523'
-          type: string
-        description:
-          description: description of this tag
-          example: This is a SPAM
-          type: string
-      required:
-      - color
-      - description
-      type: object
-    SolanaStakingInfo:
-      properties:
-        balances:
+        staking:
           allOf:
-          - $ref: '#/components/schemas/SolanaBalances'
-          description: Balances of open stakes
-        rewards:
-          allOf:
-          - $ref: '#/components/schemas/PeriodicRewards'
-          description: Rewards generated by active stakes
-      required:
-      - balances
-      - rewards
+          - $ref: '#/components/schemas/EthereumStakingInfo'
+          default: null
+          description: Ethereum Staking data
+        type:
+          default: EthereumAndEvm
       type: object
     NFTResult:
       properties:
@@ -1520,227 +1801,6 @@ components:
       required:
       - cursor
       - node
-      type: object
-    AccountBalancesHistoryEntry:
-      properties:
-        date:
-          type: string
-        value:
-          default: null
-          type:
-          - string
-          - 'null'
-      required:
-      - date
-      type: object
-    APIHistoryResult:
-      properties:
-        created_by:
-          default: null
-          example: 5
-          type:
-          - integer
-          - 'null'
-        created_on:
-          format: date-time
-          type: string
-        expired_at:
-          format: date-time
-          type: string
-        id:
-          example: 1
-          type: integer
-        is_complete:
-          type: boolean
-        status:
-          enum:
-          - ACTIVE
-          - APPROVED
-          - BLOCKED
-          - EXPIRED
-          - PENDING_APPROVAL
-          - PENDING_FIRST_APPROVAL
-          - PENDING_REGISTRATION
-          - REJECTED
-          - SIGNED
-          - SUBMITTED
-          example: ACTIVE
-          type: string
-        type:
-          enum:
-          - ACTIVATE
-          - CREATE_ACCOUNT
-          - CREATE_ADMIN
-          - CREATE_ADMIN_GROUP
-          - CREATE_API_USER
-          - CREATE_API_USER_ACCESS
-          - CREATE_DAPPS_CONFIG
-          - CREATE_ENTITY
-          - CREATE_FORCED_UNPLEDGE
-          - CREATE_GROUP
-          - CREATE_OPERATOR
-          - CREATE_PLEDGE_INCREMENT
-          - CREATE_POLICY
-          - CREATE_REPLEDGE
-          - CREATE_TRADELINK
-          - CREATE_TRADELINK_ASSET_MANAGER
-          - CREATE_TRADELINK_EXCHANGE
-          - CREATE_TRANSACTION
-          - CREATE_WHITELIST
-          - EDIT_ACCOUNT
-          - EDIT_ADMIN_GROUP
-          - EDIT_DAPPS_CONFIG
-          - EDIT_ENTITY
-          - EDIT_GROUP
-          - EDIT_POLICY
-          - EDIT_WHITELIST
-          - MESSAGE_SIGNING
-          - MIGRATE_ACCOUNT
-          - MIGRATE_ADMIN
-          - MIGRATE_GROUP
-          - MIGRATE_OPERATOR
-          - MIGRATE_WHITELIST
-          - REVOKE_ENTITY
-          - REVOKE_GROUP
-          - REVOKE_USER
-          - SIGN_DIGESTS
-          - UPDATE_QUORUM
-          example: CREATE_ACCOUNT
-          type: string
-      required:
-      - created_on
-      - expired_at
-      - id
-      - is_complete
-      - status
-      - type
-      type: object
-    AccountWhitelistRuleEntry:
-      properties:
-        whitelist:
-          type: integer
-      required:
-      - whitelist
-      type: object
-    Address:
-      additionalProperties: false
-      properties:
-        address:
-          type: string
-        derivation_path:
-          type: string
-      required:
-      - address
-      - derivation_path
-      type: object
-    CurrencyInfo:
-      properties:
-        magnitude:
-          type: integer
-        name:
-          type: string
-        network:
-          type: string
-        token_address:
-          default: null
-          type:
-          - string
-          - 'null'
-      required:
-      - magnitude
-      - name
-      - network
-      type: object
-    APISearchPageInfo:
-      properties:
-        count:
-          example: 1
-          type: integer
-        has_next_page:
-          example: false
-          type: boolean
-      required:
-      - count
-      - has_next_page
-      type: object
-    PolygonFields:
-      properties:
-        staking:
-          allOf:
-          - $ref: '#/components/schemas/MaticStakingInfo'
-          default: null
-          description: Polygon Staking data
-        type:
-          default: Polygon
-      type: object
-    NFTCollectionResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/NFTCollection'
-      required:
-      - cursor
-      - node
-      type: object
-    SolanaBalances:
-      properties:
-        activating:
-          description: Sum of balances of open stakes in status activating
-          example: '341338'
-          type: string
-        deactivating:
-          description: Sum of balances of open stakes in status deactivating
-          example: '0'
-          type: string
-        delegated:
-          description: Sum of balances of open stakes in status delegated
-          example: '0'
-          type: string
-        token_accounts:
-          default: null
-          description: The light token accounts associated to this account
-          items:
-            $ref: '#/components/schemas/LightTokenAccount'
-          type:
-          - array
-          - 'null'
-        total_staked:
-          description: Total SOL locked into staking on this solana account
-          example: '342338'
-          type: string
-        undelegated:
-          description: Sum of balances of open stakes in status undelegated
-          example: '0'
-          type: string
-      required:
-      - activating
-      - deactivating
-      - delegated
-      - total_staked
-      - undelegated
-      type: object
-    AccountThresholdRule:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/AccountThresholdRuleEntry'
-          type: array
-        id:
-          type: integer
-        type:
-          enum:
-          - MULTI_AUTHORIZATIONS
-          - SMART_CONTRACT_INTERACTION
-          - THRESHOLD
-          - TRANSACTION_FILTER
-          - WHITELIST
-          type: string
-      required:
-      - data
-      - id
-      - type
       type: object
     TezosStakeBlockchainState:
       properties:
@@ -1826,40 +1886,98 @@ components:
       - delegated_at
       - state
       type: object
-    AccountMultiauthRuleInternalGroupEntry:
+    NFTValuation:
       properties:
-        quorum:
+        eth_value:
+          description: Estimated portfolio value in ETH (in base unit WEI)
           type: integer
-        users:
-          items:
-            default: null
-            type:
-            - integer
-            - 'null'
-          type: array
+        usd_value:
+          default: null
+          description: Estimated portfolio value in USD, if available
+          type:
+          - string
+          - 'null'
       required:
-      - quorum
-      - users
+      - eth_value
       type: object
-    MaticStakingInfo:
+    PaginatedNFTs:
       properties:
-        total_rewards:
-          description: Total rewards
+        edges:
+          items:
+            $ref: '#/components/schemas/NFTResult'
+          type: array
+        page_info:
+          $ref: '#/components/schemas/APISearchPageInfo'
+      required:
+      - edges
+      - page_info
+      type: object
+    NFTPrice:
+      properties:
+        contract_address:
+          default: null
+          type:
+          - string
+          - 'null'
+        ticker:
+          enum:
+          - ETH
           type: string
-        total_staking:
-          description: Total staking
+        token_id:
+          default: null
+          type:
+          - string
+          - 'null'
+        value:
+          type: number
+      required:
+      - ticker
+      - value
+      type: object
+    LabelInfo:
+      properties:
+        color:
+          description: color of the tag
+          example: '#FE4523'
           type: string
-        total_unbonded:
-          description: Total unbonded
-          type: string
-        total_unbonding:
-          description: Total unbonding
+        description:
+          description: description of this tag
+          example: This is a SPAM
           type: string
       required:
-      - total_rewards
-      - total_staking
-      - total_unbonded
-      - total_unbonding
+      - color
+      - description
+      type: object
+    LightTokenAccount:
+      properties:
+        account_name:
+          type: string
+        associated_token_account:
+          type: string
+        available:
+          type: integer
+        contract_address:
+          type: string
+        creation_transaction_hash:
+          type: string
+        parent_id:
+          type: integer
+        pending:
+          type: integer
+        status:
+          type: string
+        ticker:
+          type: string
+      required:
+      - account_name
+      - associated_token_account
+      - available
+      - contract_address
+      - creation_transaction_hash
+      - parent_id
+      - pending
+      - status
+      - ticker
       type: object
     PaginatedNFTCollections:
       properties:
@@ -1873,201 +1991,70 @@ components:
       - edges
       - page_info
       type: object
-    AccountBalancesHistory:
+    Medias:
       properties:
-        account_index:
+        big:
+          allOf:
+          - $ref: '#/components/schemas/Media'
+          default: null
+        original:
+          allOf:
+          - $ref: '#/components/schemas/Media'
+          default: null
+        preview:
+          allOf:
+          - $ref: '#/components/schemas/Media'
+          default: null
+      type: object
+    AccountMultiauthRuleExternalGroupEntry:
+      properties:
+        group:
           type: integer
-        balances:
+        quorum:
+          type: integer
+      required:
+      - group
+      - quorum
+      type: object
+    NFTCollection:
+      properties:
+        account_id:
+          type: integer
+        contract_address:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/NFTCollectionMedia'
+          default: null
+        name:
+          default: null
+          type:
+          - string
+          - 'null'
+        price:
+          allOf:
+          - $ref: '#/components/schemas/NFTPrice'
+          default: null
+        token_balance:
+          type: integer
+        token_type:
+          description: ERC-721 or ERC-1155
+          type: string
+      required:
+      - account_id
+      - contract_address
+      - token_balance
+      - token_type
+      type: object
+    Addresses:
+      additionalProperties: false
+      properties:
+        addresses:
           items:
-            $ref: '#/components/schemas/AccountBalancesHistoryEntry'
+            $ref: '#/components/schemas/Address'
           type: array
-        currency:
-          $ref: '#/components/schemas/CurrencyInfo'
       required:
-      - account_index
-      - balances
-      - currency
-      type: object
-    AccountTransactionFilterRule:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/AccountTransactionFilterRuleEntry'
-          type: array
-        id:
-          type: integer
-        type:
-          enum:
-          - MULTI_AUTHORIZATIONS
-          - SMART_CONTRACT_INTERACTION
-          - THRESHOLD
-          - TRANSACTION_FILTER
-          - WHITELIST
-          type: string
-      required:
-      - data
-      - id
-      - type
-      type: object
-    CurrencyUnit:
-      properties:
-        code:
-          example: tBTC
-          type: string
-        magnitude:
-          example: 8
-          type: integer
-      required:
-      - code
-      - magnitude
-      type: object
-    BitcoinBalances:
-      properties:
-        available:
-          description: Sum of balances in status available
-          example: '750'
-          type: string
-        confirmed:
-          description: Balance of confirmed UTXOs
-          example: '100'
-          type: string
-        mempool_change:
-          description: Balance of change UTXOs from transactions in mempool
-          example: '100'
-          type: string
-        mempool_in:
-          description: Balance of incoming UTXOs from transactions in mempool
-          example: '200'
-          type: string
-        mempool_out:
-          description: Balance of outgoing UTXOs from transactions in mempool
-          example: '400'
-          type: string
-        pending:
-          description: Sum of balances in status pending
-          example: '250'
-          type: string
-        total:
-          description: Total balance of the account
-          example: '1000'
-          type: string
-        under_confirmation_change:
-          description: Balance of change UTXOs from transactions with less than 6 confirmations
-          example: '500'
-          type: string
-        under_confirmation_in:
-          description: Balance of incoming UTXOs from transactions with less than 6 confirmations
-          example: '700'
-          type: string
-        under_confirmation_out:
-          description: Balance of outgoing UTXOs from transactions with less than 6 confirmations
-          example: '500'
-          type: string
-        worthless:
-          description: Balance of worthless (aka dust) UTXOs
-          example: '50'
-          type: string
-      required:
-      - available
-      - confirmed
-      - mempool_change
-      - mempool_in
-      - mempool_out
-      - pending
-      - total
-      - under_confirmation_change
-      - under_confirmation_in
-      - under_confirmation_out
-      - worthless
-      type: object
-    AccountSearchResult:
-      properties:
-        cursor:
-          example: 0
-          type: integer
-        node:
-          $ref: '#/components/schemas/Account'
-      required:
-      - cursor
-      - node
-      type: object
-    NFTMetadata:
-      properties:
-        description:
-          default: null
-          type:
-          - string
-          - 'null'
-        links:
-          additionalProperties:
-            default: null
-            type:
-            - string
-            - 'null'
-          default: null
-          type:
-          - object
-          - 'null'
-        media:
-          type: string
-        medias:
-          $ref: '#/components/schemas/Medias'
-        nftName:
-          default: null
-          type:
-          - string
-          - 'null'
-        properties:
-          items:
-            $ref: '#/components/schemas/Property'
-          type: array
-        staxImage:
-          default: null
-          type:
-          - string
-          - 'null'
-        tokenId:
-          type: string
-        tokenName:
-          type: string
-        tokenNameThumbnail:
-          default: null
-          type:
-          - string
-          - 'null'
-      required:
-      - media
-      - medias
-      - properties
-      - tokenId
-      - tokenName
-      type: object
-    Media:
-      properties:
-        mediaType:
-          default: null
-          type:
-          - string
-          - 'null'
-        uri:
-          type: string
-      required:
-      - uri
-      type: object
-    NFTTransactionBalance:
-      properties:
-        available:
-          default: 0
-          type: integer
-        on_chain:
-          default: 0
-          type: integer
-        pending_approval:
-          default: 0
-          type: integer
-        submitted:
-          default: 0
-          type: integer
+      - addresses
       type: object
     AccountRuleSet:
       properties:
@@ -2129,132 +2116,253 @@ components:
       - id
       - type
       type: object
-    EthereumStakingInfo:
-      properties:
-        available_rewards:
-          default: null
-          description: Available rewards
-          type:
-          - string
-          - 'null'
-        network_apy:
-          default: null
-          description: APY
-          type:
-          - number
-          - 'null'
-        total_rewards:
-          default: null
-          description: Total rewards
-          type:
-          - string
-          - 'null'
-        total_staking:
-          default: null
-          description: Total staking
-          type:
-          - string
-          - 'null'
-      type: object
-    LiteLabel:
+    Address:
       additionalProperties: false
       properties:
-        id:
-          type: integer
-        info:
-          $ref: '#/components/schemas/LabelInfo'
-        name:
-          description: name of the tag
-          example: SPAM
+        address:
+          type: string
+        derivation_path:
           type: string
       required:
-      - id
-      - info
-      - name
+      - address
+      - derivation_path
       type: object
-    Medias:
+    AccountWhitelistRuleEntry:
       properties:
-        big:
-          allOf:
-          - $ref: '#/components/schemas/Media'
-          default: null
-        original:
-          allOf:
-          - $ref: '#/components/schemas/Media'
-          default: null
-        preview:
-          allOf:
-          - $ref: '#/components/schemas/Media'
-          default: null
-      type: object
-    NFT:
-      properties:
-        contract_address:
-          type: string
-        metadata:
-          allOf:
-          - $ref: '#/components/schemas/NFTMetadata'
-          default: null
-        price:
-          allOf:
-          - $ref: '#/components/schemas/NFTPrice'
-          default: null
-        token_id:
-          type: string
-        token_type:
-          description: ERC-721 or ERC-1155
-          type: string
-        tx_balance:
-          allOf:
-          - $ref: '#/components/schemas/NFTTransactionBalance'
-          default: null
-        value:
+        whitelist:
           type: integer
       required:
-      - contract_address
-      - token_id
-      - token_type
-      - value
+      - whitelist
       type: object
-    NFTCollection:
+    NFTMetadata:
       properties:
-        account_id:
-          type: integer
-        contract_address:
-          type: string
-        image:
-          allOf:
-          - $ref: '#/components/schemas/NFTCollectionMedia'
-          default: null
-        name:
+        description:
           default: null
           type:
           - string
           - 'null'
-        price:
-          allOf:
-          - $ref: '#/components/schemas/NFTPrice'
+        links:
+          additionalProperties:
+            default: null
+            type:
+            - string
+            - 'null'
           default: null
-        token_balance:
-          type: integer
-        token_type:
-          description: ERC-721 or ERC-1155
+          type:
+          - object
+          - 'null'
+        media:
+          type: string
+        medias:
+          $ref: '#/components/schemas/Medias'
+        nftName:
+          default: null
+          type:
+          - string
+          - 'null'
+        properties:
+          items:
+            $ref: '#/components/schemas/Property'
+          type: array
+        staxImage:
+          default: null
+          type:
+          - string
+          - 'null'
+        tokenId:
+          type: string
+        tokenName:
+          type: string
+        tokenNameThumbnail:
+          default: null
+          type:
+          - string
+          - 'null'
+      required:
+      - media
+      - medias
+      - properties
+      - tokenId
+      - tokenName
+      type: object
+    MaticStakingInfo:
+      properties:
+        total_rewards:
+          description: Total rewards
+          type: string
+        total_staking:
+          description: Total staking
+          type: string
+        total_unbonded:
+          description: Total unbonded
+          type: string
+        total_unbonding:
+          description: Total unbonding
           type: string
       required:
-      - account_id
-      - contract_address
-      - token_balance
-      - token_type
+      - total_rewards
+      - total_staking
+      - total_unbonded
+      - total_unbonding
       type: object
-    Property:
+    AccountBalancesHistoryEntry:
       properties:
-        key:
+        date:
           type: string
         value:
+          default: null
+          type:
+          - string
+          - 'null'
+      required:
+      - date
+      type: object
+    NFTCollectionResult:
+      properties:
+        cursor:
+          example: 0
+          type: integer
+        node:
+          $ref: '#/components/schemas/NFTCollection'
+      required:
+      - cursor
+      - node
+      type: object
+    APIHistoryResult:
+      properties:
+        created_by:
+          default: null
+          example: 5
+          type:
+          - integer
+          - 'null'
+        created_on:
+          format: date-time
+          type: string
+        expired_at:
+          format: date-time
+          type: string
+        id:
+          example: 1
+          type: integer
+        is_complete:
+          type: boolean
+        status:
+          enum:
+          - ACTIVE
+          - APPROVED
+          - BLOCKED
+          - EXPIRED
+          - PENDING_APPROVAL
+          - PENDING_FIRST_APPROVAL
+          - PENDING_REGISTRATION
+          - REJECTED
+          - SIGNED
+          - SUBMITTED
+          example: ACTIVE
+          type: string
+        type:
+          enum:
+          - ACTIVATE
+          - CREATE_ACCOUNT
+          - CREATE_ADMIN
+          - CREATE_ADMIN_GROUP
+          - CREATE_API_USER
+          - CREATE_API_USER_ACCESS
+          - CREATE_DAPPS_CONFIG
+          - CREATE_ENTITY
+          - CREATE_FORCED_UNPLEDGE
+          - CREATE_GROUP
+          - CREATE_OPERATOR
+          - CREATE_PLEDGE_INCREMENT
+          - CREATE_POLICY
+          - CREATE_REPLEDGE
+          - CREATE_TRADELINK
+          - CREATE_TRADELINK_ASSET_MANAGER
+          - CREATE_TRADELINK_EXCHANGE
+          - CREATE_TRANSACTION
+          - CREATE_WHITELIST
+          - EDIT_ACCOUNT
+          - EDIT_ADMIN_GROUP
+          - EDIT_DAPPS_CONFIG
+          - EDIT_ENTITY
+          - EDIT_GROUP
+          - EDIT_POLICY
+          - EDIT_WHITELIST
+          - MESSAGE_SIGNING
+          - MIGRATE_ACCOUNT
+          - MIGRATE_ADMIN
+          - MIGRATE_GROUP
+          - MIGRATE_OPERATOR
+          - MIGRATE_WHITELIST
+          - REVOKE_ENTITY
+          - REVOKE_GROUP
+          - REVOKE_USER
+          - SIGN_DIGESTS
+          - UPDATE_QUORUM
+          example: CREATE_ACCOUNT
           type: string
       required:
-      - key
-      - value
+      - created_on
+      - expired_at
+      - id
+      - is_complete
+      - status
+      - type
+      type: object
+    PeriodicRewards:
+      properties:
+        last30:
+          description: Rewards generated over the last 30 days by all active stakes
+          example: '20239'
+          type: string
+        last7:
+          description: Rewards generated over the last 7 days by all active stakes
+          example: '50239'
+          type: string
+        total:
+          description: Total rewards generated by all active stakes
+          example: '100239'
+          type: string
+      required:
+      - last30
+      - last7
+      - total
+      type: object
+    AccountTransactionFilterRule:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/AccountTransactionFilterRuleEntry'
+          type: array
+        id:
+          type: integer
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
+          type: string
+      required:
+      - data
+      - id
+      - type
+      type: object
+    AccountCurrency:
+      properties:
+        amount_units:
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+        fees_units:
+          items:
+            $ref: '#/components/schemas/CurrencyUnit'
+          type: array
+      required:
+      - amount_units
+      - fees_units
       type: object
     AccountTransactionFilterRuleEntry:
       properties:
@@ -2284,137 +2392,62 @@ components:
           - string
           - 'null'
       type: object
-    AccountMultiauthRuleExternalGroupEntry:
+    TradelinkState:
       properties:
-        group:
-          type: integer
-        quorum:
-          type: integer
-      required:
-      - group
-      - quorum
-      type: object
-    AccountBalances:
-      properties:
-        available:
-          description: Sum of balances in status available
-          example: '750'
-          type: string
-        pending:
-          description: Sum of balances in status pending
-          example: '250'
-          type: string
-        total:
-          description: Sum of all balances
-          example: '1000'
+        total_repledge:
+          description: Total pending repledge balance over all account pledges
+          example: 0
           type: string
       required:
-      - available
-      - pending
-      - total
+      - total_repledge
       type: object
-    PolkadotUnbondingInfo:
+    AccountSearchResult:
       properties:
-        amount:
-          type: string
-        waiting_time:
+        cursor:
+          example: 0
           type: integer
-        withdrawable_date:
+        node:
+          $ref: '#/components/schemas/Account'
+      required:
+      - cursor
+      - node
+      type: object
+    LiteLabel:
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        info:
+          $ref: '#/components/schemas/LabelInfo'
+        name:
+          description: name of the tag
+          example: SPAM
           type: string
       required:
-      - amount
-      - waiting_time
-      - withdrawable_date
+      - id
+      - info
+      - name
       type: object
-    PolkadotAnonymousProxyInfo:
+    AccountThresholdRule:
       properties:
-        address:
-          type: string
-        balances:
-          $ref: '#/components/schemas/PolkadotBalances'
-        block_height:
-          type: integer
-        created_at:
-          type: string
-        ext_index:
-          type: integer
-        index:
-          type: integer
-        is_controller:
-          type: boolean
-        is_main:
-          type: boolean
-        kind:
-          type: string
-      required:
-      - address
-      - balances
-      - block_height
-      - created_at
-      - ext_index
-      - index
-      - is_controller
-      - is_main
-      - kind
-      type: object
-    PolkadotFields:
-      properties:
-        anonymous_proxy:
-          allOf:
-          - $ref: '#/components/schemas/PolkadotAnonymousProxyInfo'
-          default: null
-        balances:
-          $ref: '#/components/schemas/PolkadotBalancesWithUnbondingInfo'
-        staking:
-          $ref: '#/components/schemas/PolkadotStakingInfo'
-        type:
-          default: Polkadot
-      required:
-      - balances
-      - staking
-      type: object
-    PaginatedNFTs:
-      properties:
-        edges:
+        data:
           items:
-            $ref: '#/components/schemas/NFTResult'
+            $ref: '#/components/schemas/AccountThresholdRuleEntry'
           type: array
-        page_info:
-          $ref: '#/components/schemas/APISearchPageInfo'
-      required:
-      - edges
-      - page_info
-      type: object
-    VaultLightTokenAccount:
-      properties:
-        account_name:
-          type: string
-        associated_token_account:
-          type: string
-        available:
+        id:
           type: integer
-        contract_address:
-          type: string
-        creation_transaction_hash:
-          type: string
-        parent_id:
-          type: integer
-        pending:
-          type: integer
-        status:
-          type: string
-        ticker:
+        type:
+          enum:
+          - MULTI_AUTHORIZATIONS
+          - SMART_CONTRACT_INTERACTION
+          - THRESHOLD
+          - TRANSACTION_FILTER
+          - WHITELIST
           type: string
       required:
-      - account_name
-      - associated_token_account
-      - available
-      - contract_address
-      - creation_transaction_hash
-      - parent_id
-      - pending
-      - status
-      - ticker
+      - data
+      - id
+      - type
       type: object
     AccountWhitelistRule:
       properties:
@@ -2437,17 +2470,7 @@ components:
       - id
       - type
       type: object
-    Addresses:
-      additionalProperties: false
-      properties:
-        addresses:
-          items:
-            $ref: '#/components/schemas/Address'
-          type: array
-      required:
-      - addresses
-      type: object
-    PolkadotBalancesWithUnbondingInfo:
+    PolkadotBalances:
       properties:
         available:
           type: string
@@ -2461,18 +2484,6 @@ components:
           type: string
         total:
           type: string
-        total_unbonded:
-          type: string
-        total_unbonding:
-          type: string
-        unbonded:
-          items:
-            $ref: '#/components/schemas/PolkadotUnbondingInfo'
-          type: array
-        unbonding:
-          items:
-            $ref: '#/components/schemas/PolkadotUnbondingInfo'
-          type: array
       required:
       - available
       - bonded
@@ -2480,67 +2491,56 @@ components:
       - frozen
       - reserved
       - total
-      - total_unbonded
-      - total_unbonding
-      - unbonded
-      - unbonding
       type: object
-    AccountSmartContractInteractionRuleEntry:
+    NFTTransactionBalance:
       properties:
-        enabled:
-          type: boolean
-      required:
-      - enabled
+        available:
+          default: 0
+          type: integer
+        on_chain:
+          default: 0
+          type: integer
+        pending_approval:
+          default: 0
+          type: integer
+        submitted:
+          default: 0
+          type: integer
       type: object
-    AccountThresholdRuleEntry:
+    AccountBalances:
       properties:
-        currency_type:
+        available:
+          description: Sum of balances in status available
+          example: '750'
           type: string
-        max:
+        pending:
+          description: Sum of balances in status pending
+          example: '250'
+          type: string
+        total:
+          description: Sum of all balances
+          example: '1000'
+          type: string
+      required:
+      - available
+      - pending
+      - total
+      type: object
+    PolkadotFields:
+      properties:
+        anonymous_proxy:
+          allOf:
+          - $ref: '#/components/schemas/PolkadotAnonymousProxyInfo'
           default: null
-          type:
-          - integer
-          - 'null'
-        min:
-          type: integer
-      required:
-      - currency_type
-      - min
-      type: object
-    AccountCurrency:
-      properties:
-        amount_units:
-          items:
-            $ref: '#/components/schemas/CurrencyUnit'
-          type: array
-        fees_units:
-          items:
-            $ref: '#/components/schemas/CurrencyUnit'
-          type: array
-      required:
-      - amount_units
-      - fees_units
-      type: object
-    AccountSmartContractInteractionRule:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/AccountSmartContractInteractionRuleEntry'
-          type: array
-        id:
-          type: integer
+        balances:
+          $ref: '#/components/schemas/PolkadotBalancesWithUnbondingInfo'
+        staking:
+          $ref: '#/components/schemas/PolkadotStakingInfo'
         type:
-          enum:
-          - MULTI_AUTHORIZATIONS
-          - SMART_CONTRACT_INTERACTION
-          - THRESHOLD
-          - TRANSACTION_FILTER
-          - WHITELIST
-          type: string
+          default: Polkadot
       required:
-      - data
-      - id
-      - type
+      - balances
+      - staking
       type: object
   securitySchemes:
     Ledger_API_User:
