@@ -365,9 +365,10 @@ apis:
   humanURL: https://developers.ledger.com/docs/ledger-live/exchange
   baseURL: https://api.vault.ledger.com
   tags:
-  - Cryptocurrencies
+  - Cryptocurrency
   tags_raw:
   - Crypto Currencies
+  - Cryptocurrencies
   properties:
   - type: OpenAPI
     url: openapi/ledger-crypto-currencies-api-openapi.yml
