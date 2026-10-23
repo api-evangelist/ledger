@@ -359,3 +359,9 @@ components:
 x-refined-from:
 - ledger-buy-provider-openapi-original.yml
 - ledger-sell-provider-openapi-original.yml
+x-provenance:
+  method: harvested
+  publisher: Ledger
+  source: https://developers.ledger.com/exchange/openapi/sell-provider-openapi.yml
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
